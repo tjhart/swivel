@@ -7,6 +7,9 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+/**
+ * A very re-usable class. Perhaps it should be put into some utilities artifact?
+ */
 public class ScriptWrapper {
 
     protected final String script;

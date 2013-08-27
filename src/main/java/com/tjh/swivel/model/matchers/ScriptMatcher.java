@@ -39,12 +39,12 @@ public class ScriptMatcher extends CustomMatcher<HttpServletRequest> {
     }
 
     @Factory
-    public static Matcher<? super HttpServletRequest> scriptMatches(String script) throws ScriptException {
+    public static Matcher<HttpServletRequest> scriptMatches(String script) throws ScriptException {
         return scriptMatches("javascript", script);
     }
 
     @Factory
-    public static Matcher<? super HttpServletRequest> scriptMatches(String language, String script)
+    public static Matcher<HttpServletRequest> scriptMatches(String language, String script)
             throws ScriptException {
         return new ScriptMatcher(language, script);
     }

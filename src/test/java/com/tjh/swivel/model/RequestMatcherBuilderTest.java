@@ -149,4 +149,26 @@ public class RequestMatcherBuilderTest {
                         .buildOptionalMatcher(expectationRequest,
                                 Maps.<String, Object>asMap(RequestMatcherBuilder.REMOTE_ADDR_KEY, "127.0.0.1")));
     }
+
+    @Test(expected = AssertionError.class)
+    public void matchFailsIfScriptProvidedAndDoesNotMatch() {
+        when(actualRequest.getLocalPort()).thenReturn(24);
+
+        assertThat(actualRequest,
+                requestMatcherBuilder
+                        .buildOptionalMatcher(expectationRequest,
+                                Maps.<String, Object>asMap(RequestMatcherBuilder.SCRIPT_KEY,
+                                        "(function(){return request.getLocalPort() === 23;})();")));
+    }
+
+    @Test
+    public void matchesIfScriptMatches(){
+        when(actualRequest.getLocalPort()).thenReturn(23);
+
+        assertThat(actualRequest,
+                requestMatcherBuilder
+                        .buildOptionalMatcher(expectationRequest,
+                                Maps.<String, Object>asMap(RequestMatcherBuilder.SCRIPT_KEY,
+                                        "(function(){return request.getLocalPort() === 23;})();")));
+    }
 }

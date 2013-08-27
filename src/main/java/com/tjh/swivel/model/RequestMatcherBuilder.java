@@ -7,9 +7,9 @@ import com.tjh.swivel.model.matchers.RemoteAddrMatcher;
 import com.tjh.swivel.model.matchers.RequestMethodMatcher;
 import com.tjh.swivel.model.matchers.RequestedURIPathMatcher;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,17 +18,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.tjh.swivel.model.matchers.ContentMatcher.hasContent;
+import static com.tjh.swivel.model.matchers.ScriptMatcher.scriptMatches;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static com.tjh.swivel.model.matchers.ContentMatcher.hasContent;
 
 public class RequestMatcherBuilder {
     public static final String METHOD_KEY = "method";
     public static final String REMOTE_ADDR_KEY = "remoteAddr";
     public static final String CONTENT_TYPE_KEY = "contentType";
     public static final String CONTENT_KEY = "content";
+    public static final String SCRIPT_KEY = "when";
     public static final int STATIC_MATCHER_COUNT = 3;
     public static final int OPTIONAL_MATCHER_COUNT = 4;
     protected ObjectMapper objectMapper = new ObjectMapper();
@@ -49,24 +51,31 @@ public class RequestMatcherBuilder {
     @SuppressWarnings("unchecked")
     protected Matcher<HttpServletRequest> buildOptionalMatcher(HttpServletRequest expectationRequest,
             Map<String, Object> json) {
-        List<Matcher<HttpServletRequest>> result = new ArrayList<Matcher<HttpServletRequest>>(OPTIONAL_MATCHER_COUNT);
-        Map<String, String[]> parameterMap = expectationRequest.getParameterMap();
-        if (!parameterMap.isEmpty()) {
-            result.add(ParameterMapMatcher.hasParameterMap(equalTo(convertParameterMap(parameterMap))));
+        try {
+            List<Matcher<HttpServletRequest>> result =
+                    new ArrayList<Matcher<HttpServletRequest>>(OPTIONAL_MATCHER_COUNT);
+            Map<String, String[]> parameterMap = expectationRequest.getParameterMap();
+            if (!parameterMap.isEmpty()) {
+                result.add(ParameterMapMatcher.hasParameterMap(equalTo(convertParameterMap(parameterMap))));
+            }
+            if (json.containsKey(REMOTE_ADDR_KEY)) {
+                String remoteAddr = (String) json.get(REMOTE_ADDR_KEY);
+                result.add(anyOf(RemoteAddrMatcher.hasRemoteAddr(equalTo(remoteAddr)),
+                        HeaderMatcher.hasHeader("X-Forwarded-For", hasItem(remoteAddr))));
+            }
+            if (json.containsKey(CONTENT_TYPE_KEY)) {
+                result.add(ContentTypeMatcher.hasContentType(equalTo(json.get(CONTENT_TYPE_KEY))));
+            }
+            if (json.containsKey(CONTENT_KEY)) {
+                result.add(hasContent(equalTo(json.get(CONTENT_KEY))));
+            }
+            if (json.containsKey(SCRIPT_KEY)) {
+                result.add(scriptMatches((String) json.get(SCRIPT_KEY)));
+            }
+            return allOf(result.toArray(new Matcher[result.size()]));
+        } catch (ScriptException e) {
+            throw new RuntimeException(e);
         }
-        if (json.containsKey(REMOTE_ADDR_KEY)) {
-            String remoteAddr = (String) json.get(REMOTE_ADDR_KEY);
-            result.add(
-                    CoreMatchers.anyOf(RemoteAddrMatcher.hasRemoteAddr(equalTo(remoteAddr)),
-                            HeaderMatcher.hasHeader("X-Forwarded-For", hasItem(remoteAddr))));
-        }
-        if (json.containsKey(CONTENT_TYPE_KEY)) {
-            result.add(ContentTypeMatcher.hasContentType(equalTo(json.get(CONTENT_TYPE_KEY))));
-        }
-        if (json.containsKey(CONTENT_KEY)) {
-            result.add(hasContent(equalTo(json.get(CONTENT_KEY))));
-        }
-        return allOf(result.toArray(new Matcher[result.size()]));
     }
 
     private Map<String, List<String>> convertParameterMap(Map<String, String[]> parameterMap) {

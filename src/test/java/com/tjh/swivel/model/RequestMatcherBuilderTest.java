@@ -70,7 +70,7 @@ public class RequestMatcherBuilderTest {
     }
 
     @Test
-    public void matchesRemoteAddressIfProvidedMatches() throws IOException {
+    public void matchesRemoteAddressIfProvidedAndMatches() throws IOException {
         when(actualRequest.getRemoteAddr()).thenReturn("127.0.0.1");
 
         assertThat(actualRequest,

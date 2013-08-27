@@ -32,7 +32,7 @@ public class RequestMatcherBuilder {
     public static final String CONTENT_KEY = "content";
     public static final String SCRIPT_KEY = "when";
     public static final int STATIC_MATCHER_COUNT = 3;
-    public static final int OPTIONAL_MATCHER_COUNT = 4;
+    public static final int OPTIONAL_MATCHER_COUNT = 5;
     protected ObjectMapper objectMapper = new ObjectMapper();
 
     @SuppressWarnings("unchecked")
@@ -41,8 +41,8 @@ public class RequestMatcherBuilder {
         Map<String, Object> json = objectMapper.readValue(expectationRequest.getInputStream(), Map.class);
 
         List<Matcher<HttpServletRequest>> matchers = new ArrayList<Matcher<HttpServletRequest>>(STATIC_MATCHER_COUNT);
-        matchers.add(RequestedURIPathMatcher.hasURIPath(equalTo(expectationRequest.getPathInfo())));
         matchers.add(RequestMethodMatcher.hasMethod(equalTo(json.get(METHOD_KEY))));
+        matchers.add(RequestedURIPathMatcher.hasURIPath(equalTo(expectationRequest.getPathInfo())));
 
         matchers.add(buildOptionalMatcher(expectationRequest, json));
         return allOf(matchers.toArray(new Matcher[matchers.size()]));

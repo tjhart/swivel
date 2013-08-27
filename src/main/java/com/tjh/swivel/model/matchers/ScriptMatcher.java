@@ -1,9 +1,9 @@
 package com.tjh.swivel.model.matchers;
 
+import com.tjh.swivel.utils.ScriptWrapper;
 import org.hamcrest.CustomMatcher;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
-import com.tjh.swivel.utils.ScriptWrapper;
 
 import javax.script.Bindings;
 import javax.script.ScriptException;
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class ScriptMatcher extends CustomMatcher<HttpServletRequest> {
 
-    private final ScriptWrapper scriptWrapper;
+    protected ScriptWrapper scriptWrapper;
 
     public ScriptMatcher(String language, String script) throws ScriptException {
         super(String.format("HttpServletRequest (request) evaluated by %1$s script:\n%2$s ", language, script));

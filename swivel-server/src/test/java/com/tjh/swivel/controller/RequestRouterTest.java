@@ -15,6 +15,7 @@ import static org.mockito.Mockito.mock;
 public class RequestRouterTest {
 
     public static final URI LOCAL_URI = URI.create("some/path");
+    public static final URI DEEP_URI = URI.create("some/path/deep");
     private ShuntRequestHandler mockRequestHandler;
     private RequestRouter requestRouter;
 
@@ -27,11 +28,24 @@ public class RequestRouterTest {
 
     @Test
     public void setShuntPutsRequestHandlerAtExpectedPath() {
-
         requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
 
         assertThat((ShuntRequestHandler) Maps.valueFor(requestRouter.shuntPaths, LOCAL_URI.getPath().split("/")),
                 equalTo(mockRequestHandler));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setShuntThrowsIfItemExistsAtPath(){
+        requestRouter.setShunt(DEEP_URI, mockRequestHandler);
+
+        requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setShuntThrowsIfLeafEncounteredOnWayToPath(){
+        requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
+
+        requestRouter.setShunt(DEEP_URI, mockRequestHandler);
     }
 
     @Test

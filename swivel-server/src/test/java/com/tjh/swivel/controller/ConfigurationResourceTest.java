@@ -1,7 +1,6 @@
 package com.tjh.swivel.controller;
 
 
-import com.tjh.swivel.model.Shunt;
 import com.tjh.swivel.model.ShuntRequestHandler;
 import org.junit.Test;
 import vanderbilt.util.Maps;
@@ -14,8 +13,8 @@ import static org.mockito.Mockito.verify;
 
 public class ConfigurationResourceTest {
 
-    public static final String TARGET_URI = "http:/some/target/uri";
-    public static final String RELATIVE_URI = "extra/path";
+    public static final String REMOTE_URI = "http:/some/target/uri";
+    public static final String LOCAL_URI = "extra/path";
 
     @Test
     public void putShuntAddsShuntToRouter() throws URISyntaxException {
@@ -23,11 +22,8 @@ public class ConfigurationResourceTest {
         RequestRouter mockRouter = mock(RequestRouter.class);
         configurationResource.setRouter(mockRouter);
 
-        configurationResource.putShunt(RELATIVE_URI,
-                Maps.asMap(ConfigurationResource.TARGET_URI_KEY, TARGET_URI)
-        );
+        configurationResource.putShunt(LOCAL_URI, Maps.asMap(ConfigurationResource.REMOTE_URI_KEY, REMOTE_URI));
 
-        Shunt expectedShunt = new Shunt(new URI(RELATIVE_URI), new ShuntRequestHandler(new URI(TARGET_URI)));
-        verify(mockRouter).setShunt(expectedShunt);
+        verify(mockRouter).setShunt(URI.create(LOCAL_URI), new ShuntRequestHandler(new URI(REMOTE_URI)));
     }
 }

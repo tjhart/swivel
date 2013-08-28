@@ -1,6 +1,5 @@
 package com.tjh.swivel.controller;
 
-import com.tjh.swivel.model.Shunt;
 import com.tjh.swivel.model.ShuntRequestHandler;
 
 import javax.ws.rs.Consumes;
@@ -14,15 +13,16 @@ import java.util.Map;
 
 @Path("config")
 public class ConfigurationResource {
-    public static final String TARGET_URI_KEY = "targetURI";
+    public static final String REMOTE_URI_KEY = "remoteURI";
     protected RequestRouter router;
 
+    //REDTAG:TJH - will the local path accept many path elements?
     @PUT
-    @Path("shunt/{baseTargetPath}")
+    @Path("shunt/{localPath: .*}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void putShunt(@PathParam("baseTargetPath") String baseTargetPath, Map<String, String> json) throws URISyntaxException {
+    public void putShunt(@PathParam("localPath") String localPath, Map<String, String> json) throws URISyntaxException {
 
-        router.setShunt(new Shunt(new URI(baseTargetPath), new ShuntRequestHandler(new URI(json.get(TARGET_URI_KEY)))));
+        router.setShunt(new URI(localPath), new ShuntRequestHandler(new URI(json.get(REMOTE_URI_KEY))));
     }
 
     public void setRouter(RequestRouter router) { this.router = router; }

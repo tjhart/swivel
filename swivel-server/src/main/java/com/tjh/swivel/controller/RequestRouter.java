@@ -2,12 +2,11 @@ package com.tjh.swivel.controller;
 
 import com.tjh.swivel.model.ShuntRequestHandler;
 import vanderbilt.util.Block2;
+import vanderbilt.util.MapNavigator;
 import vanderbilt.util.Maps;
 import vanderbilt.util.PopulatingMap;
 
 import java.net.URI;
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.Map;
 
 public class RequestRouter {
@@ -25,25 +24,19 @@ public class RequestRouter {
     }
 
     public void deleteShunt(URI localURI) {
+        MapNavigator<String> mapNavigator = new MapNavigator<String>(shuntPaths);
         String[] keys = toKeys(localURI);
-        String lastKey = keys[keys.length - 1];
-        Deque<Map<String, Object>> branchStack = new LinkedList<Map<String, Object>>();
-        Deque<String> keyStack = new LinkedList<String>();
-        Map<String, Object> branch = shuntPaths;
-        for (int i = 0; i < keys.length - 1; i++) {
-            String key = keys[i];
-
-            keyStack.push(key);
-            branchStack.push(branch);
-            branch = (Map<String, Object>) branch.get(key);
-        }
-
-        branch.remove(lastKey);
-        while (branch.isEmpty() && !branchStack.isEmpty()) {
-            branch = branchStack.pop();
-            String pop = keyStack.pop();
-            branch.remove(pop);
-        }
+        mapNavigator.navigateTo(keys);
+        final String[] lastKey = new String[]{keys[keys.length - 1]};
+        mapNavigator.unwind(new Block2<String, Object, Boolean>() {
+            @Override
+            public Boolean invoke(String key, Object val) {
+                Map branch = (Map) val;
+                branch.remove(lastKey[0]);
+                lastKey[0] = key;
+                return branch.isEmpty();
+            }
+        });
     }
 
     private String[] toKeys(URI localURI) {return localURI.getPath().split("/");}

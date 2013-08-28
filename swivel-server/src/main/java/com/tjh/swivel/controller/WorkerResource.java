@@ -1,5 +1,7 @@
 package com.tjh.swivel.controller;
 
+import org.apache.http.HttpResponse;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -18,7 +20,9 @@ public class WorkerResource {
     @Path("work/{localPath: .*}")
     public Response get(@PathParam("localPath") String localPath, @Context HttpServletRequest request)
             throws URISyntaxException {
-        return router.work(requestFactory.createGetRequest(new URI(localPath), request));
+        //REDTAG:TJH - will query parameters be in 'localPath'?
+        HttpResponse response = router.work(requestFactory.createGetRequest(new URI(localPath), request));
+        return null;
     }
 
     public void setRequestFactory(HttpUriRequestFactory requestFactory) {

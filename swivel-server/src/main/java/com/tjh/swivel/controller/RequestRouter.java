@@ -1,15 +1,19 @@
 package com.tjh.swivel.controller;
 
 import com.tjh.swivel.model.ShuntRequestHandler;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import vanderbilt.util.Block2;
 import vanderbilt.util.Lists;
 import vanderbilt.util.MapNavigator;
 import vanderbilt.util.Maps;
 import vanderbilt.util.PopulatingMap;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.ws.Response;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -25,13 +29,15 @@ public class RequestRouter {
                             return new PopulatingMap<String, Object>(this);
                         }
                     });
+    private ClientConnectionManager clientConnectionManager;
+    private HttpParams httpParams = new BasicHttpParams();
 
     public void setShunt(URI localURI, ShuntRequestHandler requestHandler) {
         try {
             List<String> keyList = Lists.asList(toKeys(localURI));
             String lastKey = keyList.remove(keyList.size() - 1);
             Map<String, Object> lastBranch = Maps.valueFor(shuntPaths, keyList);
-            if (lastBranch.containsKey(lastKey)) {
+            if (lastBranch.containsKey(lastKey) && lastBranch.get(lastKey) instanceof Map) {
                 throw new IllegalArgumentException(
                         String.format("%1$s is unavailable: :%2$s", localURI, lastBranch.get(lastKey)));
             }
@@ -57,9 +63,24 @@ public class RequestRouter {
         });
     }
 
+    public HttpResponse work(HttpUriRequest request) {
+        MapNavigator<String> navigator = new MapNavigator<String>(shuntPaths);
+
+        ShuntRequestHandler shuntRequestHandler = navigator.navigateTo(new Block2<String, Object, Boolean>() {
+            @Override
+            public Boolean invoke(String s, Object o) { return o instanceof Map; }
+        }, toKeys(request.getURI()));
+
+        return shuntRequestHandler.handle(request, createClient());
+    }
+
+    protected HttpClient createClient() { return new DefaultHttpClient(clientConnectionManager, httpParams); }
+
     private String[] toKeys(URI localURI) {return localURI.getPath().split("/");}
 
-    public Response work(HttpUriRequest request) {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+    public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
+        this.clientConnectionManager = clientConnectionManager;
     }
+
+    public void setHttpParams(HttpParams httpParams) { this.httpParams = httpParams; }
 }

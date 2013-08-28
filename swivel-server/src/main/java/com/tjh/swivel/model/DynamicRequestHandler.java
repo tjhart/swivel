@@ -8,15 +8,15 @@ import javax.script.Bindings;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
-public class DynamicResponseHandler implements ResponseHandler {
+public class DynamicRequestHandler implements RequestHandler {
     protected ScriptWrapper scriptWrapper;
     protected ResponseFactory responseFactory = new ResponseFactory();
 
-    public DynamicResponseHandler(String sourceScript, String engineName) throws ScriptException {
+    public DynamicRequestHandler(String sourceScript, String engineName) throws ScriptException {
         this.scriptWrapper = new ScriptWrapper(engineName, sourceScript);
     }
 
-    public DynamicResponseHandler(String sourceScript) throws ScriptException {
+    public DynamicRequestHandler(String sourceScript) throws ScriptException {
         this(sourceScript, "javascript");
     }
 

@@ -35,6 +35,11 @@
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.9.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>1.17.1</version>
+        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>

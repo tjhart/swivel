@@ -25,6 +25,11 @@ import static com.tjh.swivel.model.matchers.RequestMethodMatcher.hasMethod;
 import static com.tjh.swivel.model.matchers.RequestedURIPathMatcher.hasURIPath;
 import static com.tjh.swivel.model.matchers.ScriptMatcher.scriptMatches;
 
+/**
+ * These rules were build quickly and naively. They're not indexable or inspectable in any way.
+ * The matchers are great for evaluation, though. we need to find a way to keep the encapsulation,
+ * but organize the matchers to be inspectable and/or the rules indexable
+ */
 public class RequestMatcherBuilder {
     public static final String METHOD_KEY = "method";
     public static final String REMOTE_ADDR_KEY = "remoteAddr";
@@ -35,13 +40,22 @@ public class RequestMatcherBuilder {
     public static final int OPTIONAL_MATCHER_COUNT = 5;
     protected ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * these rules are not ready for prime time. It was a place to get started for the core of the
+     * functionality, but will change drastically as the controller layer gets build
+     * @param expectationRequest
+     * @return
+     * @throws IOException
+     */
     @SuppressWarnings("unchecked")
     public Matcher<HttpServletRequest> buildMatcher(final HttpServletRequest expectationRequest)
             throws IOException {
         Map<String, Object> json = objectMapper.readValue(expectationRequest.getInputStream(), Map.class);
 
         List<Matcher<HttpServletRequest>> matchers = new ArrayList<Matcher<HttpServletRequest>>(STATIC_MATCHER_COUNT);
+        //YELLOWTAG;TJH what about 'any' method?
         matchers.add(hasMethod(equalTo(json.get(METHOD_KEY))));
+        //YELLOWTAG:TJH - what about rest path trees? Should this be 'startsWith?'
         matchers.add(hasURIPath(equalTo(expectationRequest.getPathInfo())));
 
         matchers.add(buildOptionalMatcher(expectationRequest, json));

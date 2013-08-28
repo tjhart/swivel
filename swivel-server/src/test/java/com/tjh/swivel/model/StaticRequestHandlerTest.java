@@ -9,15 +9,15 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class StaticResponseHandlerTest {
+public class StaticRequestHandlerTest {
 
-    private StaticResponseHandler staticResponseHandler;
+    private StaticRequestHandler staticResponseHandler;
     private HttpResponse mockHttpResponse;
 
     @Before
     public void before(){
         mockHttpResponse = mock(HttpResponse.class);
-        staticResponseHandler = new StaticResponseHandler(mockHttpResponse);
+        staticResponseHandler = new StaticRequestHandler(mockHttpResponse);
     }
 
     @Test

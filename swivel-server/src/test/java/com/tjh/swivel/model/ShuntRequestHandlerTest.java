@@ -18,12 +18,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-public class ShuntResponseHandlerTest {
+public class ShuntRequestHandlerTest {
     public static final URI SHUNT_URI = URI.create("http://someServer:1234");
     public static final URI RELATIVE_URI = URI.create("/some/path");
     public static final URI EXPECTED_URI = URI.create("http://someServer:1234/some/path");
 
-    private ShuntResponseHandler shuntResponseHandler;
+    private ShuntRequestHandler shuntResponseHandler;
     private HttpClient mockClient;
     private HttpUriRequest mockRequest;
 
@@ -32,7 +32,7 @@ public class ShuntResponseHandlerTest {
         mockClient = mock(HttpClient.class);
         mockRequest = mock(HttpUriRequest.class);
 
-        shuntResponseHandler = new ShuntResponseHandler(SHUNT_URI, mockClient);
+        shuntResponseHandler = new ShuntRequestHandler(SHUNT_URI);
     }
 
     @Test
@@ -41,18 +41,13 @@ public class ShuntResponseHandlerTest {
     }
 
     @Test
-    public void constructionCapturesHttpClient() {
-        assertThat(shuntResponseHandler.client, sameInstance(mockClient));
-    }
-
-    @Test
     public void handleRequestDefersToConstructRequest() {
-        ShuntResponseHandler shuntResponseHandlerSpy = spy(shuntResponseHandler);
+        ShuntRequestHandler shuntResponseHandlerSpy = spy(shuntResponseHandler);
 
         doReturn(mock(HttpUriRequest.class))
                 .when(shuntResponseHandlerSpy)
                 .createShuntRequest(any(HttpUriRequest.class));
-        shuntResponseHandlerSpy.handle(mockRequest);
+        shuntResponseHandlerSpy.handle(mockRequest, mockClient);
 
         verify(shuntResponseHandlerSpy).createShuntRequest(mockRequest);
     }

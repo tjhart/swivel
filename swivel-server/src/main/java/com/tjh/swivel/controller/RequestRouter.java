@@ -3,7 +3,7 @@ package com.tjh.swivel.controller;
 import com.tjh.swivel.model.ShuntRequestHandler;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -71,7 +71,7 @@ public class RequestRouter {
         });
     }
 
-    public HttpResponse work(HttpUriRequest request) {
+    public HttpResponse work(HttpRequestBase request) {
         try {
             MapNavigator<String> navigator = new MapNavigator<String>(shuntPaths);
 

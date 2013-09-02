@@ -4,7 +4,7 @@ import com.tjh.swivel.controller.RequestRouter;
 import com.tjh.swivel.model.ShuntRequestHandler;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.util.EntityUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,10 +34,10 @@ public class RequestRouterTest {
 
     @Test
     public void workRedirectsRequest() throws IOException {
-        HttpUriRequest request = new HttpGet("google");
+        HttpRequestBase request = new HttpGet("google");
         HttpResponse httpResponse = requestRouter.work(request);
 
-        assertThat(httpResponse.getStatusLine().getStatusCode()/100, equalTo(2));
+        assertThat(httpResponse.getStatusLine().getStatusCode() / 100, equalTo(2));
         String entity = EntityUtils.toString(httpResponse.getEntity());
         System.out.println("entity = " + entity);
     }

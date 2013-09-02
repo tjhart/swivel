@@ -20,7 +20,7 @@ public class ShuntRequestHandler {
     }
 
     //REDTAG:TJH - should be HttpRequestBase
-    public HttpResponse handle(HttpUriRequest request, URI matchedURI, HttpClient client) {
+    public HttpResponse handle(HttpRequestBase request, URI matchedURI, HttpClient client) {
         try {
             URI localURI = request.getURI();
             HttpUriRequest shuntRequest = createShuntRequest(request, matchedURI);
@@ -31,16 +31,15 @@ public class ShuntRequestHandler {
         }
     }
 
-    protected HttpUriRequest createShuntRequest(HttpUriRequest request, URI matchedURI) {
-        HttpRequestBase result = (HttpRequestBase) request;
+    protected HttpUriRequest createShuntRequest(HttpRequestBase request, URI matchedURI) {
 
-        String relativePath = result
+        String relativePath = request
                 .getURI()
                 .getPath()
                 .substring(matchedURI.getPath().length());
-        result.setURI(baseUri.resolve(URI.create(relativePath)));
+        request.setURI(baseUri.resolve(URI.create(relativePath)));
 
-        return result;
+        return request;
     }
 
     //<editor-fold desc="Object">

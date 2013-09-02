@@ -49,7 +49,7 @@ public class ShuntRequestHandlerTest {
 
         doReturn(mock(HttpUriRequest.class))
                 .when(shuntResponseHandlerSpy)
-                .createShuntRequest(any(HttpUriRequest.class), any(URI.class));
+                .createShuntRequest(any(HttpRequestBase.class), any(URI.class));
         shuntResponseHandlerSpy.handle(mockRequest, MATCHED_URI, mockClient);
 
         verify(shuntResponseHandlerSpy).createShuntRequest(mockRequest, MATCHED_URI);

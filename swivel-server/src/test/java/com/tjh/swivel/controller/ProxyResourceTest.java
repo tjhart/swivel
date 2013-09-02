@@ -1,7 +1,7 @@
 package com.tjh.swivel.controller;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class ProxyResourceTest {
     private RequestRouter mockRouter;
     private HttpUriRequestFactory mockRequestFactory;
     private HttpServletRequest mockRequest;
-    private HttpUriRequest mockUriRequest;
+    private HttpRequestBase mockRequestBase;
     private JerseyResponseFactory mockResponseFactory;
 
     @Before
@@ -32,7 +32,7 @@ public class ProxyResourceTest {
         mockRouter = mock(RequestRouter.class);
         mockRequestFactory = mock(HttpUriRequestFactory.class);
         mockRequest = mock(HttpServletRequest.class);
-        mockUriRequest = mock(HttpUriRequest.class);
+        mockRequestBase = mock(HttpRequestBase.class);
         mockResponseFactory = mock(JerseyResponseFactory.class);
 
         proxyResource.setRouter(mockRouter);
@@ -40,7 +40,7 @@ public class ProxyResourceTest {
         proxyResource.setResponseFactory(mockResponseFactory);
 
         when(mockRequestFactory.createGetRequest(any(URI.class), any(HttpServletRequest.class)))
-                .thenReturn(mockUriRequest);
+                .thenReturn(mockRequestBase);
     }
 
     @Test
@@ -54,13 +54,13 @@ public class ProxyResourceTest {
     public void getDelegatesToRouter() throws URISyntaxException, IOException {
         proxyResource.get(LOCAL_PATH, mockRequest);
 
-        verify(mockRouter).work(mockUriRequest);
+        verify(mockRouter).work(mockRequestBase);
     }
 
     @Test
     public void getDelegatesToResponseFactory() throws URISyntaxException, IOException {
         HttpResponse mockResponse = mock(HttpResponse.class);
-        when(mockRouter.work(any(HttpUriRequest.class))).thenReturn(mockResponse);
+        when(mockRouter.work(any(HttpRequestBase.class))).thenReturn(mockResponse);
 
         proxyResource.get(LOCAL_PATH, mockRequest);
 

@@ -66,10 +66,11 @@ public class RequestRouter {
     public HttpResponse work(HttpUriRequest request) {
         MapNavigator<String> navigator = new MapNavigator<String>(shuntPaths);
 
-        ShuntRequestHandler shuntRequestHandler = navigator.navigateTo(new Block2<String, Object, Boolean>() {
-            @Override
-            public Boolean invoke(String s, Object o) { return o instanceof Map; }
-        }, toKeys(request.getURI()));
+        ShuntRequestHandler shuntRequestHandler =
+                (ShuntRequestHandler) navigator.navigateTo(new Block2<String, Object, Boolean>() {
+                    @Override
+                    public Boolean invoke(String s, Object o) { return o instanceof Map; }
+                }, toKeys(request.getURI()));
 
         return shuntRequestHandler.handle(request, createClient());
     }

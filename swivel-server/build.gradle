@@ -1,0 +1,35 @@
+apply plugin: 'war'
+
+project.ext {
+    springVersion = '3.2.2.RELEASE'
+    jerseyVersion = '1.17.1'
+}
+
+dependencies {
+
+    compile group: 'vanderbilt.util', name: 'vanderbilt-utilities', version: '1.10-SNAPSHOT'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.2.3'
+    compile group: 'org.hamcrest', name: 'hamcrest-core', version: '1.3'
+    compile group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.2'
+
+    compile group: 'com.sun.jersey', name: 'jersey-server', version: project.jerseyVersion
+    //Jersey's pom file lists it's core dependency as a specific build dependency. as a result,
+    //gradle doesn't pick it up
+    //so we have to list them manually
+    compile group: 'com.sun.jersey', name: 'jersey-core', version: project.jerseyVersion
+    //also, it doesn't pick up provided dependencies
+    compile group: 'javax.ws.rs', name: 'jsr311-api', version: '1.1.1'
+
+    runtime group: 'org.springframework', name: 'spring-context', version: project.springVersion
+    runtime group: 'org.springframework', name: 'spring-beans', version: project.springVersion
+    runtime group: 'org.springframework', name: 'spring-web', version: project.springVersion
+
+    runtime(group: 'com.sun.jersey.contribs', name: 'jersey-spring', version: project.jerseyVersion) {
+        exclude group: 'org.springframework'
+    }
+
+    providedCompile group: 'javax.servlet', name: 'servlet-api', version: '2.5'
+
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
+}

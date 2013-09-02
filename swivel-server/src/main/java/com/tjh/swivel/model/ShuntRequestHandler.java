@@ -19,10 +19,11 @@ public class ShuntRequestHandler {
         this.baseUri = baseUri;
     }
 
-    public HttpResponse handle(HttpUriRequest request, HttpClient client) {
+    //REDTAG:TJH - should be HttpRequestBase
+    public HttpResponse handle(HttpUriRequest request, URI matchedURI, HttpClient client) {
         try {
             URI localURI = request.getURI();
-            HttpUriRequest shuntRequest = createShuntRequest(request);
+            HttpUriRequest shuntRequest = createShuntRequest(request, matchedURI);
             logger.debug(String.format("Shunting request %1$s to %2$s", localURI, shuntRequest.getURI()));
             return client.execute(shuntRequest);
         } catch (IOException e) {
@@ -30,10 +31,14 @@ public class ShuntRequestHandler {
         }
     }
 
-    protected HttpUriRequest createShuntRequest(HttpUriRequest request) {
+    protected HttpUriRequest createShuntRequest(HttpUriRequest request, URI matchedURI) {
         HttpRequestBase result = (HttpRequestBase) request;
 
-        result.setURI(baseUri.resolve(result.getURI()));
+        String relativePath = result
+                .getURI()
+                .getPath()
+                .substring(matchedURI.getPath().length());
+        result.setURI(baseUri.resolve(URI.create(relativePath)));
 
         return result;
     }

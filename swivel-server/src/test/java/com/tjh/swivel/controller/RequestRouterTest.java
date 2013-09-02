@@ -72,7 +72,7 @@ public class RequestRouterTest {
 
         requestRouter.work(mockUriRequest);
 
-        verify(mockRequestHandler).handle(eq(mockUriRequest), any(HttpClient.class));
+        verify(mockRequestHandler).handle(eq(mockUriRequest), any(URI.class), any(HttpClient.class));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class RequestRouterTest {
 
         requestRouter.work(mockUriRequest);
 
-        verify(mockRequestHandler).handle(eq(mockUriRequest), any(HttpClient.class));
+        verify(mockRequestHandler).handle(eq(mockUriRequest), any(URI.class), any(HttpClient.class));
     }
 
     @Test(expected = RuntimeException.class)
@@ -98,5 +98,15 @@ public class RequestRouterTest {
         } catch (RuntimeException e) {
             assertThat(requestRouter.shuntPaths.isEmpty(), is(true));
         }
+    }
+
+    @Test
+    public void workRemovesMatchedPathFromURISentToHandler() {
+        requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
+        when(mockUriRequest.getURI()).thenReturn(DEEP_URI);
+
+        requestRouter.work(mockUriRequest);
+
+        verify(mockRequestHandler).handle(eq(mockUriRequest), eq(LOCAL_URI), any(HttpClient.class));
     }
 }

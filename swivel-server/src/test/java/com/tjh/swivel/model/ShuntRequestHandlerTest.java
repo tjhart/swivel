@@ -1,15 +1,14 @@
 package com.tjh.swivel.model;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.net.URI;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -17,47 +16,56 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ShuntRequestHandlerTest {
     public static final URI SHUNT_URI = URI.create("http://someServer:1234");
-    public static final URI RELATIVE_URI = URI.create("/some/path");
-    public static final URI EXPECTED_URI = URI.create("http://someServer:1234/some/path");
+    public static final URI RELATIVE_URI = URI.create("/some/path/deep");
+    public static final URI EXPECTED_URI = URI.create("http://someServer:1234/deep");
+    public static final URI MATCHED_URI = URI.create("/some/path");
 
-    private ShuntRequestHandler shuntResponseHandler;
+    private ShuntRequestHandler shuntRequestHandler;
     private HttpClient mockClient;
-    private HttpUriRequest mockRequest;
+    private HttpRequestBase mockRequest;
 
     @Before
     public void before() {
         mockClient = mock(HttpClient.class);
-        mockRequest = mock(HttpUriRequest.class);
+        mockRequest = mock(HttpRequestBase.class);
 
-        shuntResponseHandler = new ShuntRequestHandler(SHUNT_URI);
+        when(mockRequest.getURI()).thenReturn(RELATIVE_URI);
+
+        shuntRequestHandler = new ShuntRequestHandler(SHUNT_URI);
     }
 
     @Test
     public void constructionCapturesShuntURL() {
-        assertThat(shuntResponseHandler.baseUri, sameInstance(SHUNT_URI));
+        assertThat(shuntRequestHandler.baseUri, sameInstance(SHUNT_URI));
     }
 
     @Test
     public void handleRequestDefersToConstructRequest() {
-        ShuntRequestHandler shuntResponseHandlerSpy = spy(shuntResponseHandler);
+        ShuntRequestHandler shuntResponseHandlerSpy = spy(shuntRequestHandler);
 
         doReturn(mock(HttpUriRequest.class))
                 .when(shuntResponseHandlerSpy)
-                .createShuntRequest(any(HttpUriRequest.class));
-        shuntResponseHandlerSpy.handle(mockRequest, mockClient);
+                .createShuntRequest(any(HttpUriRequest.class), any(URI.class));
+        shuntResponseHandlerSpy.handle(mockRequest, MATCHED_URI, mockClient);
 
-        verify(shuntResponseHandlerSpy).createShuntRequest(mockRequest);
+        verify(shuntResponseHandlerSpy).createShuntRequest(mockRequest, MATCHED_URI);
     }
 
     @Test
-    public void createShuntRequestWorksForGetRequest(){
-        HttpGet get = new HttpGet(RELATIVE_URI);
-        HttpUriRequest shuntRequest = shuntResponseHandler.createShuntRequest(get);
+    public void handleRequestDefersToClient() throws IOException {
+        shuntRequestHandler.handle(mockRequest, MATCHED_URI, mockClient);
 
-        assertThat(shuntRequest, instanceOf(HttpGet.class));
-        assertThat(shuntRequest.getURI(), equalTo(EXPECTED_URI));
+        verify(mockClient).execute(mockRequest);
+    }
+    @Test
+    public void createShuntRequestSetsExpectedURI() {
+
+        shuntRequestHandler.createShuntRequest(mockRequest, MATCHED_URI);
+
+        verify(mockRequest).setURI(EXPECTED_URI);
     }
 }

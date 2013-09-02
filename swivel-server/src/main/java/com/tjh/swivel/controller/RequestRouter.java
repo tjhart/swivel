@@ -14,8 +14,11 @@ import vanderbilt.util.Lists;
 import vanderbilt.util.MapNavigator;
 import vanderbilt.util.Maps;
 import vanderbilt.util.PopulatingMap;
+import vanderbilt.util.Strings;
 
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -72,16 +75,23 @@ public class RequestRouter {
         try {
             MapNavigator<String> navigator = new MapNavigator<String>(shuntPaths);
 
+            final List<String> matchedPath = new ArrayList<String>();
             ShuntRequestHandler shuntRequestHandler =
                     (ShuntRequestHandler) navigator.navigateTo(new Block2<String, Object, Boolean>() {
                         @Override
-                        public Boolean invoke(String s, Object o) { return !(o instanceof Map); }
+                        public Boolean invoke(String s, Object o) {
+                            matchedPath.add(s);
+                            return !(o instanceof Map);
+                        }
                     }, toKeys(request.getURI()));
 
-            return shuntRequestHandler.handle(request, createClient());
+            return shuntRequestHandler.handle(request,
+                    new URI(Strings.join("/", matchedPath.toArray(new String[matchedPath.size()]))), createClient());
         } catch (ClassCastException e) {
             deleteShunt(request.getURI());
             throw e;
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Programmer error!", e);
         }
     }
 

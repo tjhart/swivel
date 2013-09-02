@@ -14,11 +14,10 @@ dependencies {
 
     compile group: 'com.sun.jersey', name: 'jersey-server', version: project.jerseyVersion
     //Jersey's pom file lists it's core dependency as a specific build dependency. as a result,
-    //gradle doesn't pick it up
-    //so we have to list them manually
+    //gradle doesn't pick it up, so we have to list them manually
     compile group: 'com.sun.jersey', name: 'jersey-core', version: project.jerseyVersion
-    //also, it doesn't pick up provided dependencies
-    compile group: 'javax.ws.rs', name: 'jsr311-api', version: '1.1.1'
+    //also, it doesn't pick up 'provided' dependencies
+    providedCompile group: 'javax.ws.rs', name: 'jsr311-api', version: '1.1.1'
 
     runtime group: 'org.springframework', name: 'spring-context', version: project.springVersion
     runtime group: 'org.springframework', name: 'spring-beans', version: project.springVersion

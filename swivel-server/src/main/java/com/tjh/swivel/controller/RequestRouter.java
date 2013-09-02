@@ -58,7 +58,7 @@ public class RequestRouter {
                 Map branch = (Map) val;
                 branch.remove(lastKey[0]);
                 lastKey[0] = key;
-                return branch.isEmpty();
+                return !branch.isEmpty();
             }
         });
     }
@@ -69,7 +69,7 @@ public class RequestRouter {
         ShuntRequestHandler shuntRequestHandler =
                 (ShuntRequestHandler) navigator.navigateTo(new Block2<String, Object, Boolean>() {
                     @Override
-                    public Boolean invoke(String s, Object o) { return o instanceof Map; }
+                    public Boolean invoke(String s, Object o) { return !(o instanceof Map); }
                 }, toKeys(request.getURI()));
 
         return shuntRequestHandler.handle(request, createClient());

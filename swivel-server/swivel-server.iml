@@ -15,6 +15,14 @@
         </sourceRoots>
       </configuration>
     </facet>
+    <facet type="Spring" name="Spring">
+      <configuration>
+        <fileset id="fileset" name="Spring Application Context" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/routerContext.xml</file>
+          <file>file://$MODULE_DIR$/src/main/resources/serverContext.xml</file>
+        </fileset>
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
@@ -42,9 +50,9 @@
     <orderEntry type="library" exported="" name="httpclient-4.2.3" level="project" />
     <orderEntry type="library" exported="" scope="RUNTIME" name="spring-expression-3.2.2.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="commons-logging-1.1.1" level="project" />
-    <orderEntry type="library" exported="" scope="RUNTIME" name="spring-core-3.2.2.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="spring-core-3.2.2.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="asm-3.1" level="project" />
-    <orderEntry type="library" exported="" scope="RUNTIME" name="spring-beans-3.2.2.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="spring-beans-3.2.2.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="jackson-mapper-asl-1.9.2" level="project" />
     <orderEntry type="library" exported="" name="httpcore-4.2.2" level="project" />
     <orderEntry type="library" scope="TEST" name="mockito-all-1.9.5" level="project" />
@@ -52,6 +60,17 @@
     <orderEntry type="library" exported="" name="vanderbilt-utilities-1.10-SNAPSHOT" level="project" />
     <orderEntry type="library" exported="" name="jersey-core-1.17.1" level="project" />
     <orderEntry type="library" exported="" name="jsr311-api-1.1.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="spring-test-3.2.2.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="log4j-1.2.17" level="project" />
+    <orderEntry type="library" exported="" scope="RUNTIME" name="jersey-servlet-1.17.1" level="project" />
+    <orderEntry type="library" exported="" name="jaxb-api-2.2.2" level="project" />
+    <orderEntry type="library" exported="" name="activation-1.1" level="project" />
+    <orderEntry type="library" exported="" name="jersey-json-1.17.1" level="project" />
+    <orderEntry type="library" exported="" name="stax-api-1.0-2" level="project" />
+    <orderEntry type="library" exported="" name="jackson-xc-1.9.2" level="project" />
+    <orderEntry type="library" exported="" name="jackson-jaxrs-1.9.2" level="project" />
+    <orderEntry type="library" exported="" name="jaxb-impl-2.2.3-1" level="project" />
+    <orderEntry type="library" exported="" name="jettison-1.1" level="project" />
   </component>
 </module>
 

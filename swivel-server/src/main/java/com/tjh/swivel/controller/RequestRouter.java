@@ -8,6 +8,7 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
+import org.apache.log4j.Logger;
 import vanderbilt.util.Block2;
 import vanderbilt.util.Lists;
 import vanderbilt.util.MapNavigator;
@@ -20,8 +21,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestRouter {
+
+    private Logger logger = Logger.getLogger(RequestRouter.class);
     //perpetually populating map
     protected final Map<String, Object> shuntPaths =
+            //YELLOWTAG:TJH - great for fast development, but can grow if
+            //mis-used
             new PopulatingMap<String, Object>(new ConcurrentHashMap<String, Object>(),
                     new Block2<Map<String, Object>, Object, Object>() {
                         @Override
@@ -64,15 +69,20 @@ public class RequestRouter {
     }
 
     public HttpResponse work(HttpUriRequest request) {
-        MapNavigator<String> navigator = new MapNavigator<String>(shuntPaths);
+        try {
+            MapNavigator<String> navigator = new MapNavigator<String>(shuntPaths);
 
-        ShuntRequestHandler shuntRequestHandler =
-                (ShuntRequestHandler) navigator.navigateTo(new Block2<String, Object, Boolean>() {
-                    @Override
-                    public Boolean invoke(String s, Object o) { return !(o instanceof Map); }
-                }, toKeys(request.getURI()));
+            ShuntRequestHandler shuntRequestHandler =
+                    (ShuntRequestHandler) navigator.navigateTo(new Block2<String, Object, Boolean>() {
+                        @Override
+                        public Boolean invoke(String s, Object o) { return !(o instanceof Map); }
+                    }, toKeys(request.getURI()));
 
-        return shuntRequestHandler.handle(request, createClient());
+            return shuntRequestHandler.handle(request, createClient());
+        } catch (ClassCastException e) {
+            deleteShunt(request.getURI());
+            throw e;
+        }
     }
 
     protected HttpClient createClient() { return new DefaultHttpClient(clientConnectionManager, httpParams); }

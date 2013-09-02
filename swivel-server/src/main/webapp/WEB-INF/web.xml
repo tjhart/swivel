@@ -5,7 +5,7 @@
     <display-name>Swivel</display-name>
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:swivel-context.xml</param-value>
+        <param-value>classpath:serverContext.xml</param-value>
     </context-param>
 
     <listener>

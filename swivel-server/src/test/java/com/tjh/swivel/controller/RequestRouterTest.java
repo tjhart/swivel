@@ -9,6 +9,7 @@ import vanderbilt.util.Maps;
 
 import java.net.URI;
 
+import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -75,12 +76,27 @@ public class RequestRouterTest {
     }
 
     @Test
-    public void workFindsHandlerOnShallowerPath(){
+    public void workFindsHandlerOnShallowerPath() {
         requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
         when(mockUriRequest.getURI()).thenReturn(DEEP_URI);
 
         requestRouter.work(mockUriRequest);
 
         verify(mockRequestHandler).handle(eq(mockUriRequest), any(HttpClient.class));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void workThrowsOnUnknownURI() {
+        requestRouter.work(mockUriRequest);
+    }
+
+    @Test
+    public void workCleansUpOnUnknownURI() {
+        try {
+            requestRouter.work(mockUriRequest);
+            fail("An exception should have been thrown");
+        } catch (RuntimeException e) {
+            assertThat(requestRouter.shuntPaths.isEmpty(), is(true));
+        }
     }
 }

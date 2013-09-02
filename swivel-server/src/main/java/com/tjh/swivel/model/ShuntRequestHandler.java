@@ -4,12 +4,15 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URI;
 
 
 public class ShuntRequestHandler {
+
+    protected Logger logger = Logger.getLogger(ShuntRequestHandler.class);
     protected final URI baseUri;
 
     public ShuntRequestHandler(URI baseUri) {
@@ -18,7 +21,10 @@ public class ShuntRequestHandler {
 
     public HttpResponse handle(HttpUriRequest request, HttpClient client) {
         try {
-            return client.execute(createShuntRequest(request));
+            URI localURI = request.getURI();
+            HttpUriRequest shuntRequest = createShuntRequest(request);
+            logger.debug(String.format("Shunting request %1$s to %2$s", localURI, shuntRequest.getURI()));
+            return client.execute(shuntRequest);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

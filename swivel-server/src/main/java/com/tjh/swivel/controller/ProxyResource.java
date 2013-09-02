@@ -7,22 +7,24 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
-import javax.xml.ws.Response;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 @Path("proxy")
-public class WorkerResource {
+public class ProxyResource {
     private RequestRouter router;
     private HttpUriRequestFactory requestFactory;
+    private JerseyResponseFactory responseFactory;
 
     @GET
-    @Path("work/{localPath: .*}")
+    @Path("{localPath: .*}")
     public Response get(@PathParam("localPath") String localPath, @Context HttpServletRequest request)
-            throws URISyntaxException {
+            throws URISyntaxException, IOException {
         //REDTAG:TJH - will query parameters be in 'localPath'?
         HttpResponse response = router.work(requestFactory.createGetRequest(new URI(localPath), request));
-        return null;
+        return responseFactory.createResponse(response);
     }
 
     public void setRequestFactory(HttpUriRequestFactory requestFactory) {
@@ -30,4 +32,6 @@ public class WorkerResource {
     }
 
     public void setRouter(RequestRouter router) { this.router = router; }
+
+    public void setResponseFactory(JerseyResponseFactory responseFactory) { this.responseFactory = responseFactory; }
 }

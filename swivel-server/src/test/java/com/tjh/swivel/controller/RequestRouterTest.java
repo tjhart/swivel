@@ -8,6 +8,8 @@ import org.junit.Test;
 import vanderbilt.util.Maps;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -26,12 +28,16 @@ public class RequestRouterTest {
     private ShuntRequestHandler mockRequestHandler;
     private RequestRouter requestRouter;
     private HttpRequestBase mockRequestBase;
+    private StubFactory mockStubFactory;
 
     @Before
     public void setUp() throws Exception {
         requestRouter = new RequestRouter();
         mockRequestBase = mock(HttpRequestBase.class);
         mockRequestHandler = mock(ShuntRequestHandler.class);
+        mockStubFactory = mock(StubFactory.class);
+
+        requestRouter.setStubFactory(mockStubFactory);
 
         when(mockRequestBase.getURI()).thenReturn(LOCAL_URI);
     }
@@ -108,5 +114,13 @@ public class RequestRouterTest {
         requestRouter.work(mockRequestBase);
 
         verify(mockRequestHandler).handle(eq(mockRequestBase), eq(LOCAL_URI), any(HttpClient.class));
+    }
+
+    @Test
+    public void addStubDefersToStubFactory() {
+        Map<String,Object> stubDescription = Collections.emptyMap();
+        requestRouter.addStub(LOCAL_URI, stubDescription);
+
+        verify(mockStubFactory).createStubFor(LOCAL_URI, stubDescription);
     }
 }

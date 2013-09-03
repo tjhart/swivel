@@ -7,7 +7,8 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 
 
     <bean id="clientConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
+    <bean id="stubFactory" class="com.tjh.swivel.controller.StubFactory"/>
 
     <bean id="requestRouter" class="com.tjh.swivel.controller.RequestRouter"
-          p:clientConnectionManager-ref="clientConnectionManager"/>
+          p:clientConnectionManager-ref="clientConnectionManager" p:stubFactory-ref="stubFactory"/>
 </beans>

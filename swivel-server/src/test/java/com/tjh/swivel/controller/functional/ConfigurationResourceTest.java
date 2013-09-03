@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ConfigurationResourceTest {
 
+    public static final URI LOCAL_URI = URI.create("google");
     @Autowired
     protected ConfigurationResource configurationResource;
     @Autowired
@@ -25,7 +26,7 @@ public class ConfigurationResourceTest {
 
     @Before
     public void before() throws URISyntaxException {
-        configurationResource.putShunt("google",
+        configurationResource.putShunt(LOCAL_URI,
                 Maps.asMap(ConfigurationResource.REMOTE_URI_KEY, "http://www.google.com"));
     }
 
@@ -37,7 +38,7 @@ public class ConfigurationResourceTest {
 
     @Test
     public void shuntThrowsOnUnknownURL() throws URISyntaxException {
-        configurationResource.deleteShunt("google");
+        configurationResource.deleteShunt(LOCAL_URI);
         //would throw if failed
     }
 }

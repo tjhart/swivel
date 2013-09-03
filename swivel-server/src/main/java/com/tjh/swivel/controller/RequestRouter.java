@@ -1,6 +1,7 @@
 package com.tjh.swivel.controller;
 
 import com.tjh.swivel.model.ShuntRequestHandler;
+import com.tjh.swivel.model.StubRequestHandler;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -28,17 +29,12 @@ public class RequestRouter {
     private Logger logger = Logger.getLogger(RequestRouter.class);
     //perpetually populating map
     protected final Map<String, Object> shuntPaths =
-            //YELLOWTAG:TJH - great for fast development, but can grow if
-            //mis-used
-            new PopulatingMap<String, Object>(new ConcurrentHashMap<String, Object>(),
-                    new Block2<Map<String, Object>, Object, Object>() {
-                        @Override
-                        public Object invoke(Map<String, Object> stringObjectMap, Object o) {
-                            return new PopulatingMap<String, Object>(this);
-                        }
-                    });
+            new PopulatingMap<String, Object>(new ConcurrentHashMap<String, Object>(), new MapPopulator());
+    protected final Map<String, Object> stubPaths =
+            new PopulatingMap<String, Object>(new ConcurrentHashMap<String, Object>(), new MapPopulator());
     private ClientConnectionManager clientConnectionManager;
     private HttpParams httpParams = new BasicHttpParams();
+    private StubFactory stubFactory;
 
     public void setShunt(URI localURI, ShuntRequestHandler requestHandler) {
         try {
@@ -46,11 +42,16 @@ public class RequestRouter {
             String lastKey = keyList.remove(keyList.size() - 1);
             Map<String, Object> lastBranch = Maps.valueFor(shuntPaths, keyList);
             if (lastBranch.containsKey(lastKey) && lastBranch.get(lastKey) instanceof Map) {
+                Object target = lastBranch.get(lastKey);
+                logger.warn(String.format("Attempted to set a shunt at %1$s, but that path is used for other shunts: " +
+                        "%2$s", localURI, target));
                 throw new IllegalArgumentException(
-                        String.format("%1$s is unavailable: :%2$s", localURI, lastBranch.get(lastKey)));
+                        String.format("%1$s is unavailable: :%2$s", localURI, target));
             }
             lastBranch.put(lastKey, requestHandler);
         } catch (ClassCastException e) {
+            logger.warn(String.format("Attempted to set a shunt at %1$s, but a shunt already exists along that path",
+                    localURI));
             throw new IllegalArgumentException(String.format("%1$s is unavailable", localURI), e);
         }
     }
@@ -69,6 +70,14 @@ public class RequestRouter {
                 return !branch.isEmpty();
             }
         });
+    }
+
+    public String addStub(URI localUri, Map<String, Object> stubDescription) {
+        int identityHashCode = System.identityHashCode(stubDescription);
+        System.out.println("identityHashCode = " + identityHashCode);
+
+        StubRequestHandler stubFor = stubFactory.createStubFor(localUri, stubDescription);
+        return "id";
     }
 
     public HttpResponse work(HttpRequestBase request) {
@@ -103,5 +112,14 @@ public class RequestRouter {
         this.clientConnectionManager = clientConnectionManager;
     }
 
+    public void setStubFactory(StubFactory stubFactory) { this.stubFactory = stubFactory; }
+
     public void setHttpParams(HttpParams httpParams) { this.httpParams = httpParams; }
+}
+
+class MapPopulator implements Block2<Map<String, Object>, Object, Object> {
+    @Override
+    public Object invoke(Map<String, Object> stringObjectMap, Object o) {
+        return new PopulatingMap<String, Object>(new ConcurrentHashMap<String, Object>(), this);
+    }
 }

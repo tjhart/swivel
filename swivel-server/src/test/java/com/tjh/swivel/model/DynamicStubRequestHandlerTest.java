@@ -15,18 +15,18 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class DynamicRequestHandlerTest {
+public class DynamicStubRequestHandlerTest {
 
     public static final String SOURCE_SCRIPT =
             "(function(){\n" +
                     "    return responseFactory.createResponse(200, 'OK');" +
                     "})();";
-    private DynamicRequestHandler dynamicResponseHandler;
+    private DynamicStubRequestHandler dynamicResponseHandler;
     private HttpUriRequest mockRequest;
 
     @Before
     public void setUp() throws Exception {
-        dynamicResponseHandler = new DynamicRequestHandler(SOURCE_SCRIPT);
+        dynamicResponseHandler = new DynamicStubRequestHandler(SOURCE_SCRIPT);
         mockRequest = mock(HttpUriRequest.class);
     }
 

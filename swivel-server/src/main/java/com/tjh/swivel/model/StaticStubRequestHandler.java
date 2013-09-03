@@ -3,10 +3,10 @@ package com.tjh.swivel.model;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 
-public class StaticRequestHandler implements RequestHandler {
+public class StaticStubRequestHandler implements StubRequestHandler {
     protected final HttpResponse httpResponse;
 
-    public StaticRequestHandler(HttpResponse httpResponse) {
+    public StaticStubRequestHandler(HttpResponse httpResponse) {
         this.httpResponse = httpResponse;
     }
 

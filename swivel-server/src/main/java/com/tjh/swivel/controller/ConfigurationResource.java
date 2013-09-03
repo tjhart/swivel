@@ -4,6 +4,7 @@ import com.tjh.swivel.model.ShuntRequestHandler;
 import org.apache.log4j.Logger;
 import vanderbilt.util.Maps;
 
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -60,7 +61,7 @@ public class ConfigurationResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Object> putStub(@PathParam("localPath") String localPath, Map<String, Object> stubDescription,
-            @Context HttpServletRequest request) throws URISyntaxException {
+            @Context HttpServletRequest request) throws URISyntaxException, ScriptException {
         StringBuilder sb = new StringBuilder(localPath);
         String queryString = trimToNull(request.getQueryString());
         if (queryString != null) {

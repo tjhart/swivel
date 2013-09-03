@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import vanderbilt.util.Maps;
 
+import javax.script.ScriptException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
@@ -118,7 +119,7 @@ public class RequestRouterTest {
     }
 
     @Test
-    public void addStubDefersToStubFactory() {
+    public void addStubDefersToStubFactory() throws ScriptException {
         Map<String, Object> stubDescription = Collections.emptyMap();
         requestRouter.addStub(LOCAL_URI, stubDescription);
 

@@ -18,6 +18,7 @@ import vanderbilt.util.Maps;
 import vanderbilt.util.PopulatingMap;
 import vanderbilt.util.Strings;
 
+import javax.script.ScriptException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class RequestRouter {
         });
     }
 
-    public String addStub(URI localUri, Map<String, Object> stubDescription) {
+    public String addStub(URI localUri, Map<String, Object> stubDescription) throws ScriptException {
         int identityHashCode = System.identityHashCode(stubDescription);
         System.out.println("identityHashCode = " + identityHashCode);
 

@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import vanderbilt.util.Maps;
 
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -55,14 +56,14 @@ public class ConfigurationResourceTest {
     }
 
     @Test
-    public void putStubDefersToRouter() throws URISyntaxException {
+    public void putStubDefersToRouter() throws URISyntaxException, ScriptException {
         configurationResource.putStub(LOCAL_PATH, JSON, mockRequest);
 
         verify(mockRouter).addStub(LOCAL_URI, JSON);
     }
 
     @Test
-    public void putStubAddsQueryStringIfProvided() throws URISyntaxException {
+    public void putStubAddsQueryStringIfProvided() throws URISyntaxException, ScriptException {
         when(mockRequest.getQueryString()).thenReturn("key=val");
 
         configurationResource.putStub(LOCAL_PATH, JSON, mockRequest);
@@ -72,7 +73,7 @@ public class ConfigurationResourceTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void putStubReturnsRouterIDForStub() throws URISyntaxException {
+    public void putStubReturnsRouterIDForStub() throws URISyntaxException, ScriptException {
         when(mockRouter.addStub(any(URI.class), any(Map.class))).thenReturn("someId");
 
         assertThat((String) configurationResource.putStub(LOCAL_PATH, JSON, mockRequest).get("id"), equalTo("someId"));

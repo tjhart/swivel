@@ -59,7 +59,7 @@ public class ConfigurationResource {
     @Path("stub/{localPath: .*}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> putStub(@PathParam("localPath") String localPath, Map<String, Object> json,
+    public Map<String, Object> putStub(@PathParam("localPath") String localPath, Map<String, Object> stubDescription,
             @Context HttpServletRequest request) throws URISyntaxException {
         StringBuilder sb = new StringBuilder(localPath);
         String queryString = trimToNull(request.getQueryString());
@@ -70,7 +70,7 @@ public class ConfigurationResource {
         URI localUri = new URI(sb.toString());
 
         logger.debug(String.format("Adding stub for %1$s", localUri));
-        return Maps.<String, Object>asMap("id", router.addStub(localUri, json));
+        return Maps.<String, Object>asMap("id", router.addStub(localUri, stubDescription));
     }
 
     protected static String trimToNull(String source) {

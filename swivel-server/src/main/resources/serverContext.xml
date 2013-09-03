@@ -12,9 +12,9 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
           p:router-ref="requestRouter"/>
 
     <bean id="requestFactory" class="com.tjh.swivel.controller.HttpUriRequestFactory"/>
-    <bean id="responseFactory" class="com.tjh.swivel.controller.JerseyResponseFactory"/>
+    <bean id="jerseyResponseFactory" class="com.tjh.swivel.controller.JerseyResponseFactory"/>
     <bean id="proxyResource" class="com.tjh.swivel.controller.ProxyResource"
           p:router-ref="requestRouter"
           p:requestFactory-ref="requestFactory"
-          p:responseFactory-ref="responseFactory"/>
+          p:responseFactory-ref="jerseyResponseFactory"/>
 </beans>

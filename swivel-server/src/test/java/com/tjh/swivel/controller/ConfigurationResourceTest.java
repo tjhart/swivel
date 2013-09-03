@@ -70,10 +70,11 @@ public class ConfigurationResourceTest {
         verify(mockRouter).addStub(new URI(LOCAL_PATH + "?" + "key=val"), JSON);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void putStubReturnsRouterIDForStub() throws URISyntaxException {
         when(mockRouter.addStub(any(URI.class), any(Map.class))).thenReturn("someId");
 
-        assertThat((String)configurationResource.putStub(LOCAL_PATH, JSON, mockRequest).get("id"), equalTo("someId"));
+        assertThat((String) configurationResource.putStub(LOCAL_PATH, JSON, mockRequest).get("id"), equalTo("someId"));
     }
 }

@@ -1,6 +1,7 @@
 package com.tjh.swivel.controller;
 
 import com.tjh.swivel.model.ShuntRequestHandler;
+import com.tjh.swivel.model.StubFactory;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.Before;
@@ -118,7 +119,7 @@ public class RequestRouterTest {
 
     @Test
     public void addStubDefersToStubFactory() {
-        Map<String,Object> stubDescription = Collections.emptyMap();
+        Map<String, Object> stubDescription = Collections.emptyMap();
         requestRouter.addStub(LOCAL_URI, stubDescription);
 
         verify(mockStubFactory).createStubFor(LOCAL_URI, stubDescription);

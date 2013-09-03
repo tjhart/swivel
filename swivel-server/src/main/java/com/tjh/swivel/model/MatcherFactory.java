@@ -35,7 +35,7 @@ public class MatcherFactory {
     public static final String REMOTE_ADDR_KEY = "remoteAddr";
     public static final String CONTENT_TYPE_KEY = "contentType";
     public static final String CONTENT_KEY = "content";
-    public static final String SCRIPT_KEY = "when";
+    public static final String SCRIPT_KEY = "matchScript";
     public static final int STATIC_MATCHER_COUNT = 3;
     public static final int OPTIONAL_MATCHER_COUNT = 5;
 
@@ -89,10 +89,8 @@ public class MatcherFactory {
         if (queryString == null) return Collections.emptyMap();
         try {
             Constructor constructor = ArrayList.class.getConstructor();
-            Map<String, List<String>> result =
-                    new PopulatingMap<String, List<String>>(constructor);
-            String[] entries = queryString.split("\\&");
-            for (String entry : entries) {
+            Map<String, List<String>> result = new PopulatingMap<String, List<String>>(constructor);
+            for (String entry : queryString.split("\\&")) {
                 String[] keyVal = entry.split("=");
                 result.get(keyVal[0]).add(keyVal[1]);
             }

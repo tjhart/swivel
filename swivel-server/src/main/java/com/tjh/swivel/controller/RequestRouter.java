@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class RequestRouter {
 
+    public static final String LEAF_KEY = "^leaf";
     private Logger logger = Logger.getLogger(RequestRouter.class);
     //perpetually populating map
     protected final Map<String, Object> shuntPaths =
@@ -74,11 +75,19 @@ public class RequestRouter {
         });
     }
 
+    @SuppressWarnings("unchecked")
     public String addStub(URI localUri, Map<String, Object> stubDescription) throws ScriptException {
-        int identityHashCode = System.identityHashCode(stubDescription);
-        System.out.println("identityHashCode = " + identityHashCode);
+        StubRequestHandler stubRequestHandler = stubFactory.createStubFor(localUri, stubDescription);
 
-        StubRequestHandler stubFor = stubFactory.createStubFor(localUri, stubDescription);
+        Map<String, Object> node = Maps.valueFor(stubPaths, toKeys(localUri));
+        List<StubRequestHandler> stubRequestHandlers;
+        if (node.containsKey(LEAF_KEY)) {
+            stubRequestHandlers = (List<StubRequestHandler>) node.get(LEAF_KEY);
+        } else {
+            stubRequestHandlers = new ArrayList<StubRequestHandler>();
+            node.put(LEAF_KEY, stubRequestHandlers);
+        }
+        stubRequestHandlers.add(stubRequestHandler);
         return "id";
     }
 

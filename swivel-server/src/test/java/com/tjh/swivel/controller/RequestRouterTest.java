@@ -2,6 +2,7 @@ package com.tjh.swivel.controller;
 
 import com.tjh.swivel.model.ShuntRequestHandler;
 import com.tjh.swivel.model.StubFactory;
+import com.tjh.swivel.model.StubRequestHandler;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.Before;
@@ -11,10 +12,12 @@ import vanderbilt.util.Maps;
 import javax.script.ScriptException;
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -27,10 +30,12 @@ public class RequestRouterTest {
 
     public static final URI LOCAL_URI = URI.create("some/path");
     public static final URI DEEP_URI = URI.create("some/path/deep");
+    public static final Map<String, Object> SUB_DESCRIPTION = Collections.emptyMap();
     private ShuntRequestHandler mockRequestHandler;
     private RequestRouter requestRouter;
     private HttpRequestBase mockRequestBase;
     private StubFactory mockStubFactory;
+    private StubRequestHandler mockStubHandler;
 
     @Before
     public void setUp() throws Exception {
@@ -38,10 +43,12 @@ public class RequestRouterTest {
         mockRequestBase = mock(HttpRequestBase.class);
         mockRequestHandler = mock(ShuntRequestHandler.class);
         mockStubFactory = mock(StubFactory.class);
+        mockStubHandler = mock(StubRequestHandler.class);
 
         requestRouter.setStubFactory(mockStubFactory);
 
         when(mockRequestBase.getURI()).thenReturn(LOCAL_URI);
+        when(mockStubFactory.createStubFor(any(URI.class), any(Map.class))).thenReturn(mockStubHandler);
     }
 
     @Test
@@ -120,9 +127,16 @@ public class RequestRouterTest {
 
     @Test
     public void addStubDefersToStubFactory() throws ScriptException {
-        Map<String, Object> stubDescription = Collections.emptyMap();
-        requestRouter.addStub(LOCAL_URI, stubDescription);
+        requestRouter.addStub(LOCAL_URI, SUB_DESCRIPTION);
 
-        verify(mockStubFactory).createStubFor(LOCAL_URI, stubDescription);
+        verify(mockStubFactory).createStubFor(LOCAL_URI, SUB_DESCRIPTION);
+    }
+
+    @Test
+    public void addStubPutsStubInListAtPath() throws ScriptException {
+        requestRouter.addStub(LOCAL_URI, SUB_DESCRIPTION);
+
+        Map<String, Object> node = Maps.valueFor(requestRouter.stubPaths, LOCAL_URI.getPath().split("/"));
+        assertThat(node.get(RequestRouter.LEAF_KEY), instanceOf(List.class));
     }
 }

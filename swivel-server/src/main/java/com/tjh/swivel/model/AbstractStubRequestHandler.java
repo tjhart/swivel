@@ -13,5 +13,8 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
 
     public boolean matches(HttpServletRequest request) { return matcher.matches(request); }
 
+    @Override
+    public int getId() { return System.identityHashCode(this); }
+
     public abstract HttpResponse handle(HttpUriRequest request);
 }

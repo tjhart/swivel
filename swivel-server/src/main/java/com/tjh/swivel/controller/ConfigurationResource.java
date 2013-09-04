@@ -1,6 +1,8 @@
 package com.tjh.swivel.controller;
 
 import com.tjh.swivel.model.ShuntRequestHandler;
+import com.tjh.swivel.model.StubFactory;
+import com.tjh.swivel.model.StubRequestHandler;
 import org.apache.log4j.Logger;
 import vanderbilt.util.Maps;
 
@@ -25,6 +27,7 @@ public class ConfigurationResource {
 
     protected Logger logger = Logger.getLogger(ConfigurationResource.class);
     protected RequestRouter router;
+    protected StubFactory stubFactory;
 
     @PUT
     @Path("shunt/{localPath: .*}")
@@ -69,9 +72,11 @@ public class ConfigurationResource {
                     .append(queryString);
         }
         URI localUri = new URI(sb.toString());
+        StubRequestHandler stubRequestHandler = stubFactory.createStubFor(localUri, stubDescription);
 
         logger.debug(String.format("Adding stub for %1$s", localUri));
-        return Maps.<String, Object>asMap("id", router.addStub(localUri, stubDescription));
+        router.addStub(localUri, stubRequestHandler);
+        return Maps.<String, Object>asMap("id", stubRequestHandler.getId());
     }
 
     protected static String trimToNull(String source) {
@@ -86,4 +91,6 @@ public class ConfigurationResource {
     }
 
     public void setRouter(RequestRouter router) { this.router = router; }
+
+    public void setStubFactory(StubFactory stubFactory) { this.stubFactory = stubFactory; }
 }

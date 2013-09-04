@@ -1,7 +1,6 @@
 package com.tjh.swivel.controller;
 
 import com.tjh.swivel.model.ShuntRequestHandler;
-import com.tjh.swivel.model.StubFactory;
 import com.tjh.swivel.model.StubRequestHandler;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -15,7 +14,6 @@ import vanderbilt.util.Block2;
 import vanderbilt.util.PopulatingMap;
 import vanderbilt.util.Strings;
 
-import javax.script.ScriptException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -42,7 +40,6 @@ public class RequestRouter {
 
     private ClientConnectionManager clientConnectionManager;
     private HttpParams httpParams = new BasicHttpParams();
-    private StubFactory stubFactory;
 
     public void setShunt(URI localURI, ShuntRequestHandler requestHandler) {
         shuntPaths.put(localURI.getPath(), requestHandler);
@@ -52,10 +49,8 @@ public class RequestRouter {
         shuntPaths.remove(localURI.getPath());
     }
 
-    public String addStub(URI localUri, Map<String, Object> stubDescription) throws ScriptException {
-        StubRequestHandler stubRequestHandler = stubFactory.createStubFor(localUri, stubDescription);
+    public void addStub(URI localUri, StubRequestHandler stubRequestHandler) {
         stubPaths.get(localUri.getPath()).add(stubRequestHandler);
-        return "id";
     }
 
     public HttpResponse work(HttpRequestBase request) {
@@ -82,8 +77,6 @@ public class RequestRouter {
     public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
     }
-
-    public void setStubFactory(StubFactory stubFactory) { this.stubFactory = stubFactory; }
 
     public void setHttpParams(HttpParams httpParams) { this.httpParams = httpParams; }
 }

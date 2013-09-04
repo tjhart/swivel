@@ -1,7 +1,6 @@
 package com.tjh.swivel.controller;
 
 import com.tjh.swivel.model.ShuntRequestHandler;
-import com.tjh.swivel.model.StubFactory;
 import com.tjh.swivel.model.StubRequestHandler;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -14,8 +13,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -31,20 +30,16 @@ public class RequestRouterTest {
     private ShuntRequestHandler mockRequestHandler;
     private RequestRouter requestRouter;
     private HttpRequestBase mockRequestBase;
-    private StubFactory mockStubFactory;
+    private StubRequestHandler mockStubHandler;
 
     @Before
     public void setUp() throws Exception {
         requestRouter = new RequestRouter();
         mockRequestBase = mock(HttpRequestBase.class);
         mockRequestHandler = mock(ShuntRequestHandler.class);
-        mockStubFactory = mock(StubFactory.class);
-        StubRequestHandler mockStubHandler = mock(StubRequestHandler.class);
-
-        requestRouter.setStubFactory(mockStubFactory);
+        mockStubHandler = mock(StubRequestHandler.class);
 
         when(mockRequestBase.getURI()).thenReturn(LOCAL_URI);
-        when(mockStubFactory.createStubFor(any(URI.class), any(Map.class))).thenReturn(mockStubHandler);
     }
 
     @Test
@@ -97,16 +92,9 @@ public class RequestRouterTest {
     }
 
     @Test
-    public void addStubDefersToStubFactory() throws ScriptException {
-        requestRouter.addStub(LOCAL_URI, SUB_DESCRIPTION);
-
-        verify(mockStubFactory).createStubFor(LOCAL_URI, SUB_DESCRIPTION);
-    }
-
-    @Test
     public void addStubPutsStubInListAtPath() throws ScriptException {
-        requestRouter.addStub(LOCAL_URI, SUB_DESCRIPTION);
+        requestRouter.addStub(LOCAL_URI, mockStubHandler);
 
-        assertThat(requestRouter.stubPaths.get(LOCAL_URI.getPath()).get(0), instanceOf(StubRequestHandler.class));
+        assertThat(requestRouter.stubPaths.get(LOCAL_URI.getPath()).get(0), sameInstance(mockStubHandler));
     }
 }

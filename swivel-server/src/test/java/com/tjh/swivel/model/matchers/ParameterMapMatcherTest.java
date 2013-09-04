@@ -1,9 +1,10 @@
 package com.tjh.swivel.model.matchers;
 
+import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Test;
 import vanderbilt.util.Maps;
 
-import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +18,10 @@ public class ParameterMapMatcherTest {
 
     @Test
     public void queryParamsMatch() {
-        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        HttpUriRequest mockRequest = mock(HttpUriRequest.class);
 
-        Map<String, String[]> parameterMap = Maps.asMap("key", new String[]{"value"});
-        when(mockRequest.getParameterMap()).thenReturn(parameterMap);
+        when(mockRequest.getURI()).thenReturn(URI.create("some/path?key=value"));
 
-        //NOTE:TJH - the copy is on purpose - we need to make sure that two different maps with the same
-        //set of values are equal
         Map<String, List<String>> copy = Maps.asMap("key", Arrays.asList("value"));
         assertThat(mockRequest, ParameterMapMatcher.hasParameterMap(equalTo(copy)));
     }

@@ -1,29 +1,22 @@
 package com.tjh.swivel.model.matchers;
 
+import org.apache.http.client.methods.HttpUriRequest;
 import org.hamcrest.Factory;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 
-import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-public class RequestedURIPathMatcher extends FeatureMatcher<HttpServletRequest, String> {
+public class RequestedURIPathMatcher extends FeatureMatcher<HttpUriRequest, String> {
     public RequestedURIPathMatcher(Matcher<? super String> subMatcher) {
-        super(subMatcher, "HttpServletRequest with URI Path", "uri path");
+        super(subMatcher, "HttpUriRequest with URI Path", "uri path");
     }
 
     @Override
-    protected String featureValueOf(HttpServletRequest request) {
-        try {
-            return new URI(request.getRequestURI()).getPath();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+    protected String featureValueOf(HttpUriRequest request) {
+        return request.getURI().getPath();
     }
 
     @Factory
-    public static Matcher<HttpServletRequest> hasURIPath(Matcher<? super String> subMatcher) {
+    public static Matcher<HttpUriRequest> hasURIPath(Matcher<? super String> subMatcher) {
         return new RequestedURIPathMatcher(subMatcher);
     }
 }

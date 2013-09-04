@@ -4,12 +4,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.hamcrest.Matcher;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class StaticStubRequestHandler extends AbstractStubRequestHandler {
     protected final HttpResponse httpResponse;
 
-    public StaticStubRequestHandler(Matcher<HttpServletRequest> matcher, HttpResponse httpResponse) {
+    public StaticStubRequestHandler(Matcher<HttpUriRequest> matcher, HttpResponse httpResponse) {
         super(matcher);
         this.httpResponse = httpResponse;
     }

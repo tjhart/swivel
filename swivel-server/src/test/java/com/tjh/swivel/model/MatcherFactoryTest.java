@@ -1,11 +1,15 @@
 package com.tjh.swivel.model;
 
+import org.apache.http.Header;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHeader;
 import org.junit.Before;
 import org.junit.Test;
 import vanderbilt.util.Maps;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
@@ -21,18 +25,24 @@ public class MatcherFactoryTest {
 
     public static final Map<String, String> STUB_DESCRIPTION = Maps.asMap(MatcherFactory.METHOD_KEY, "POST");
     public static final URI LOCAL_URI = URI.create("some/path");
-    public static final String APPLICATION_JSON = "application/json";
+    public static final String APPLICATION_JSON = ContentType.APPLICATION_JSON.toString();
+    public static final String CONTENT = "fred";
+    public static final StringEntity STRING_ENTITY = new StringEntity(CONTENT, ContentType.APPLICATION_JSON);
 
     private MatcherFactory matcherFactory;
-    private HttpServletRequest actualRequest;
+    private HttpUriRequest actualRequest;
+    private HttpEntityEnclosingRequestBase mockEnclosingRequest;
 
     @Before
     public void setUp() throws IOException {
         matcherFactory = new MatcherFactory();
-        actualRequest = mock(HttpServletRequest.class);
+        actualRequest = mock(HttpUriRequest.class);
+        mockEnclosingRequest = mock(HttpEntityEnclosingRequestBase.class);
 
-        when(actualRequest.getRequestURI()).thenReturn("some/path");
+        when(actualRequest.getURI()).thenReturn(URI.create("some/path"));
         when(actualRequest.getMethod()).thenReturn("POST");
+        when(mockEnclosingRequest.getEntity()).thenReturn(STRING_ENTITY);
+
     }
 
     @Test
@@ -45,27 +55,11 @@ public class MatcherFactoryTest {
 
     @Test
     public void buildMatcherDefersToBuildOptionalMatcher() throws IOException {
-        System.out.println("LOCAL_URI.getQuery() = " + LOCAL_URI.getQuery());
         MatcherFactory builderSpy = spy(matcherFactory);
 
         builderSpy.buildMatcher(LOCAL_URI, STUB_DESCRIPTION);
 
         verify(builderSpy).buildOptionalMatcher(LOCAL_URI, STUB_DESCRIPTION);
-    }
-
-    @Test(expected = AssertionError.class)
-    public void matchFailsIfRemoteAddressProvidedAndDoesNotMatch() throws IOException {
-        assertThat(actualRequest,
-                matcherFactory
-                        .buildOptionalMatcher(LOCAL_URI, Maps.asMap(MatcherFactory.REMOTE_ADDR_KEY, "127.0.0.1")));
-    }
-
-    @Test
-    public void matchesRemoteAddressIfProvidedAndMatches() throws IOException {
-        when(actualRequest.getRemoteAddr()).thenReturn("127.0.0.1");
-
-        assertThat(actualRequest, matcherFactory.buildOptionalMatcher(LOCAL_URI,
-                Maps.asMap(MatcherFactory.REMOTE_ADDR_KEY, "127.0.0.1")));
     }
 
     @Test(expected = AssertionError.class)
@@ -78,9 +72,7 @@ public class MatcherFactoryTest {
 
     @Test
     public void matchesIfContentTypeProvidedAndMatches() throws IOException {
-        when(actualRequest.getContentType()).thenReturn(APPLICATION_JSON);
-
-        assertThat(actualRequest,
+        assertThat(mockEnclosingRequest,
                 matcherFactory
                         .buildOptionalMatcher(LOCAL_URI,
                                 Maps.asMap(MatcherFactory.CONTENT_TYPE_KEY, APPLICATION_JSON)));
@@ -88,21 +80,15 @@ public class MatcherFactoryTest {
 
     @Test(expected = AssertionError.class)
     public void matchFailsIfContentProvidedAndDoesNotMatch() throws IOException {
-        BufferedReader mockReader = mock(BufferedReader.class);
-        when(actualRequest.getReader()).thenReturn(mockReader);
-
         assertThat(actualRequest,
                 matcherFactory.buildOptionalMatcher(LOCAL_URI, Maps.asMap(MatcherFactory.CONTENT_KEY, "Yummy!")));
     }
 
     @Test
     public void matchesIfContentProvidedAndMatches() throws IOException {
-        BufferedReader mockReader = mock(BufferedReader.class);
-        when(actualRequest.getReader()).thenReturn(mockReader);
-        when(mockReader.readLine()).thenReturn("Yummy!", null);
-
-        assertThat(actualRequest,
-                matcherFactory.buildOptionalMatcher(LOCAL_URI, Maps.asMap(MatcherFactory.CONTENT_KEY, "Yummy!")));
+        assertThat(mockEnclosingRequest,
+                matcherFactory.buildOptionalMatcher(LOCAL_URI,
+                        Maps.asMap(MatcherFactory.CONTENT_KEY, CONTENT)));
     }
 
     @Test(expected = AssertionError.class)
@@ -115,8 +101,7 @@ public class MatcherFactoryTest {
 
     @Test
     public void matchesIfQueryProvidedAndRequestContainsQuery() throws IOException {
-        when(actualRequest.getParameterMap()).thenReturn(Maps.asMap("key", new String[]{"val"}));
-
+        when(actualRequest.getURI()).thenReturn(URI.create("some/path?key=val"));
 
         assertThat(actualRequest,
                 matcherFactory
@@ -126,7 +111,8 @@ public class MatcherFactoryTest {
 
     @Test
     public void matchesIfRemoteAddrInXForwardedForHeader() throws IOException {
-        when(actualRequest.getHeader("X-Forwarded-For")).thenReturn("198.154.20.2, 127.0.0.1");
+        when(actualRequest.getHeaders("X-Forwarded-For")).thenReturn(
+                new Header[]{new BasicHeader("X-Forwarded-For", "198.154.20.2, 127.0.0.1")});
 
         assertThat(actualRequest,
                 matcherFactory
@@ -135,21 +121,21 @@ public class MatcherFactoryTest {
 
     @Test(expected = AssertionError.class)
     public void matchFailsIfScriptProvidedAndDoesNotMatch() {
-        when(actualRequest.getLocalPort()).thenReturn(24);
+        when(actualRequest.getMethod()).thenReturn("GET");
 
         assertThat(actualRequest,
                 matcherFactory
                         .buildOptionalMatcher(LOCAL_URI, Maps.asMap(MatcherFactory.SCRIPT_KEY,
-                                "(function(){return request.getLocalPort() === 23;})();")));
+                                "(function(){return request.getMethod() == 'POST';})();")));
     }
 
     @Test
     public void matchesIfScriptMatches() {
-        when(actualRequest.getLocalPort()).thenReturn(23);
+        when(actualRequest.getMethod()).thenReturn("GET");
 
         assertThat(actualRequest,
                 matcherFactory
                         .buildOptionalMatcher(LOCAL_URI, Maps.asMap(MatcherFactory.SCRIPT_KEY,
-                                "(function(){return request.getLocalPort() === 23;})();")));
+                                "(function(){return request.getMethod() == 'GET';})();")));
     }
 }

@@ -1,6 +1,7 @@
 package com.tjh.swivel.model.matchers;
 
 import com.tjh.swivel.utils.ScriptWrapper;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.hamcrest.CustomMatcher;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
@@ -8,14 +9,13 @@ import org.hamcrest.Matcher;
 import javax.script.Bindings;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
-import javax.servlet.http.HttpServletRequest;
 
-public class ScriptMatcher extends CustomMatcher<HttpServletRequest> {
+public class ScriptMatcher extends CustomMatcher<HttpUriRequest> {
 
     protected ScriptWrapper scriptWrapper;
 
     public ScriptMatcher(String language, String script) throws ScriptException {
-        super(String.format("HttpServletRequest (request) evaluated by %1$s script:\n%2$s ", language, script));
+        super(String.format("HttpUriRequest (request) evaluated by %1$s script:\n%2$s ", language, script));
         this.scriptWrapper = new ScriptWrapper(language, script);
     }
 
@@ -23,12 +23,12 @@ public class ScriptMatcher extends CustomMatcher<HttpServletRequest> {
 
     @Override
     public boolean matches(Object o) {
-        if (o == null || !(o instanceof HttpServletRequest)) {
+        if (o == null || !(o instanceof HttpUriRequest)) {
             return false;
         }
 
         try {
-            HttpServletRequest request = (HttpServletRequest) o;
+            HttpUriRequest request = (HttpUriRequest) o;
 
             Bindings bindings = new SimpleBindings();
             bindings.put("request", request);
@@ -39,13 +39,12 @@ public class ScriptMatcher extends CustomMatcher<HttpServletRequest> {
     }
 
     @Factory
-    public static Matcher<HttpServletRequest> scriptMatches(String script) throws ScriptException {
+    public static Matcher<HttpUriRequest> scriptMatches(String script) throws ScriptException {
         return scriptMatches("javascript", script);
     }
 
     @Factory
-    public static Matcher<HttpServletRequest> scriptMatches(String language, String script)
-            throws ScriptException {
+    public static Matcher<HttpUriRequest> scriptMatches(String language, String script) throws ScriptException {
         return new ScriptMatcher(language, script);
     }
 }

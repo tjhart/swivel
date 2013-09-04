@@ -7,9 +7,9 @@ import org.hamcrest.Matcher;
 import javax.servlet.http.HttpServletRequest;
 
 public abstract class AbstractStubRequestHandler implements StubRequestHandler {
-    protected final Matcher<HttpServletRequest> matcher;
+    protected final Matcher<HttpUriRequest> matcher;
 
-    public AbstractStubRequestHandler(Matcher<HttpServletRequest> matcher) {this.matcher = matcher;}
+    public AbstractStubRequestHandler(Matcher<HttpUriRequest> matcher) {this.matcher = matcher;}
 
     @Override
     public boolean matches(HttpServletRequest request) { return matcher.matches(request); }

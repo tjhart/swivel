@@ -6,8 +6,6 @@ import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.servlet.http.HttpServletRequest;
-
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -20,7 +18,7 @@ public class StaticStubRequestHandlerTest {
     @Before
     public void before() {
         mockHttpResponse = mock(HttpResponse.class);
-        Matcher<HttpServletRequest> mockMatcher = mock(Matcher.class);
+        Matcher<HttpUriRequest> mockMatcher = mock(Matcher.class);
         staticResponseHandler = new StaticStubRequestHandler(mockMatcher, mockHttpResponse);
     }
 

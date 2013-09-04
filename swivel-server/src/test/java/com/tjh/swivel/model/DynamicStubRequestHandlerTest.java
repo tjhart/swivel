@@ -9,7 +9,6 @@ import org.mockito.ArgumentCaptor;
 
 import javax.script.Bindings;
 import javax.script.ScriptException;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -28,7 +27,7 @@ public class DynamicStubRequestHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        Matcher<HttpServletRequest> mockMatcher = mock(Matcher.class);
+        Matcher<HttpUriRequest> mockMatcher = mock(Matcher.class);
         dynamicResponseHandler = new DynamicStubRequestHandler(mockMatcher, SOURCE_SCRIPT);
         mockRequest = mock(HttpUriRequest.class);
     }

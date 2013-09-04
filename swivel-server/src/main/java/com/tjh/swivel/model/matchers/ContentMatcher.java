@@ -1,33 +1,27 @@
 package com.tjh.swivel.model.matchers;
 
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.util.EntityUtils;
 import org.hamcrest.Factory;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.io.IOException;
 
-public class ContentMatcher extends FeatureMatcher<HttpServletRequest, String> {
+public class ContentMatcher extends FeatureMatcher<HttpUriRequest, String> {
     protected String consumedContent;
 
     public ContentMatcher(Matcher<? super String> subMatcher) {
-        super(subMatcher, "HttpServletRequest with content", "content");
+        super(subMatcher, "HttpUriRequest content", "content");
     }
 
     @Override
-    protected String featureValueOf(HttpServletRequest request) {
+    protected String featureValueOf(HttpUriRequest request) {
         //NOTE:TJH - content is consumed once, then no longer available from the reader, so we have to cache it
-        if (consumedContent == null) {
+        if ((request instanceof HttpEntityEnclosingRequest) && consumedContent == null) {
             try {
-                int contentLength = request.getContentLength();
-                StringBuilder stringBuilder = new StringBuilder(contentLength == -1 ? 5120 : contentLength);
-                BufferedReader reader = request.getReader();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    stringBuilder.append(line);
-                }
-                consumedContent = stringBuilder.toString();
+                consumedContent = EntityUtils.toString(((HttpEntityEnclosingRequest) request).getEntity());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -37,7 +31,7 @@ public class ContentMatcher extends FeatureMatcher<HttpServletRequest, String> {
     }
 
     @Factory
-    public static Matcher<HttpServletRequest> hasContent(Matcher<? super String> stringMatcher) {
+    public static Matcher<HttpUriRequest> hasContent(Matcher<? super String> stringMatcher) {
         return new ContentMatcher(stringMatcher);
     }
 }

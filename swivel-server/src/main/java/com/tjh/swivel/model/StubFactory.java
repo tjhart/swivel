@@ -1,5 +1,6 @@
 package com.tjh.swivel.model;
 
+import org.apache.http.client.methods.HttpUriRequest;
 import org.hamcrest.Matcher;
 
 import javax.script.ScriptException;
@@ -17,7 +18,7 @@ public class StubFactory {
     @SuppressWarnings("unchecked")
     public StubRequestHandler createStubFor(URI localURI, Map<String, Object> stubDescription) throws ScriptException {
         StubRequestHandler result;
-        Matcher<HttpServletRequest> matcher =
+        Matcher<HttpUriRequest> matcher =
                 matcherFactory.buildMatcher(localURI, (Map<String, String>) stubDescription.get(WHEN_KEY));
         Map<String, Object> thenMap = (Map<String, Object>) stubDescription.get(THEN_KEY);
         if (thenMap.containsKey(SCRIPT_KEY)) {

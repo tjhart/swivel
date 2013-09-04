@@ -1,22 +1,23 @@
 package com.tjh.swivel.model.matchers;
 
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 
-import javax.servlet.http.HttpServletRequest;
-
-import static org.hamcrest.CoreMatchers.equalTo;
+import static com.tjh.swivel.model.matchers.ContentTypeMatcher.hasContentType;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static com.tjh.swivel.model.matchers.ContentTypeMatcher.hasContentType;
 
 public class ContentTypeMatcherTest {
 
     @Test
-    public void contentTypeMatches(){
-        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+    public void contentTypeMatches() {
+        HttpEntityEnclosingRequestBase mockRequest = mock(HttpEntityEnclosingRequestBase.class);
 
-        when(mockRequest.getContentType()).thenReturn("application/xml");
-        assertThat(mockRequest, hasContentType(equalTo("application/xml")));
+        when(mockRequest.getEntity()).thenReturn(new StringEntity("content", ContentType.APPLICATION_XML));
+        assertThat(mockRequest, hasContentType(containsString("application/xml")));
     }
 }

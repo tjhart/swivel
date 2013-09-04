@@ -8,19 +8,18 @@ import org.hamcrest.Matcher;
 import javax.script.Bindings;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
-import javax.servlet.http.HttpServletRequest;
 
 public class DynamicStubRequestHandler extends AbstractStubRequestHandler {
     protected ScriptWrapper scriptWrapper;
     protected ResponseFactory responseFactory = new ResponseFactory();
 
-    public DynamicStubRequestHandler(Matcher<HttpServletRequest> matcher, String sourceScript,
+    public DynamicStubRequestHandler(Matcher<HttpUriRequest> matcher, String sourceScript,
             String engineName) throws ScriptException {
         super(matcher);
         this.scriptWrapper = new ScriptWrapper(engineName, sourceScript);
     }
 
-    public DynamicStubRequestHandler(Matcher<HttpServletRequest> matcher, String sourceScript) throws ScriptException {
+    public DynamicStubRequestHandler(Matcher<HttpUriRequest> matcher, String sourceScript) throws ScriptException {
         this(matcher, sourceScript, "javascript");
     }
 

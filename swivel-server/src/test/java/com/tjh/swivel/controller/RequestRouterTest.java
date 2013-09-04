@@ -7,15 +7,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.Before;
 import org.junit.Test;
-import vanderbilt.util.Maps;
 
 import javax.script.ScriptException;
 import java.net.URI;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
-import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -35,7 +32,6 @@ public class RequestRouterTest {
     private RequestRouter requestRouter;
     private HttpRequestBase mockRequestBase;
     private StubFactory mockStubFactory;
-    private StubRequestHandler mockStubHandler;
 
     @Before
     public void setUp() throws Exception {
@@ -43,7 +39,7 @@ public class RequestRouterTest {
         mockRequestBase = mock(HttpRequestBase.class);
         mockRequestHandler = mock(ShuntRequestHandler.class);
         mockStubFactory = mock(StubFactory.class);
-        mockStubHandler = mock(StubRequestHandler.class);
+        StubRequestHandler mockStubHandler = mock(StubRequestHandler.class);
 
         requestRouter.setStubFactory(mockStubFactory);
 
@@ -55,22 +51,7 @@ public class RequestRouterTest {
     public void setShuntPutsRequestHandlerAtExpectedPath() {
         requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
 
-        assertThat((ShuntRequestHandler) Maps.valueFor(requestRouter.shuntPaths, LOCAL_URI.getPath().split("/")),
-                equalTo(mockRequestHandler));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void setShuntThrowsIfItemExistsAtPath() {
-        requestRouter.setShunt(DEEP_URI, mockRequestHandler);
-
-        requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void setShuntThrowsIfLeafEncounteredOnWayToPath() {
-        requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
-
-        requestRouter.setShunt(DEEP_URI, mockRequestHandler);
+        assertThat(requestRouter.shuntPaths.get(LOCAL_URI.getPath()), equalTo(mockRequestHandler));
     }
 
     @Test
@@ -106,16 +87,6 @@ public class RequestRouterTest {
     }
 
     @Test
-    public void workCleansUpOnUnknownURI() {
-        try {
-            requestRouter.work(mockRequestBase);
-            fail("An exception should have been thrown");
-        } catch (RuntimeException e) {
-            assertThat(requestRouter.shuntPaths.isEmpty(), is(true));
-        }
-    }
-
-    @Test
     public void workRemovesMatchedPathFromURISentToHandler() {
         requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
         when(mockRequestBase.getURI()).thenReturn(DEEP_URI);
@@ -136,7 +107,6 @@ public class RequestRouterTest {
     public void addStubPutsStubInListAtPath() throws ScriptException {
         requestRouter.addStub(LOCAL_URI, SUB_DESCRIPTION);
 
-        Map<String, Object> node = Maps.valueFor(requestRouter.stubPaths, LOCAL_URI.getPath().split("/"));
-        assertThat(node.get(RequestRouter.LEAF_KEY), instanceOf(List.class));
+        assertThat(requestRouter.stubPaths.get(LOCAL_URI.getPath()).get(0), instanceOf(StubRequestHandler.class));
     }
 }

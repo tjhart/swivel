@@ -121,10 +121,8 @@ public class HttpServletRequestWrapper implements HttpServletRequest {
     public boolean isRequestedSessionIdFromURL() {return delegate.isRequestedSessionIdFromURL();}
 
     @Override
-    public boolean isRequestedSessionIdFromUrl() {
-        //noinspection deprecation
-        return delegate.isRequestedSessionIdFromUrl();
-    }
+    @Deprecated
+    public boolean isRequestedSessionIdFromUrl() { throw new UnsupportedOperationException(); }
 
     @Override
     public Object getAttribute(String s) {return delegate.getAttribute(s);}
@@ -193,10 +191,8 @@ public class HttpServletRequestWrapper implements HttpServletRequest {
     public RequestDispatcher getRequestDispatcher(String s) {return delegate.getRequestDispatcher(s);}
 
     @Override
-    public String getRealPath(String s) {
-        //noinspection deprecation
-        return delegate.getRealPath(s);
-    }
+    @Deprecated
+    public String getRealPath(String s) { throw new UnsupportedOperationException(); }
 
     @Override
     public int getRemotePort() {return delegate.getRemotePort();}

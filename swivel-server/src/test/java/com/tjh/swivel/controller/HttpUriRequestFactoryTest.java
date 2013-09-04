@@ -1,5 +1,6 @@
 package com.tjh.swivel.controller;
 
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,8 +45,15 @@ public class HttpUriRequestFactoryTest {
 
     @Test
     public void createGetRequestSetsURI() {
-
         assertThat(httpUriRequestFactory.createGetRequest(LOCAL_URI, mockServletRequest).getURI(), equalTo(LOCAL_URI));
+    }
+
+    @Test
+    public void createGetRequestUsesQueryStringFromRequest() {
+        when(mockServletRequest.getQueryString()).thenReturn("key=val");
+
+        HttpRequestBase getRequest = httpUriRequestFactory.createGetRequest(URI.create("some/path"), mockServletRequest);
+        assertThat(getRequest.getURI().getQuery(), equalTo("key=val"));
     }
 
     @Test

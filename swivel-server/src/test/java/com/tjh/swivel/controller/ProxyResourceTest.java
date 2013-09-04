@@ -17,8 +17,7 @@ import static org.mockito.Mockito.when;
 
 public class ProxyResourceTest {
 
-    public static final String LOCAL_PATH = "local/path";
-    public static final URI LOCAL_URI = URI.create(LOCAL_PATH);
+    public static final URI LOCAL_URI = URI.create("local/path");
     private ProxyResource proxyResource;
     private RequestRouter mockRouter;
     private HttpUriRequestFactory mockRequestFactory;
@@ -45,14 +44,14 @@ public class ProxyResourceTest {
 
     @Test
     public void getDelegatesToRequestFactory() throws URISyntaxException, IOException {
-        proxyResource.get(LOCAL_PATH, mockRequest);
+        proxyResource.get(LOCAL_URI, mockRequest);
 
         verify(mockRequestFactory).createGetRequest(LOCAL_URI, mockRequest);
     }
 
     @Test
     public void getDelegatesToRouter() throws URISyntaxException, IOException {
-        proxyResource.get(LOCAL_PATH, mockRequest);
+        proxyResource.get(LOCAL_URI, mockRequest);
 
         verify(mockRouter).work(mockRequestBase);
     }
@@ -62,7 +61,7 @@ public class ProxyResourceTest {
         HttpResponse mockResponse = mock(HttpResponse.class);
         when(mockRouter.work(any(HttpRequestBase.class))).thenReturn(mockResponse);
 
-        proxyResource.get(LOCAL_PATH, mockRequest);
+        proxyResource.get(LOCAL_URI, mockRequest);
 
         verify(mockResponseFactory).createResponse(mockResponse);
     }

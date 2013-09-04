@@ -1,6 +1,5 @@
 package com.tjh.swivel.controller;
 
-import com.tjh.swivel.model.HttpServletRequestWrapper;
 import org.apache.http.client.methods.HttpRequestBase;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,14 +37,14 @@ public class ProxyResource {
     @Path("{localPath: .*}")
     public Response put(@PathParam("localPath") URI localPath, @Context HttpServletRequest request)
             throws IOException {
-        return respondTo(requestFactory.createPutRequest(localPath, new HttpServletRequestWrapper(request)));
+        return respondTo(requestFactory.createPutRequest(localPath, request));
     }
 
     @POST
     @Path("{localPath: .*}")
     public Response post(@PathParam("localPath") URI localPath, @Context HttpServletRequest request)
             throws IOException {
-        return respondTo(requestFactory.createPostRequest(localPath, new HttpServletRequestWrapper(request)));
+        return respondTo(requestFactory.createPostRequest(localPath, request));
     }
 
     protected Response respondTo(HttpRequestBase request) throws IOException {

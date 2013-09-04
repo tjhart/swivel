@@ -10,7 +10,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.apache.log4j.Logger;
+import vanderbilt.util.Block;
 import vanderbilt.util.Block2;
+import vanderbilt.util.Lists;
 import vanderbilt.util.PopulatingMap;
 import vanderbilt.util.Strings;
 
@@ -41,18 +43,6 @@ public class RequestRouter {
     private ClientConnectionManager clientConnectionManager;
     private HttpParams httpParams = new BasicHttpParams();
 
-    public void setShunt(URI localURI, ShuntRequestHandler requestHandler) {
-        shuntPaths.put(localURI.getPath(), requestHandler);
-    }
-
-    public void deleteShunt(URI localURI) {
-        shuntPaths.remove(localURI.getPath());
-    }
-
-    public void addStub(URI localUri, StubRequestHandler stubRequestHandler) {
-        stubPaths.get(localUri.getPath()).add(stubRequestHandler);
-    }
-
     public HttpResponse work(HttpRequestBase request) {
         try {
             Deque<String> pathElements = new LinkedList<String>(Arrays.asList(toKeys(request.getURI())));
@@ -64,26 +54,43 @@ public class RequestRouter {
                 pathElements.removeLast();
             }
             while (shuntRequestHandler == null && !pathElements.isEmpty());
+            //noinspection ConstantConditions
             return shuntRequestHandler.handle(request, new URI(matchedPath), createClient());
         } catch (URISyntaxException use) {
             throw new RuntimeException("Programmer error!", use);
         }
     }
 
+    public void removeStub(URI localUri, final int stubHandlerId) {
+        List<StubRequestHandler> handlers = stubPaths.get(localUri.getPath());
+        StubRequestHandler target = Lists.find(handlers, new Block<StubRequestHandler, Boolean>() {
+            @Override
+            public Boolean invoke(StubRequestHandler stubRequestHandler) {
+                return stubRequestHandler.getId() == stubHandlerId;
+            }
+        });
+        handlers.remove(target);
+    }
+
+    public void setShunt(URI localURI, ShuntRequestHandler requestHandler) {
+        shuntPaths.put(localURI.getPath(), requestHandler);
+    }
+
+    public void addStub(URI localUri, StubRequestHandler stubRequestHandler) {
+        stubPaths.get(localUri.getPath()).add(stubRequestHandler);
+    }
+
+    public void deleteShunt(URI localURI) { shuntPaths.remove(localURI.getPath()); }
+
     protected HttpClient createClient() { return new DefaultHttpClient(clientConnectionManager, httpParams); }
 
     private String[] toKeys(URI localURI) {return localURI.getPath().split("/");}
 
+    //<editor-fold desc="bean">
     public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
     }
 
     public void setHttpParams(HttpParams httpParams) { this.httpParams = httpParams; }
-}
-
-class MapPopulator implements Block2<Map<String, Object>, Object, Object> {
-    @Override
-    public Object invoke(Map<String, Object> stringObjectMap, Object o) {
-        return new PopulatingMap<String, Object>(new ConcurrentHashMap<String, Object>(), this);
-    }
+    //</editor-fold>
 }

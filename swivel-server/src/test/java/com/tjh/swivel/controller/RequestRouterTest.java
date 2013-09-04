@@ -7,13 +7,13 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.script.ScriptException;
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
-import java.util.Collections;
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -26,7 +26,7 @@ public class RequestRouterTest {
 
     public static final URI LOCAL_URI = URI.create("some/path");
     public static final URI DEEP_URI = URI.create("some/path/deep");
-    public static final Map<String, Object> SUB_DESCRIPTION = Collections.emptyMap();
+    public static final int STUB_HANDLER_ID = 456;
     private ShuntRequestHandler mockRequestHandler;
     private RequestRouter requestRouter;
     private HttpRequestBase mockRequestBase;
@@ -40,6 +40,8 @@ public class RequestRouterTest {
         mockStubHandler = mock(StubRequestHandler.class);
 
         when(mockRequestBase.getURI()).thenReturn(LOCAL_URI);
+        when(mockStubHandler.getId()).thenReturn(STUB_HANDLER_ID);
+        when(mockStubHandler.matches(any(HttpServletRequest.class))).thenReturn(true);
     }
 
     @Test
@@ -92,9 +94,27 @@ public class RequestRouterTest {
     }
 
     @Test
-    public void addStubPutsStubInListAtPath() throws ScriptException {
+    public void addStubPutsStubInListAtPath() {
         requestRouter.addStub(LOCAL_URI, mockStubHandler);
 
         assertThat(requestRouter.stubPaths.get(LOCAL_URI.getPath()).get(0), sameInstance(mockStubHandler));
     }
+
+    @Test
+    public void removeStubRemovesStubInListAtPath() {
+        requestRouter.addStub(LOCAL_URI, mockStubHandler);
+
+        requestRouter.removeStub(LOCAL_URI, STUB_HANDLER_ID);
+
+        assertThat(requestRouter.stubPaths.get(LOCAL_URI.getPath()), not(hasItem(mockStubHandler)));
+    }
+
+//    @Test
+//    public void workDelegatesToStub() {
+//        requestRouter.addStub(LOCAL_URI, mockStubHandler);
+//
+//        requestRouter.work(mockRequestBase);
+//
+//        verify(mockStubHandler).matches(mockRequestBase);
+//    }
 }

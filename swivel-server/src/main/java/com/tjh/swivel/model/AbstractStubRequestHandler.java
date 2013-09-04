@@ -11,6 +11,7 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
 
     public AbstractStubRequestHandler(Matcher<HttpServletRequest> matcher) {this.matcher = matcher;}
 
+    @Override
     public boolean matches(HttpServletRequest request) { return matcher.matches(request); }
 
     @Override

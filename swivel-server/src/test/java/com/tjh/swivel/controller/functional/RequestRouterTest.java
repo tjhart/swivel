@@ -28,13 +28,13 @@ public class RequestRouterTest {
 
     @Before
     public void before() {
-        ShuntRequestHandler requestHandler = new ShuntRequestHandler(URI.create("http://www.google.com"));
-        requestRouter.setShunt(URI.create("google"), requestHandler);
+        ShuntRequestHandler requestHandler = new ShuntRequestHandler(URI.create("http://localhost:5984"));
+        requestRouter.setShunt(URI.create("couch"), requestHandler);
     }
 
     @Test
     public void workRedirectsRequest() throws IOException {
-        HttpRequestBase request = new HttpGet("google");
+        HttpRequestBase request = new HttpGet("couch");
         HttpResponse httpResponse = requestRouter.work(request);
 
         assertThat(httpResponse.getStatusLine().getStatusCode() / 100, equalTo(2));

@@ -21,6 +21,7 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.startsWith;
 
 /**
  * These rules were build quickly and naively. They're not indexable or inspectable in any way.
@@ -44,10 +45,8 @@ public class MatcherFactory {
     public Matcher<HttpUriRequest> buildMatcher(URI localURI, Map<String, String> stubDescription) {
 
         List<Matcher<HttpUriRequest>> matchers = new ArrayList<Matcher<HttpUriRequest>>(STATIC_MATCHER_COUNT);
-        //YELLOWTAG;TJH what about 'any' method?
         matchers.add(hasMethod(equalTo(stubDescription.get(METHOD_KEY))));
-        //YELLOWTAG:TJH - what about rest path trees? Should this be 'startsWith?'
-        matchers.add(hasURIPath(equalTo(localURI.toString())));
+        matchers.add(hasURIPath(startsWith(localURI.toString())));
 
         matchers.add(buildOptionalMatcher(localURI, stubDescription));
         return allOf(matchers.toArray(new Matcher[matchers.size()]));
@@ -64,12 +63,7 @@ public class MatcherFactory {
             }
             if (stubDescription.containsKey(REMOTE_ADDR_KEY)) {
                 String remoteAddr = stubDescription.get(REMOTE_ADDR_KEY);
-                //REDTAG:TJH - remoteAddr not accessible from HttpUriRequest. Consider
-                //manually matching it
                 result.add(hasHeader("X-Forwarded-For", hasItem(containsString(remoteAddr))));
-//                result.add(
-//                        anyOf(hasRemoteAddr(equalTo(remoteAddr)), hasHeader("X-Forwarded-For", hasItem(containsString(
-//                                remoteAddr)))));
             }
             if (stubDescription.containsKey(CONTENT_TYPE_KEY)) {
                 result.add(hasContentType(containsString(stubDescription.get(CONTENT_TYPE_KEY))));

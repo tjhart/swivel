@@ -1,5 +1,6 @@
 package com.tjh.swivel.controller;
 
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
@@ -26,6 +27,7 @@ public class HttpUriRequestFactoryTest {
     public static final URI LOCAL_URI = URI.create("some/path");
     public static final String HEADER_NAME = "headerName";
     public static final String HEADER = "header";
+    public static final String REMOTE_ADDR = "127.0.0.1";
 
     private HttpUriRequestFactory httpUriRequestFactory;
     private HttpServletRequest mockServletRequest;
@@ -41,6 +43,7 @@ public class HttpUriRequestFactoryTest {
 
         when(mockServletRequest.getHeaderNames()).thenReturn(mockEnumeration);
         when(mockServletRequest.getParameterMap()).thenReturn(Collections.emptyMap());
+        when(mockServletRequest.getRemoteAddr()).thenReturn(REMOTE_ADDR);
     }
 
     @Test
@@ -52,7 +55,8 @@ public class HttpUriRequestFactoryTest {
     public void createGetRequestUsesQueryStringFromRequest() {
         when(mockServletRequest.getQueryString()).thenReturn("key=val");
 
-        HttpRequestBase getRequest = httpUriRequestFactory.createGetRequest(URI.create("some/path"), mockServletRequest);
+        HttpRequestBase getRequest =
+                httpUriRequestFactory.createGetRequest(URI.create("some/path"), mockServletRequest);
         assertThat(getRequest.getURI().getQuery(), equalTo("key=val"));
     }
 
@@ -79,5 +83,14 @@ public class HttpUriRequestFactoryTest {
         inOrder.verify(mockEnumeration).nextElement();
         inOrder.verify(mockServletRequest).getHeader(HEADER_NAME);
         inOrder.verify(mockUriRequest).addHeader(HEADER_NAME, HEADER);
+    }
+
+    @Test
+    public void populateRequestAddsRemoteHostToXForwardedFor() {
+        HttpGet uriRequest = new HttpGet();
+        httpUriRequestFactory.populateRequest(uriRequest, mockServletRequest);
+
+        assertThat(uriRequest.getHeaders(HttpUriRequestFactory.X_FORWARDED_FOR_HEADER)[0].getValue(),
+                equalTo(REMOTE_ADDR));
     }
 }

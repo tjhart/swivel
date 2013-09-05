@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ConfigurationResourceTest {
 
-    public static final URI LOCAL_URI = URI.create("google");
+    public static final URI LOCAL_URI = URI.create("couch");
     @Autowired
     protected ConfigurationResource configurationResource;
     @Autowired
@@ -27,12 +27,12 @@ public class ConfigurationResourceTest {
     @Before
     public void before() throws URISyntaxException {
         configurationResource.putShunt(LOCAL_URI,
-                Maps.asMap(ConfigurationResource.REMOTE_URI_KEY, "http://www.google.com"));
+                Maps.asMap(ConfigurationResource.REMOTE_URI_KEY, "http://localhost:5984"));
     }
 
     @Test
     public void shuntWorks(){
-        requestRouter.work(new HttpGet(URI.create("google")));
+        requestRouter.work(new HttpGet(URI.create("couch")));
         //would throw if failed
     }
 

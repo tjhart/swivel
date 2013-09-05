@@ -32,7 +32,7 @@
 
     <servlet-mapping>
         <servlet-name>JerseySpringServlet</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>rest/*</url-pattern>
     </servlet-mapping>
 
     <session-config>

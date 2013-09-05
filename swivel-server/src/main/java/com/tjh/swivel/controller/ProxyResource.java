@@ -35,16 +35,16 @@ public class ProxyResource {
 
     @PUT
     @Path("{localPath: .*}")
-    public Response put(@PathParam("localPath") URI localPath, @Context HttpServletRequest request)
+    public Response put(@PathParam("localPath") URI localPath, byte[] body, @Context HttpServletRequest request)
             throws IOException {
-        return respondTo(requestFactory.createPutRequest(localPath, request));
+        return respondTo(requestFactory.createPutRequest(localPath, request, body));
     }
 
     @POST
     @Path("{localPath: .*}")
-    public Response post(@PathParam("localPath") URI localPath, @Context HttpServletRequest request)
+    public Response post(@PathParam("localPath") URI localPath, byte[] body, @Context HttpServletRequest request)
             throws IOException {
-        return respondTo(requestFactory.createPostRequest(localPath, request));
+        return respondTo(requestFactory.createPostRequest(localPath, request, body));
     }
 
     protected Response respondTo(HttpRequestBase request) throws IOException {

@@ -12,6 +12,7 @@ import java.net.URI;
 
 public class ShuntRequestHandler {
 
+    public static final String CONTENT_BASE_HEADER = "Content-base";
     protected Logger logger = Logger.getLogger(ShuntRequestHandler.class);
     protected final URI baseUri;
 
@@ -19,13 +20,14 @@ public class ShuntRequestHandler {
         this.baseUri = baseUri;
     }
 
-    //REDTAG:TJH - should be HttpRequestBase
     public HttpResponse handle(HttpRequestBase request, URI matchedURI, HttpClient client) {
         try {
             URI localURI = request.getURI();
             HttpUriRequest shuntRequest = createShuntRequest(request, matchedURI);
             logger.debug(String.format("Shunting request %1$s to %2$s", localURI, shuntRequest.getURI()));
-            return client.execute(shuntRequest);
+            HttpResponse response = client.execute(shuntRequest);
+            response.addHeader(CONTENT_BASE_HEADER, this.baseUri.toString());
+            return response;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

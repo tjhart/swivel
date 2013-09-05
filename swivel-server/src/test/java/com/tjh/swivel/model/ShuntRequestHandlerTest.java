@@ -1,5 +1,6 @@
 package com.tjh.swivel.model;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -29,11 +30,13 @@ public class ShuntRequestHandlerTest {
     private HttpRequestBase mockRequest;
 
     @Before
-    public void before() {
+    public void before() throws IOException {
         mockClient = mock(HttpClient.class);
         mockRequest = mock(HttpRequestBase.class);
+        HttpResponse mockResponse = mock(HttpResponse.class);
 
         when(mockRequest.getURI()).thenReturn(RELATIVE_URI);
+        when(mockClient.execute(any(HttpUriRequest.class))).thenReturn(mockResponse);
 
         shuntRequestHandler = new ShuntRequestHandler(SHUNT_URI);
     }
@@ -50,6 +53,7 @@ public class ShuntRequestHandlerTest {
         doReturn(mock(HttpUriRequest.class))
                 .when(shuntResponseHandlerSpy)
                 .createShuntRequest(any(HttpRequestBase.class), any(URI.class));
+
         shuntResponseHandlerSpy.handle(mockRequest, MATCHED_URI, mockClient);
 
         verify(shuntResponseHandlerSpy).createShuntRequest(mockRequest, MATCHED_URI);

@@ -7,12 +7,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.InputStreamEntity;
 import vanderbilt.util.Sets;
 import vanderbilt.util.Strings;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -38,18 +39,18 @@ public class HttpUriRequestFactory {
         return result;
     }
 
-    public HttpRequestBase createPutRequest(URI uri, HttpServletRequest request, byte[] body) throws IOException {
+    public HttpRequestBase createPutRequest(URI uri, HttpServletRequest request, InputStream body) throws IOException {
         HttpPut result = new HttpPut(createURI(uri, request));
         populateRequest(result, request);
-        result.setEntity(new ByteArrayEntity(body));
+        result.setEntity(new InputStreamEntity(body, request.getContentLength()));
 
         return result;
     }
 
-    public HttpRequestBase createPostRequest(URI uri, HttpServletRequest request, byte[] body) throws IOException {
+    public HttpRequestBase createPostRequest(URI uri, HttpServletRequest request, InputStream body) throws IOException {
         HttpPost result = new HttpPost(createURI(uri, request));
         populateRequest(result, request);
-        result.setEntity(new ByteArrayEntity(body));
+        result.setEntity(new InputStreamEntity(body, request.getContentLength()));
 
         return result;
     }
@@ -68,13 +69,13 @@ public class HttpUriRequestFactory {
         Enumeration headerNames = servletRequest.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String headerName = (String) headerNames.nextElement();
-            //some headers will be populated in the library
+            //some headers will be populated during execution of the request
             if (!IGNORED_HEADERS.contains(headerName)) {
                 uriRequest.addHeader(headerName, servletRequest.getHeader(headerName));
             }
         }
 
-        //TODO:TJH - verify Swivel is populating all header fields as a good proxy should
+        //TODO:TJH - verify Swivel is managing header fields as a good proxy should
         Header header = uriRequest.getFirstHeader(X_FORWARDED_FOR_HEADER);
         List<String> origValue = new ArrayList<String>(2);
         if (header != null) {

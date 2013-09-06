@@ -4,15 +4,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.hamcrest.Matcher;
 
-import javax.servlet.http.HttpServletRequest;
-
 public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     protected final Matcher<HttpUriRequest> matcher;
 
     public AbstractStubRequestHandler(Matcher<HttpUriRequest> matcher) {this.matcher = matcher;}
 
     @Override
-    public boolean matches(HttpServletRequest request) { return matcher.matches(request); }
+    public boolean matches(HttpUriRequest request) { return matcher.matches(request); }
 
     @Override
     public int getId() { return System.identityHashCode(this); }

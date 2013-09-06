@@ -12,6 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
 @Path("proxy")
@@ -35,14 +36,14 @@ public class ProxyResource {
 
     @PUT
     @Path("{localPath: .*}")
-    public Response put(@PathParam("localPath") URI localPath, byte[] body, @Context HttpServletRequest request)
+    public Response put(@PathParam("localPath") URI localPath, InputStream body, @Context HttpServletRequest request)
             throws IOException {
         return respondTo(requestFactory.createPutRequest(localPath, request, body));
     }
 
     @POST
     @Path("{localPath: .*}")
-    public Response post(@PathParam("localPath") URI localPath, byte[] body, @Context HttpServletRequest request)
+    public Response post(@PathParam("localPath") URI localPath, InputStream body, @Context HttpServletRequest request)
             throws IOException {
         return respondTo(requestFactory.createPostRequest(localPath, request, body));
     }

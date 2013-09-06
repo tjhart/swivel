@@ -44,21 +44,64 @@ public class RequestRouter {
     private HttpParams httpParams = new BasicHttpParams();
 
     public HttpResponse work(HttpRequestBase request) {
+        HttpResponse result = stub(request);
+        if (result == null) {
+            result = shunt(request);
+        }
+        return result;
+    }
+
+    protected HttpResponse stub(final HttpRequestBase request) {
+        StubRequestHandler handler =
+                findHandler(request, stubPaths, new Block2<List<StubRequestHandler>, String, StubRequestHandler>() {
+                    @Override
+                    public StubRequestHandler invoke(List<StubRequestHandler> stubRequestHandlers,
+                            final String matchedPath) {
+                        return Lists.find(stubRequestHandlers, new Block<StubRequestHandler, Boolean>() {
+                            @Override
+                            public Boolean invoke(StubRequestHandler stubRequestHandler) {
+                                return stubRequestHandler.matches(request);
+                            }
+                        });
+                    }
+                });
+        return handler == null
+                ? null
+                : handler.handle(request);
+    }
+
+    protected HttpResponse shunt(HttpRequestBase request) {
         try {
-            Deque<String> pathElements = new LinkedList<String>(Arrays.asList(toKeys(request.getURI())));
-            ShuntRequestHandler shuntRequestHandler;
-            String matchedPath;
-            do {
-                matchedPath = Strings.join(pathElements.toArray(new String[pathElements.size()]), "/");
-                shuntRequestHandler = shuntPaths.get(matchedPath);
-                pathElements.removeLast();
-            }
-            while (shuntRequestHandler == null && !pathElements.isEmpty());
-            //noinspection ConstantConditions
-            return shuntRequestHandler.handle(request, new URI(matchedPath), createClient());
+            final String[] matchedPaths = new String[]{null};
+            ShuntRequestHandler shuntRequestHandler =
+                    findHandler(request, shuntPaths, new Block2<ShuntRequestHandler, String, ShuntRequestHandler>() {
+                        @Override
+                        public ShuntRequestHandler invoke(ShuntRequestHandler shuntRequestHandler, String matchedPath) {
+                            matchedPaths[0] = matchedPath;
+                            return shuntRequestHandler;
+                        }
+                    });
+            return shuntRequestHandler.handle(request, new URI(matchedPaths[0]), createClient());
         } catch (URISyntaxException use) {
             throw new RuntimeException("Programmer error!", use);
         }
+    }
+
+    protected <T, U> T findHandler(HttpRequestBase request, Map<String, U> handlerMap, Block2<U, String, T> block) {
+        T result = null;
+        Deque<String> pathElements = new LinkedList<String>(Arrays.asList(toKeys(request.getURI())));
+        String matchedPath;
+        do {
+            matchedPath = Strings.join(pathElements.toArray(new String[pathElements.size()]), "/");
+            U u = handlerMap.get(matchedPath);
+            if (u != null) {
+                result = block.invoke(u, matchedPath);
+            }
+            pathElements.removeLast();
+        }
+        while (result == null && !pathElements.isEmpty());
+
+        return result;
     }
 
     public void removeStub(URI localUri, final int stubHandlerId) {

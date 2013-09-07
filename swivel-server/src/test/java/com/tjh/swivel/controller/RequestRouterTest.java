@@ -2,7 +2,6 @@ package com.tjh.swivel.controller;
 
 import com.tjh.swivel.model.ShuntRequestHandler;
 import com.tjh.swivel.model.StubRequestHandler;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -10,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.net.URI;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -19,13 +19,11 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("unchecked")
 public class RequestRouterTest {
 
     public static final URI LOCAL_URI = URI.create("some/path");
@@ -52,7 +50,10 @@ public class RequestRouterTest {
     public void setShuntPutsRequestHandlerAtExpectedPath() {
         requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
 
-        assertThat(requestRouter.shuntPaths.get(LOCAL_URI.getPath()), equalTo(mockRequestHandler));
+        assertThat((ShuntRequestHandler) requestRouter.uriHandlers
+                .get(LOCAL_URI.getPath())
+                .get(RequestRouter.SHUNT_NODE),
+                equalTo(mockRequestHandler));
     }
 
     @Test
@@ -60,39 +61,39 @@ public class RequestRouterTest {
         requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
         requestRouter.deleteShunt(LOCAL_URI);
 
-        assertThat(requestRouter.shuntPaths.keySet().isEmpty(), is(true));
+        assertThat(requestRouter.uriHandlers.keySet().isEmpty(), is(true));
     }
 
     @Test
-    public void shuntDelegatesToShuntRequestHandler() {
+    public void routeDelegatesToShuntRequestHandler() {
         requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
 
-        requestRouter.shunt(mockRequestBase);
+        requestRouter.route(mockRequestBase);
 
         verify(mockRequestHandler).handle(eq(mockRequestBase), any(URI.class), any(HttpClient.class));
     }
 
     @Test
-    public void shuntFindsHandlerOnShallowerPath() {
+    public void routeFindsHandlerOnShallowerPath() {
         requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
         when(mockRequestBase.getURI()).thenReturn(DEEP_URI);
 
-        requestRouter.shunt(mockRequestBase);
+        requestRouter.route(mockRequestBase);
 
         verify(mockRequestHandler).handle(eq(mockRequestBase), any(URI.class), any(HttpClient.class));
     }
 
     @Test(expected = RuntimeException.class)
-    public void shuntThrowsOnUnknownURI() {
-        requestRouter.shunt(mockRequestBase);
+    public void routeThrowsOnUnknownURI() {
+        requestRouter.route(mockRequestBase);
     }
 
     @Test
-    public void shuntRemovesMatchedPathFromURISentToHandler() {
+    public void routeRemovesMatchedPathFromURISentToHandler() {
         requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
         when(mockRequestBase.getURI()).thenReturn(DEEP_URI);
 
-        requestRouter.shunt(mockRequestBase);
+        requestRouter.route(mockRequestBase);
 
         verify(mockRequestHandler).handle(eq(mockRequestBase), eq(LOCAL_URI), any(HttpClient.class));
     }
@@ -101,7 +102,10 @@ public class RequestRouterTest {
     public void addStubPutsStubInListAtPath() {
         requestRouter.addStub(LOCAL_URI, mockStubHandler);
 
-        assertThat(requestRouter.stubPaths.get(LOCAL_URI.getPath()).get(0), sameInstance(mockStubHandler));
+        assertThat(((List<StubRequestHandler>) requestRouter.uriHandlers
+                .get(LOCAL_URI.getPath())
+                .get(RequestRouter.STUB_NODE)).get(0),
+                sameInstance(mockStubHandler));
     }
 
     @Test
@@ -110,58 +114,9 @@ public class RequestRouterTest {
 
         requestRouter.removeStub(LOCAL_URI, STUB_HANDLER_ID);
 
-        assertThat(requestRouter.stubPaths.get(LOCAL_URI.getPath()), not(hasItem(mockStubHandler)));
-    }
-
-    @Test
-    public void workDelegatesToStub() {
-        RequestRouter requestRouterSpy = spy(requestRouter);
-
-        doReturn(null)
-                .when(requestRouterSpy)
-                .shunt(mockRequestBase);
-
-        requestRouterSpy.work(mockRequestBase);
-
-        verify(requestRouterSpy).stub(mockRequestBase);
-    }
-
-    @Test
-    public void workDelegatesToShuntIfStubReturnsNull() {
-        RequestRouter requestRouterSpy = spy(requestRouter);
-
-        doReturn(null)
-                .when(requestRouterSpy)
-                .stub(mockRequestBase);
-        doReturn(null)
-                .when(requestRouterSpy)
-                .shunt(mockRequestBase);
-
-        requestRouterSpy.work(mockRequestBase);
-
-        verify(requestRouterSpy).shunt(mockRequestBase);
-    }
-
-    @Test
-    public void workDoesNotShuntIfStubReturns() {
-        RequestRouter requestRouterSpy = spy(requestRouter);
-
-        HttpResponse mockResponse = mock(HttpResponse.class);
-        doReturn(mockResponse)
-                .when(requestRouterSpy)
-                .stub(mockRequestBase);
-
-        requestRouterSpy.work(mockRequestBase);
-
-        verify(requestRouterSpy, never()).shunt(mockRequestBase);
-    }
-
-    @Test
-    public void stubDelegatesToStubRequestHandler() {
-        requestRouter.addStub(LOCAL_URI, mockStubHandler);
-
-        requestRouter.stub(mockRequestBase);
-
-        verify(mockStubHandler).matches(mockRequestBase);
+        assertThat((List<StubRequestHandler>) requestRouter.uriHandlers
+                .get(LOCAL_URI.getPath())
+                .get(RequestRouter.STUB_NODE),
+                not(hasItem(mockStubHandler)));
     }
 }

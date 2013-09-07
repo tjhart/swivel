@@ -35,7 +35,7 @@ public class RequestRouterTest {
     @Test
     public void workRedirectsRequest() throws IOException {
         HttpRequestBase request = new HttpGet("couch");
-        HttpResponse httpResponse = requestRouter.work(request);
+        HttpResponse httpResponse = requestRouter.route(request);
 
         assertThat(httpResponse.getStatusLine().getStatusCode() / 100, equalTo(2));
         String entity = EntityUtils.toString(httpResponse.getEntity());

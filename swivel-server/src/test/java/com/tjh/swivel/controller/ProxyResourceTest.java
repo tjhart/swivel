@@ -53,13 +53,13 @@ public class ProxyResourceTest {
     public void getDelegatesToRouter() throws URISyntaxException, IOException {
         proxyResource.get(LOCAL_URI, mockRequest);
 
-        verify(mockRouter).work(mockRequestBase);
+        verify(mockRouter).route(mockRequestBase);
     }
 
     @Test
     public void getDelegatesToResponseFactory() throws URISyntaxException, IOException {
         HttpResponse mockResponse = mock(HttpResponse.class);
-        when(mockRouter.work(any(HttpRequestBase.class))).thenReturn(mockResponse);
+        when(mockRouter.route(any(HttpRequestBase.class))).thenReturn(mockResponse);
 
         proxyResource.get(LOCAL_URI, mockRequest);
 

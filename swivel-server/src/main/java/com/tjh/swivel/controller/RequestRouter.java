@@ -1,10 +1,12 @@
 package com.tjh.swivel.controller;
 
+import com.tjh.swivel.model.RequestHandler;
 import com.tjh.swivel.model.ShuntRequestHandler;
 import com.tjh.swivel.model.StubRequestHandler;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -17,8 +19,8 @@ import vanderbilt.util.PopulatingMap;
 import vanderbilt.util.Strings;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,98 +30,70 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RequestRouter {
 
+    public static final String SHUNT_NODE = "^shunt";
+    public static final String STUB_NODE = "^stub";
     private Logger logger = Logger.getLogger(RequestRouter.class);
 
-    protected final Map<String, ShuntRequestHandler> shuntPaths = new ConcurrentHashMap<String, ShuntRequestHandler>();
-    protected final Map<String, List<StubRequestHandler>> stubPaths =
-            new PopulatingMap<String, List<StubRequestHandler>>(
-                    new ConcurrentHashMap<String, List<StubRequestHandler>>(),
-                    new Block2<Map<String, List<StubRequestHandler>>, Object, List<StubRequestHandler>>() {
-                        @Override
-                        public List<StubRequestHandler> invoke(Map<String, List<StubRequestHandler>> stringListMap,
-                                Object o) {
-                            return new CopyOnWriteArrayList<StubRequestHandler>();
-                        }
-                    });
+    protected final Map<String, Map<String, Object>> uriHandlers = new PopulatingMap<String, Map<String, Object>>(
+            new ConcurrentHashMap<String, Map<String, Object>>(),
+            new Block2<Map<String, Map<String, Object>>, Object, Map<String, Object>>() {
+                @Override
+                public Map<String, Object> invoke(Map<String, Map<String, Object>> stringMapMap, Object o) {
+                    return new PopulatingMap<String, Object>(new ConcurrentHashMap<String, Object>(),
+                            new Block2<Map<String, Object>, Object, Object>() {
+                                @Override
+                                public Object invoke(Map<String, Object> stringObjectMap, Object o) {
+                                    Object result = null;
+                                    if (STUB_NODE.equals(o)) {
+                                        result = new CopyOnWriteArrayList();
+                                    }
+                                    return result;
+                                }
+                            });
+                }
+            }
+    );
 
     private ClientConnectionManager clientConnectionManager;
     private HttpParams httpParams = new BasicHttpParams();
 
-    public HttpResponse work(HttpRequestBase request) {
-        //YELLOWTAG:TJH - would it be better to have stubs and shunts in the same map?
-        //might be more efficient and less surprising than a matching stub at '/foo'
-        //when a shunt existed at '/foo/bar'
-        HttpResponse result = stub(request);
-        if (result == null) {
-            result = shunt(request);
-        }
-        return result;
-    }
-
-    protected HttpResponse stub(final HttpRequestBase request) {
-        try {
-            final String[] matchedPaths = new String[]{null};
-            StubRequestHandler handler =
-                    findHandler(request, stubPaths, new Block2<List<StubRequestHandler>, String, StubRequestHandler>() {
-                        @Override
-                        public StubRequestHandler invoke(List<StubRequestHandler> stubRequestHandlers,
-                                final String matchedPath) {
-                            return Lists.find(stubRequestHandlers, new Block<StubRequestHandler, Boolean>() {
-                                @Override
-                                public Boolean invoke(StubRequestHandler stubRequestHandler) {
-                                    boolean matches = stubRequestHandler.matches(request);
-                                    if (matches) {
-                                        matchedPaths[0] = matchedPath;
-                                    }
-                                    return matches;
-                                }
-                            });
-                        }
-                    });
-            return handler == null
-                    ? null
-                    : handler.handle(request, new URI(matchedPaths[0]), createClient());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Programmer Error!", e);
-        }
-    }
-
-    protected HttpResponse shunt(HttpRequestBase request) {
-        try {
-            final String[] matchedPaths = new String[]{null};
-            ShuntRequestHandler shuntRequestHandler =
-                    findHandler(request, shuntPaths, new Block2<ShuntRequestHandler, String, ShuntRequestHandler>() {
-                        @Override
-                        public ShuntRequestHandler invoke(ShuntRequestHandler shuntRequestHandler, String matchedPath) {
-                            matchedPaths[0] = matchedPath;
-                            return shuntRequestHandler;
-                        }
-                    });
-            return shuntRequestHandler.handle(request, new URI(matchedPaths[0]), createClient());
-        } catch (URISyntaxException use) {
-            throw new RuntimeException("Programmer error!", use);
-        }
-    }
-
-    protected <T, U> T findHandler(HttpRequestBase request, Map<String, U> handlerMap, Block2<U, String, T> block) {
-        T result = null;
+    @SuppressWarnings({"ConstantConditions", "unchecked"})
+    public HttpResponse route(HttpRequestBase request) {
+        RequestHandler result = null;
         Deque<String> pathElements = new LinkedList<String>(Arrays.asList(toKeys(request.getURI())));
         String matchedPath;
         do {
             matchedPath = Strings.join(pathElements.toArray(new String[pathElements.size()]), "/");
-            U u = handlerMap.get(matchedPath);
-            if (u != null) {
-                result = block.invoke(u, matchedPath);
+            if (uriHandlers.containsKey(matchedPath)) {
+                Map<String, Object> stringObjectMap = uriHandlers.get(matchedPath);
+                result = findStub(stringObjectMap, request);
+                if (result == null) {
+                    result = (RequestHandler) stringObjectMap.get(SHUNT_NODE);
+                }
             }
             pathElements.removeLast();
         }
         while (result == null && !pathElements.isEmpty());
 
-        return result;
+        return result.handle(request, URI.create(matchedPath), createClient());
     }
 
+    @SuppressWarnings("unchecked")
+    private RequestHandler findStub(Map<String, Object> stringObjectMap, final HttpUriRequest request) {
+        return Lists.find((Collection<StubRequestHandler>) stringObjectMap.get(STUB_NODE),
+                new Block<StubRequestHandler, Boolean>() {
+                    @Override
+                    public Boolean invoke(StubRequestHandler requestHandler) {
+                        return requestHandler.matches(request);
+                    }
+                });
+    }
+
+    @SuppressWarnings("unchecked")
     public void removeStub(URI localUri, final int stubHandlerId) {
-        List<StubRequestHandler> handlers = stubPaths.get(localUri.getPath());
+        List<StubRequestHandler> handlers = (List<StubRequestHandler>) uriHandlers
+                .get(localUri.getPath())
+                .get(STUB_NODE);
         StubRequestHandler target = Lists.find(handlers, new Block<StubRequestHandler, Boolean>() {
             @Override
             public Boolean invoke(StubRequestHandler stubRequestHandler) {
@@ -130,14 +104,17 @@ public class RequestRouter {
     }
 
     public void setShunt(URI localURI, ShuntRequestHandler requestHandler) {
-        shuntPaths.put(localURI.getPath(), requestHandler);
+        uriHandlers.get(localURI.getPath()).put(SHUNT_NODE, requestHandler);
     }
 
+    @SuppressWarnings("unchecked")
     public void addStub(URI localUri, StubRequestHandler stubRequestHandler) {
-        stubPaths.get(localUri.getPath()).add(stubRequestHandler);
+        ((List) uriHandlers.get(localUri.getPath())
+                .get(STUB_NODE))
+                .add(stubRequestHandler);
     }
 
-    public void deleteShunt(URI localURI) { shuntPaths.remove(localURI.getPath()); }
+    public void deleteShunt(URI localURI) { uriHandlers.remove(localURI.getPath()); }
 
     protected HttpClient createClient() { return new DefaultHttpClient(clientConnectionManager, httpParams); }
 

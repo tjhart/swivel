@@ -49,7 +49,7 @@ public class ProxyResource {
     }
 
     protected Response respondTo(HttpRequestBase request) throws IOException {
-        return responseFactory.createResponse(router.work(request));
+        return responseFactory.createResponse(router.route(request));
     }
 
     public void setRequestFactory(HttpUriRequestFactory requestFactory) { this.requestFactory = requestFactory; }

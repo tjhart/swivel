@@ -32,7 +32,7 @@ public class ConfigurationResourceTest {
 
     @Test
     public void shuntWorks(){
-        requestRouter.work(new HttpGet(URI.create("couch")));
+        requestRouter.route(new HttpGet(URI.create("couch")));
         //would throw if failed
     }
 

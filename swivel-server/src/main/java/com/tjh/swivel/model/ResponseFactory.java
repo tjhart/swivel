@@ -31,7 +31,7 @@ public class ResponseFactory {
     }
 
     public HttpResponse createResponse(Map<String, Object> map) {
-        return createResponse((Integer) map.get(STATUS_CODE_KEY),
+        return createResponse(((Number) map.get(STATUS_CODE_KEY)).intValue(),
                 (String) map.get(REASON_KEY),
                 (String) map.get(ENTITY_KEY),
                 (String) map.get(CONTENT_TYPE_KEY));

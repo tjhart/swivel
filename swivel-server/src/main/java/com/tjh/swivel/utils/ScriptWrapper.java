@@ -1,5 +1,7 @@
 package com.tjh.swivel.utils;
 
+import org.apache.log4j.Logger;
+
 import javax.script.Bindings;
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -12,11 +14,15 @@ import javax.script.ScriptException;
  */
 public class ScriptWrapper {
 
+    private Logger logger = Logger.getLogger(ScriptWrapper.class);
+
     protected final String script;
     protected ScriptEngine engine;
     protected CompiledScript compiledScript;
 
     public ScriptWrapper(String language, String script) throws ScriptException {
+        logger.debug("ScriptWrapper.ScriptWrapper");
+        logger.debug("script = " + script);
         this.script = script;
         this.engine = new ScriptEngineManager().getEngineByName(language);
         if (engine instanceof Compilable) {

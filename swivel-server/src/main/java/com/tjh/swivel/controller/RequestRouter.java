@@ -44,6 +44,9 @@ public class RequestRouter {
     private HttpParams httpParams = new BasicHttpParams();
 
     public HttpResponse work(HttpRequestBase request) {
+        //YELLOWTAG:TJH - would it be better to have stubs and shunts in the same map?
+        //might be more efficient and less surprising than a matching stub at '/foo'
+        //when a shunt existed at '/foo/bar'
         HttpResponse result = stub(request);
         if (result == null) {
             result = shunt(request);

@@ -3,7 +3,6 @@ package com.tjh.swivel.controller;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -16,7 +15,7 @@ public class JerseyResponseFactory {
                 Response.status(response.getStatusLine().getStatusCode());
         HttpEntity entity = response.getEntity();
         if (entity != null) {
-            builder.entity(EntityUtils.toByteArray(entity));
+            builder.entity(entity.getContent());
         }
 
         for (Header header : response.getAllHeaders()) {

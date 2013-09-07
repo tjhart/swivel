@@ -36,7 +36,7 @@ public class DynamicStubRequestHandlerTest {
     public void handleDefersToScriptWrapper() throws ScriptException {
         dynamicResponseHandler.scriptWrapper = mock(ScriptWrapper.class);
 
-        dynamicResponseHandler.handle(mockRequest);
+        dynamicResponseHandler.handle(mockRequest, null, null);
 
         ArgumentCaptor<Bindings> bindingsCaptor = ArgumentCaptor.forClass(Bindings.class);
 

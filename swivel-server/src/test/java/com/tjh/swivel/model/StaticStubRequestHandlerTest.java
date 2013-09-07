@@ -29,6 +29,6 @@ public class StaticStubRequestHandlerTest {
 
     @Test
     public void handleReturnsResponse() {
-        assertThat(staticResponseHandler.handle(mock(HttpUriRequest.class)), sameInstance(mockHttpResponse));
+        assertThat(staticResponseHandler.handle(mock(HttpUriRequest.class), null, null), sameInstance(mockHttpResponse));
     }
 }

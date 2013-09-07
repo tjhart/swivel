@@ -1,10 +1,8 @@
 package com.tjh.swivel.model;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 
-public interface StubRequestHandler {
-    HttpResponse handle(HttpUriRequest request);
+public interface StubRequestHandler extends RequestHandler<HttpUriRequest> {
 
     boolean matches(HttpUriRequest request);
 

@@ -31,14 +31,16 @@ public class RequestRouter {
     private Logger logger = Logger.getLogger(RequestRouter.class);
 
     protected final Map<String, ShuntRequestHandler> shuntPaths = new ConcurrentHashMap<String, ShuntRequestHandler>();
-    protected final Map<String, List<StubRequestHandler>> stubPaths = new PopulatingMap<String,
-            List<StubRequestHandler>>(new ConcurrentHashMap<String, List<StubRequestHandler>>(),
-            new Block2<Map<String, List<StubRequestHandler>>, Object, List<StubRequestHandler>>() {
-                @Override
-                public List<StubRequestHandler> invoke(Map<String, List<StubRequestHandler>> stringListMap, Object o) {
-                    return new CopyOnWriteArrayList<StubRequestHandler>();
-                }
-            });
+    protected final Map<String, List<StubRequestHandler>> stubPaths =
+            new PopulatingMap<String, List<StubRequestHandler>>(
+                    new ConcurrentHashMap<String, List<StubRequestHandler>>(),
+                    new Block2<Map<String, List<StubRequestHandler>>, Object, List<StubRequestHandler>>() {
+                        @Override
+                        public List<StubRequestHandler> invoke(Map<String, List<StubRequestHandler>> stringListMap,
+                                Object o) {
+                            return new CopyOnWriteArrayList<StubRequestHandler>();
+                        }
+                    });
 
     private ClientConnectionManager clientConnectionManager;
     private HttpParams httpParams = new BasicHttpParams();
@@ -55,22 +57,31 @@ public class RequestRouter {
     }
 
     protected HttpResponse stub(final HttpRequestBase request) {
-        StubRequestHandler handler =
-                findHandler(request, stubPaths, new Block2<List<StubRequestHandler>, String, StubRequestHandler>() {
-                    @Override
-                    public StubRequestHandler invoke(List<StubRequestHandler> stubRequestHandlers,
-                            final String matchedPath) {
-                        return Lists.find(stubRequestHandlers, new Block<StubRequestHandler, Boolean>() {
-                            @Override
-                            public Boolean invoke(StubRequestHandler stubRequestHandler) {
-                                return stubRequestHandler.matches(request);
-                            }
-                        });
-                    }
-                });
-        return handler == null
-                ? null
-                : handler.handle(request);
+        try {
+            final String[] matchedPaths = new String[]{null};
+            StubRequestHandler handler =
+                    findHandler(request, stubPaths, new Block2<List<StubRequestHandler>, String, StubRequestHandler>() {
+                        @Override
+                        public StubRequestHandler invoke(List<StubRequestHandler> stubRequestHandlers,
+                                final String matchedPath) {
+                            return Lists.find(stubRequestHandlers, new Block<StubRequestHandler, Boolean>() {
+                                @Override
+                                public Boolean invoke(StubRequestHandler stubRequestHandler) {
+                                    boolean matches = stubRequestHandler.matches(request);
+                                    if (matches) {
+                                        matchedPaths[0] = matchedPath;
+                                    }
+                                    return matches;
+                                }
+                            });
+                        }
+                    });
+            return handler == null
+                    ? null
+                    : handler.handle(request, new URI(matchedPaths[0]), createClient());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Programmer Error!", e);
+        }
     }
 
     protected HttpResponse shunt(HttpRequestBase request) {

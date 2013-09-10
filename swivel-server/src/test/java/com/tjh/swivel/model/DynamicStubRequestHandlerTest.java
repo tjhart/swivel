@@ -1,6 +1,7 @@
 package com.tjh.swivel.model;
 
 import com.tjh.swivel.utils.ScriptWrapper;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -9,6 +10,7 @@ import org.mockito.ArgumentCaptor;
 
 import javax.script.Bindings;
 import javax.script.ScriptException;
+import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -36,7 +38,7 @@ public class DynamicStubRequestHandlerTest {
     public void handleDefersToScriptWrapper() throws ScriptException {
         dynamicResponseHandler.scriptWrapper = mock(ScriptWrapper.class);
 
-        dynamicResponseHandler.handle(mockRequest, null, null);
+        dynamicResponseHandler.handle(mockRequest, URI.create("matched/uri"), mock(HttpClient.class));
 
         ArgumentCaptor<Bindings> bindingsCaptor = ArgumentCaptor.forClass(Bindings.class);
 

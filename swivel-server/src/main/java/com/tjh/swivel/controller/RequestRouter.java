@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import vanderbilt.util.Block;
 import vanderbilt.util.Block2;
 import vanderbilt.util.Lists;
+import vanderbilt.util.Maps;
 import vanderbilt.util.PopulatingMap;
 import vanderbilt.util.Strings;
 
@@ -22,6 +23,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +70,7 @@ public class RequestRouter {
             if (uriHandlers.containsKey(matchedPath)) {
                 Map<String, Object> stringObjectMap = uriHandlers.get(matchedPath);
                 result = findStub(stringObjectMap, request);
-                if (result == null) {
+                if (result == null && stringObjectMap.containsKey(SHUNT_NODE)) {
                     result = (RequestHandler) stringObjectMap.get(SHUNT_NODE);
                 }
             }
@@ -102,23 +104,28 @@ public class RequestRouter {
                 return stubRequestHandler.getId() == stubHandlerId;
             }
         });
+        logger.debug(String.format("Removing <%1$s> from path <%2$s>", target, localUri));
         handlers.remove(target);
     }
 
     public void setShunt(URI localURI, ShuntRequestHandler requestHandler) {
+        logger.debug(String.format("Setting shunt <%1$s> at <%2$s>", requestHandler, localURI));
         uriHandlers.get(localURI.getPath()).put(SHUNT_NODE, requestHandler);
     }
 
     @SuppressWarnings("unchecked")
     public void addStub(URI localUri, StubRequestHandler stubRequestHandler) {
+        logger.debug(String.format("Adding stub <%1$s> to <%2$s>", stubRequestHandler, localUri));
         ((List) uriHandlers.get(localUri.getPath())
                 .get(STUB_NODE))
                 .add(stubRequestHandler);
     }
 
     public void deleteShunt(URI localURI) {
-        uriHandlers.get(localURI.getPath())
+        ShuntRequestHandler shuntRequestHandler = (ShuntRequestHandler) uriHandlers.get(localURI.getPath())
                 .remove(SHUNT_NODE);
+
+        logger.debug(String.format("Removed <%1$s> from <%2$s>", shuntRequestHandler, localURI));
     }
 
     protected HttpClient createClient() { return new DefaultHttpClient(clientConnectionManager, httpParams); }
@@ -126,6 +133,18 @@ public class RequestRouter {
     private String[] toKeys(URI localURI) {return localURI.getPath().split("/");}
 
     //<editor-fold desc="bean">
+    public Map<String, Map<String, Object>> getUriHandlers() {
+        final HashMap<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>(uriHandlers);
+        Maps.eachPair(result, new Block2<String, Map<String, Object>, Object>() {
+            @Override
+            public Object invoke(String s, Map<String, Object> stringObjectMap) {
+                result.put(s, new HashMap<String, Object>(stringObjectMap));
+                return null;
+            }
+        });
+        return result;
+    }
+
     public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
     }

@@ -27,6 +27,7 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
         StringDescription stringDescription = new StringDescription();
         matcher.describeTo(stringDescription);
         sb.append("matcher=").append(stringDescription.toString());
+        sb.append("id=").append(getId());
         sb.append('}');
         return sb.toString();
     }

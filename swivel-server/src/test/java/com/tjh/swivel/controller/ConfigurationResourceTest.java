@@ -106,4 +106,22 @@ public class ConfigurationResourceTest {
 
         verify(mockRouter).removeStub(LOCAL_URI, STUB_HANDLER_ID);
     }
+
+    @Test
+    public void getConfigDefersToRouter() {
+        configurationResource.getConfiguration();
+
+        verify(mockRouter).getUriHandlers();
+    }
+
+    @Test
+    public void getConfigTranslatesShuntsToStrings() {
+        ShuntRequestHandler mockShuntHandler = mock(ShuntRequestHandler.class);
+        when(mockRouter.getUriHandlers()).thenReturn(
+                Maps.asMap(LOCAL_PATH, Maps.<String, Object>asMap(RequestRouter.SHUNT_NODE, mockShuntHandler)));
+
+        Map<String, Map<String, Object>> configuration = configurationResource.getConfiguration();
+
+        assertThat((String) configuration.get(LOCAL_PATH).get("shunt"), equalTo(mockShuntHandler.toString()));
+    }
 }

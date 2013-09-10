@@ -15,13 +15,11 @@ import static com.tjh.swivel.model.matchers.ContentTypeMatcher.hasContentType;
 import static com.tjh.swivel.model.matchers.ParameterMapMatcher.hasParameterMap;
 import static com.tjh.swivel.model.matchers.RequestHeaderMatcher.hasHeader;
 import static com.tjh.swivel.model.matchers.RequestMethodMatcher.hasMethod;
-import static com.tjh.swivel.model.matchers.RequestedURIPathMatcher.hasURIPath;
 import static com.tjh.swivel.model.matchers.ScriptMatcher.scriptMatches;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.startsWith;
 
 /**
  * These rules were build quickly and naively. They're not indexable or inspectable in any way.
@@ -46,7 +44,6 @@ public class MatcherFactory {
 
         List<Matcher<HttpUriRequest>> matchers = new ArrayList<Matcher<HttpUriRequest>>(STATIC_MATCHER_COUNT);
         matchers.add(hasMethod(equalTo(stubDescription.get(METHOD_KEY))));
-        matchers.add(hasURIPath(startsWith(localURI.toString())));
 
         matchers.add(buildOptionalMatcher(localURI, stubDescription));
         return allOf(matchers.toArray(new Matcher[matchers.size()]));

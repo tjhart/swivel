@@ -46,7 +46,7 @@ public class MatcherFactoryTest {
     }
 
     @Test
-    public void matchesPathAndMethod() throws IOException {
+    public void matchesMethod() throws IOException {
         //This is backwards from normal - expected is usually on the left.
         //but if I put the actual on the left, when the assertion fails, I get a nice
         //description of what's wrong

@@ -59,9 +59,11 @@ public class RequestRouterTest {
     @Test
     public void deleteShuntRemovesHandler() {
         requestRouter.setShunt(LOCAL_URI, mockRequestHandler);
+
         requestRouter.deleteShunt(LOCAL_URI);
 
-        assertThat(requestRouter.uriHandlers.keySet().isEmpty(), is(true));
+        assertThat(requestRouter.uriHandlers.get(LOCAL_URI.toString()).containsKey(RequestRouter.SHUNT_NODE),
+                is(false));
     }
 
     @Test

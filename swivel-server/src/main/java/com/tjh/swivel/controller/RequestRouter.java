@@ -47,6 +47,7 @@ public class RequestRouter {
                                     if (STUB_NODE.equals(o)) {
                                         result = new CopyOnWriteArrayList();
                                     }
+
                                     return result;
                                 }
                             });
@@ -114,7 +115,10 @@ public class RequestRouter {
                 .add(stubRequestHandler);
     }
 
-    public void deleteShunt(URI localURI) { uriHandlers.remove(localURI.getPath()); }
+    public void deleteShunt(URI localURI) {
+        uriHandlers.get(localURI.getPath())
+                .remove(SHUNT_NODE);
+    }
 
     protected HttpClient createClient() { return new DefaultHttpClient(clientConnectionManager, httpParams); }
 

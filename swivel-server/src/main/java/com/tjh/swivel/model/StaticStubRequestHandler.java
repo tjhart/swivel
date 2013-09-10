@@ -22,7 +22,7 @@ public class StaticStubRequestHandler extends AbstractStubRequestHandler {
     public String toString() {
         final StringBuilder sb = new StringBuilder("StaticStubRequestHandler{");
         sb.append("super=").append(super.toString());
-        sb.append("httpResponse=").append(httpResponse);
+        sb.append(", httpResponse=").append(httpResponse);
         sb.append('}');
         return sb.toString();
     }

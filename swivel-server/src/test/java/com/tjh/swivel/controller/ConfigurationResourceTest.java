@@ -102,7 +102,7 @@ public class ConfigurationResourceTest {
     public void deleteStubRemovesStubAtURI() throws ScriptException, URISyntaxException {
         configurationResource.postStub(LOCAL_PATH, JSON, mockRequest);
 
-        configurationResource.deleteStub(LOCAL_URI, Maps.asMap(ConfigurationResource.STUB_ID_KEY, STUB_HANDLER_ID));
+        configurationResource.deleteStub(LOCAL_URI, STUB_HANDLER_ID);
 
         verify(mockRouter).removeStub(LOCAL_URI, STUB_HANDLER_ID);
     }

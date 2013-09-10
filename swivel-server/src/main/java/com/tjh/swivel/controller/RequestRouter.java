@@ -118,7 +118,7 @@ public class RequestRouter {
         logger.debug(String.format("Adding stub <%1$s> to <%2$s>", stubRequestHandler, localUri));
         ((List) uriHandlers.get(localUri.getPath())
                 .get(STUB_NODE))
-                .add(stubRequestHandler);
+                .add(0, stubRequestHandler);
     }
 
     public void deleteShunt(URI localURI) {

@@ -1,0 +1,26 @@
+@import "source-sans-pro-fontfacekit/stylesheet.css";
+
+body {
+    font-family: "SourceSansProRegular", sans-serif;
+}
+
+body > header {
+    background-color: black;
+    color: #4D9CB2;
+    font-weight: bold;
+    font-size: 24px;
+    padding: 25px 25px 25px 25px;
+    text-align: center;
+}
+
+.content {
+    margin: 10px 100px 10px 100px;
+    border-style: groove;
+    box-shadow: 10px 10px 5px darkgray;
+    height: 500px;
+}
+
+body > footer {
+    text-align: center;
+    padding: 25px 25px 25px 25px;
+}

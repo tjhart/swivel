@@ -10,6 +10,7 @@ import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -24,6 +25,7 @@ import java.util.Map;
 @Path("config")
 public class ConfigurationResource {
     public static final String REMOTE_URI_KEY = "remoteURI";
+    public static final String STUB_ID_KEY = "id";
 
     protected Logger logger = Logger.getLogger(ConfigurationResource.class);
     protected RequestRouter router;
@@ -59,11 +61,11 @@ public class ConfigurationResource {
         router.deleteShunt(localPath);
     }
 
-    @PUT
+    @POST
     @Path("stub/{localPath: .*}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> putStub(@PathParam("localPath") String localPath, Map<String, Object> stubDescription,
+    public Map<String, Object> postStub(@PathParam("localPath") String localPath, Map<String, Object> stubDescription,
             @Context HttpServletRequest request) throws URISyntaxException, ScriptException {
         StringBuilder sb = new StringBuilder(localPath);
         String queryString = trimToNull(request.getQueryString());
@@ -76,7 +78,13 @@ public class ConfigurationResource {
 
         logger.debug(String.format("Adding stub for %1$s", localUri));
         router.addStub(localUri, stubRequestHandler);
-        return Maps.<String, Object>asMap("id", stubRequestHandler.getId());
+        return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());
+    }
+
+    @DELETE
+    @Path("stub/{localPath: .*}")
+    public void deleteStub(URI localUri, Map<String, Integer> json) {
+        router.removeStub(localUri, json.get(STUB_ID_KEY));
     }
 
     protected static String trimToNull(String source) {

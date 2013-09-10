@@ -70,14 +70,14 @@ public class ConfigurationResourceTest {
 
     @Test
     public void putStubDefersToFactory() throws ScriptException, URISyntaxException {
-        configurationResource.putStub(LOCAL_PATH, JSON, mockRequest);
+        configurationResource.postStub(LOCAL_PATH, JSON, mockRequest);
 
         verify(mockStubFactory).createStubFor(LOCAL_URI, JSON);
     }
 
     @Test
     public void putStubDefersToRouter() throws URISyntaxException, ScriptException {
-        configurationResource.putStub(LOCAL_PATH, JSON, mockRequest);
+        configurationResource.postStub(LOCAL_PATH, JSON, mockRequest);
 
         verify(mockRouter).addStub(LOCAL_URI, mockStubRequestHandler);
     }
@@ -86,7 +86,7 @@ public class ConfigurationResourceTest {
     public void putStubAddsQueryStringIfProvided() throws URISyntaxException, ScriptException {
         when(mockRequest.getQueryString()).thenReturn("key=val");
 
-        configurationResource.putStub(LOCAL_PATH, JSON, mockRequest);
+        configurationResource.postStub(LOCAL_PATH, JSON, mockRequest);
 
         verify(mockRouter).addStub(new URI(LOCAL_PATH + "?" + "key=val"), mockStubRequestHandler);
     }
@@ -94,7 +94,16 @@ public class ConfigurationResourceTest {
     @Test
     public void putStubReturnsRouterIDForStub() throws URISyntaxException, ScriptException {
 
-        assertThat((Integer) configurationResource.putStub(LOCAL_PATH, JSON, mockRequest).get("id"),
+        assertThat((Integer) configurationResource.postStub(LOCAL_PATH, JSON, mockRequest).get("id"),
                 equalTo(STUB_HANDLER_ID));
+    }
+
+    @Test
+    public void deleteStubRemovesStubAtURI() throws ScriptException, URISyntaxException {
+        configurationResource.postStub(LOCAL_PATH, JSON, mockRequest);
+
+        configurationResource.deleteStub(LOCAL_URI, Maps.asMap(ConfigurationResource.STUB_ID_KEY, STUB_HANDLER_ID));
+
+        verify(mockRouter).removeStub(LOCAL_URI, STUB_HANDLER_ID);
     }
 }

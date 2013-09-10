@@ -1,5 +1,6 @@
 package com.tjh.swivel.model;
 
+import com.tjh.swivel.utils.URIUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -35,11 +36,7 @@ public class ShuntRequestHandler implements RequestHandler<HttpRequestBase>{
 
     protected HttpUriRequest createShuntRequest(HttpRequestBase request, URI matchedURI) {
 
-        String relativePath = request
-                .getURI()
-                .getPath()
-                .substring(matchedURI.getPath().length());
-        request.setURI(baseUri.resolve(URI.create(relativePath)));
+        request.setURI(URIUtils.resolveUri(baseUri, request.getURI(), matchedURI));
 
         return request;
     }

@@ -3,6 +3,7 @@ package com.tjh.swivel.utils;
 import vanderbilt.util.PopulatingMap;
 
 import java.lang.reflect.Constructor;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,5 +24,12 @@ public class URIUtils {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException("Programmer error", e);
         }
+    }
+
+    public static URI resolveUri(URI baseUri, URI requestedUri, URI matchedUri) {
+        String relativePath = requestedUri
+                .getPath()
+                .substring(matchedUri.getPath().length());
+        return baseUri.resolve(URI.create(relativePath));
     }
 }

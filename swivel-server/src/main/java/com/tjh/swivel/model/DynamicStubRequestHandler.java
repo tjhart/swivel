@@ -30,6 +30,8 @@ public class DynamicStubRequestHandler extends AbstractStubRequestHandler {
         try {
             Bindings bindings = new SimpleBindings();
             bindings.put("request", request);
+            bindings.put("matchedURI", matchedURI.toString());
+            bindings.put("client", client);
             bindings.put("responseFactory", responseFactory);
 
             return (HttpResponse) scriptWrapper.evalWith(bindings);

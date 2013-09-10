@@ -17,4 +17,13 @@ public class StaticStubRequestHandler extends AbstractStubRequestHandler {
 
     @Override
     public HttpResponse handle(HttpUriRequest request, URI matchedURI, HttpClient client) { return httpResponse; }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("StaticStubRequestHandler{");
+        sb.append("super=").append(super.toString());
+        sb.append("httpResponse=").append(httpResponse);
+        sb.append('}');
+        return sb.toString();
+    }
 }

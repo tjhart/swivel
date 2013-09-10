@@ -75,6 +75,7 @@ public class RequestRouter {
             pathElements.removeLast();
         }
         while (result == null && !pathElements.isEmpty());
+        logger.debug(String.format("Routing <%1$s> to <%2$s>. Matched path is: <%3$s>", request, result, matchedPath));
 
         return result.handle(request, URI.create(matchedPath), createClient());
     }

@@ -21,8 +21,6 @@ public class ScriptWrapper {
     protected CompiledScript compiledScript;
 
     public ScriptWrapper(String language, String script) throws ScriptException {
-        logger.debug("ScriptWrapper.ScriptWrapper");
-        logger.debug("script = " + script);
         this.script = script;
         this.engine = new ScriptEngineManager().getEngineByName(language);
         if (engine instanceof Compilable) {
@@ -40,5 +38,13 @@ public class ScriptWrapper {
             result = engine.eval(script, bindings);
         }
         return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ScriptWrapper{");
+        sb.append("script='").append(script).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

@@ -26,7 +26,10 @@ define(['jQuery'], function ($) {
                     datum.shunt = val.shunt;
                 }
                 if (val.stubs) {
-                    datum.stubs = val.stubs;
+                    datum.stubs = [];
+                    $.each(val.stubs, function (index, item) {
+                        datum.stubs.push({path: key, id: item.id, description: item.description});
+                    });
                 }
                 viewData.push(datum);
             });
@@ -39,6 +42,12 @@ define(['jQuery'], function ($) {
         })
             .on('delete-shunt.swivelView', function (event, shuntData) {
                 swivelServer.deleteShunt(shuntData.path)
+                    .done(function (data) {
+                        client.loadConfigurationSuccess(data);
+                    });
+            })
+            .on('delete-stub.swivelView', function (event, stubData) {
+                swivelServer.deleteStub(stubData)
                     .done(function (data) {
                         client.loadConfigurationSuccess(data);
                     });

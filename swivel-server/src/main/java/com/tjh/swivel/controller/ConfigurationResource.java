@@ -94,8 +94,13 @@ public class ConfigurationResource {
 
     @DELETE
     @Path("stub/{localPath: .*}")
-    public void deleteStub(@PathParam("localPath") URI localUri, @QueryParam(STUB_ID_KEY) int stubId) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Map<String, Object>> deleteStub(@PathParam("localPath") URI localUri,
+            @QueryParam(STUB_ID_KEY) int stubId) {
+        logger.debug(String.format("Deleting stub with id %1$d at path $2$s", stubId, localUri));
         router.removeStub(localUri, stubId);
+
+        return getConfiguration();
     }
 
     @GET

@@ -95,8 +95,9 @@ public class RequestRouter {
 
     @SuppressWarnings("unchecked")
     public void removeStub(URI localUri, final int stubHandlerId) {
-        List<StubRequestHandler> handlers = (List<StubRequestHandler>) uriHandlers
-                .get(localUri.getPath())
+        String path = localUri.getPath();
+        Map<String, Object> handlerMap = uriHandlers.get(path);
+        List<StubRequestHandler> handlers = (List<StubRequestHandler>) handlerMap
                 .get(STUB_NODE);
         StubRequestHandler target = Lists.find(handlers, new Block<StubRequestHandler, Boolean>() {
             @Override
@@ -106,6 +107,13 @@ public class RequestRouter {
         });
         logger.debug(String.format("Removing <%1$s> from path <%2$s>", target, localUri));
         handlers.remove(target);
+
+        if (handlers.isEmpty()) {
+            handlerMap.remove(STUB_NODE);
+            if (handlerMap.isEmpty()) {
+                uriHandlers.remove(path);
+            }
+        }
     }
 
     public void setShunt(URI localURI, ShuntRequestHandler requestHandler) {

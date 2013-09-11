@@ -16,6 +16,16 @@ define(['jQuery'], function ($) {
                 type: 'DELETE',
                 accept: 'application/json'
             });
+        };
+
+        this.deleteStub = function (stubData) {
+            var path = [baseUrl, this.CONFIG_PATH, 'stub', stubData.path].join('/'), url;
+            url = [path, $.param({id: stubData.id})].join('?');
+            return $.ajax({
+                url: url,
+                type: 'DELETE',
+                accept: 'application/json'
+            });
         }
     };
 

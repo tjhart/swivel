@@ -5,10 +5,16 @@ define(['jQuery', 'jsTree'], function ($) {
         var view = this, $view = $(this);
 
         this.loadConfigurationData = function (data) {
+            this.configTree.find('.path').each(function (index, dom) {
+                console.log('dom');
+                console.log(dom);
+                view.configTree.jstree('delete_node', dom);
+            });
             $.each(data, function (index, item) {
                 var pathNode = view.configTree.jstree('create_node', view.rootNode, 'last', {
                     data: item.path,
-                    state: 'open'
+                    state: 'open',
+                    attr: {class: 'path'}
                 }), i, stubNode, stub;
                 if (item.shunt) {
                     view.configTree.jstree('create_node', pathNode, 'inside', {
@@ -35,6 +41,7 @@ define(['jQuery', 'jsTree'], function ($) {
             });
 
             this.decorateTree();
+            this.configTree.jstree('open_node', this.rootNode, null, true);
         };
 
         this.decorateTree = function () {

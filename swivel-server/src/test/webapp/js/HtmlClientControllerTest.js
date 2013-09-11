@@ -35,6 +35,7 @@ RequireJSTestCase('HtmlClientController tests', {
         this.mockView = mock(this.r.HtmlClientView);
 
         when(this.mockSwivelServer).getConfig().thenReturn(this.ajaxResult);
+        when(this.mockSwivelServer).deleteShunt().thenReturn(this.ajaxResult);
 
         this.client = new this.r.HtmlClientController(this.mockSwivelServer, this.mockView);
     },
@@ -95,5 +96,19 @@ RequireJSTestCase('HtmlClientController tests', {
         this.r.$(this.mockView).trigger('delete-shunt.swivelView', shuntData);
 
         verify(this.mockSwivelServer).deleteShunt('some/path');
+    },
+
+    'test delete-shunt success loads configuration': function () {
+        var doneHandler;
+        this.client.loadConfiguration = mockFunction();
+        when(this.ajaxResult.done)(typeOf('function')).then(function (handler) {
+            doneHandler = handler;
+            return this;
+        });
+
+        this.r.$(this.mockView).trigger('delete-shunt.swivelView', {path:'some/path'});
+        doneHandler();
+
+        verify(this.client.loadConfiguration)();
     }
 });

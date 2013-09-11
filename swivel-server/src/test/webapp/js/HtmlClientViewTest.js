@@ -29,6 +29,8 @@ RequireJSTestCase('HtmlClientView tests', {
         $(this.view).on('loaded.swivelView', function () {
             that.loadTriggered = true;
         });
+
+        this.mockJQueryObject = mock(this.r.$);
     },
 
     'test construction configures tree': function () {
@@ -46,6 +48,7 @@ RequireJSTestCase('HtmlClientView tests', {
 
         when(this.view.configTree).jstree('create_node', anything(), anything(), anything())
             .thenReturn(mockPathNode);
+        when(this.view.configTree).find(anything()).thenReturn(this.mockJQueryObject);
         this.view.loadConfigurationData(this.NODE_DATA);
 
         verify(this.view.configTree).jstree('create_node', this.view.rootNode, 'last', allOf(
@@ -59,6 +62,7 @@ RequireJSTestCase('HtmlClientView tests', {
         this.view.configTree = mock(this.r.$);
         this.view.decorateTree = mockFunction();
 
+        when(this.view.configTree).find(anything()).thenReturn(this.mockJQueryObject);
         when(this.view.configTree).jstree('create_node', this.view.rootNode, anything(), anything())
             .thenReturn(mockPathNode);
         when(this.view.configTree).jstree('create_node', mockPathNode, anything(), anything())
@@ -76,6 +80,7 @@ RequireJSTestCase('HtmlClientView tests', {
         this.view.configTree = mock(this.r.$);
         this.view.decorateTree = mockFunction();
 
+        when(this.view.configTree).find(anything()).thenReturn(this.mockJQueryObject);
         when(this.view.configTree).jstree('create_node', this.view.rootNode, anything(), anything())
             .thenReturn(mockPathNode);
         when(this.view.configTree).jstree('create_node', mockPathNode, anything(), anything())
@@ -94,6 +99,7 @@ RequireJSTestCase('HtmlClientView tests', {
         this.view.configTree = mock(this.r.$);
         this.view.decorateTree = mockFunction();
 
+        when(this.view.configTree).find(anything()).thenReturn(this.mockJQueryObject);
         when(this.view.configTree).jstree('create_node', this.view.rootNode, anything(), anything())
             .thenReturn(mockPathNode);
         when(this.view.configTree).jstree('create_node', mockPathNode, anything(), anything())
@@ -136,7 +142,7 @@ RequireJSTestCase('HtmlClientView tests', {
         assertThat(shuntData, equalTo(this.NODE_DATA[0]));
     },
 
-    'test deleteStub click triggers delete':function(){
+    'test deleteStub click triggers delete': function () {
         var deleteTriggered;
         this.view.loadConfigurationData(this.NODE_DATA);
 

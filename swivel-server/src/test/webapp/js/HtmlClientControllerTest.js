@@ -53,7 +53,7 @@ RequireJSTestCase('HtmlClientController tests', {
         verify(this.mockSwivelServer).getConfig();
     },
 
-    'test loadConfiguration done defers to success':function(){
+    'test loadConfiguration done defers to success': function () {
         var doneHandler;
         when(this.ajaxResult.done)(typeOf('function')).then(function (handler) {
             doneHandler = handler;
@@ -88,5 +88,12 @@ RequireJSTestCase('HtmlClientController tests', {
                     ))
                 )
             ));
+    },
+
+    'test delete-shunt listener defers to server': function () {
+        var shuntData = {path: 'some/path'};
+        this.r.$(this.mockView).trigger('delete-shunt.swivelView', shuntData);
+
+        verify(this.mockSwivelServer).deleteShunt('some/path');
     }
 });

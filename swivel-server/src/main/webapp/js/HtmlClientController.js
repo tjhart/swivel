@@ -5,10 +5,6 @@ define(['jQuery'], function ($) {
 
         var client = this;
 
-        $(view).one('loaded.swivelView', function () {
-            client.loadConfiguration();
-        });
-
         this.loadConfiguration = function () {
             swivelServer.getConfig()
                 .done(function (data) {
@@ -36,6 +32,13 @@ define(['jQuery'], function ($) {
             });
 
             view.loadConfigurationData(viewData);
-        }
+        };
+
+        $(view).one('loaded.swivelView', function () {
+            client.loadConfiguration();
+        })
+            .on('delete-shunt.swivelView', function (event, shuntData) {
+
+            });
     };
 });

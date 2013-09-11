@@ -2,19 +2,7 @@
 
 define(['jQuery', 'jsTree'], function ($) {
     return function () {
-        var view = this;
-        this.configTree = $('.currentConfig')
-            .one('loaded.jstree', function () {
-                view.rootNode = $('#configRoot');
-                $(view).trigger('loaded.swivelView')
-            })
-            .jstree({
-                core: {},
-                plugins: ['themes', 'json_data'],
-                json_data: {data: [
-                    {data: 'Configuration', state: 'open', attr: {id: 'configRoot'}}
-                ]}
-            });
+        var view = this, $view = $(this);
 
         this.loadConfigurationData = function (data) {
             $.each(data, function (index, item) {
@@ -45,6 +33,38 @@ define(['jQuery', 'jsTree'], function ($) {
                     }
                 }
             });
+
+            this.decorateTree();
         };
+
+        this.decorateTree = function () {
+            var $removeShunt = $('<button class="delete"></button>')
+                    .click(function (e) {
+                        $view.trigger('delete-shunt.swivelView', $(e.target).closest('.shunt').data('shunt-data'));
+                    }),
+                $removeStub = $('<button class="delete"></button>')
+                    .click(function (e) {
+                        $view.trigger('delete-stub.swivelView', $(e.target).closest('.stub').data('stub-data'));
+                    });
+            this.configTree.find('.shunt')
+                .find('a')
+                .append($removeShunt);
+            this.configTree.find('.stub')
+                .find('a')
+                .append($removeStub);
+        };
+
+        this.configTree = $('.currentConfig')
+            .one('loaded.jstree', function () {
+                view.rootNode = $('#configRoot');
+                $view.trigger('loaded.swivelView')
+            })
+            .jstree({
+                core: {},
+                plugins: ['themes', 'json_data'],
+                json_data: {data: [
+                    {data: 'Configuration', state: 'open', attr: {id: 'configRoot'}}
+                ]}
+            });
     };
 });

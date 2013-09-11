@@ -42,6 +42,7 @@ RequireJSTestCase('HtmlClientView tests', {
     'test loadConfigurationData creates path node': function () {
         var mockPathNode = mock(this.r.$);
         this.view.configTree = mock(this.r.$);
+        this.view.decorateTree = mockFunction();
 
         when(this.view.configTree).jstree('create_node', anything(), anything(), anything())
             .thenReturn(mockPathNode);
@@ -56,6 +57,7 @@ RequireJSTestCase('HtmlClientView tests', {
     'test loadConfigurationData creates shunt leaf': function () {
         var mockPathNode = mock(this.r.$);
         this.view.configTree = mock(this.r.$);
+        this.view.decorateTree = mockFunction();
 
         when(this.view.configTree).jstree('create_node', this.view.rootNode, anything(), anything())
             .thenReturn(mockPathNode);
@@ -72,6 +74,7 @@ RequireJSTestCase('HtmlClientView tests', {
     'test loadConfigurationData creates stub nodes': function () {
         var mockPathNode = mock(this.r.$);
         this.view.configTree = mock(this.r.$);
+        this.view.decorateTree = mockFunction();
 
         when(this.view.configTree).jstree('create_node', this.view.rootNode, anything(), anything())
             .thenReturn(mockPathNode);
@@ -89,6 +92,7 @@ RequireJSTestCase('HtmlClientView tests', {
     'test loadConfigurationData creates stub leafs': function () {
         var mockPathNode = mock(this.r.$), mockStubsNode = mock(this.r.$);
         this.view.configTree = mock(this.r.$);
+        this.view.decorateTree = mockFunction();
 
         when(this.view.configTree).jstree('create_node', this.view.rootNode, anything(), anything())
             .thenReturn(mockPathNode);
@@ -106,5 +110,53 @@ RequireJSTestCase('HtmlClientView tests', {
             hasMember('data', equalTo(this.NODE_DATA[0].stubs[1].description)),
             hasMember('attr', hasMember('class', equalTo('stub')))
         ));
+    },
+
+    'test deleteShunt click triggers delete': function () {
+        var deleteTriggered;
+        this.view.loadConfigurationData(this.NODE_DATA);
+
+        $(this.view).one('delete-shunt.swivelView', function (event, shunt) {
+            deleteTriggered = true;
+        });
+
+        this.view.configTree.find('.shunt:first').find('button').click();
+        assertThat(deleteTriggered, is(true));
+    },
+
+    'test deleteShunt sends related shunt data': function () {
+        var shuntData;
+        this.view.loadConfigurationData(this.NODE_DATA);
+
+        $(this.view).one('delete-shunt.swivelView', function (event, shunt) {
+            shuntData = shunt;
+        });
+
+        this.view.configTree.find('.shunt:first').find('button').click();
+        assertThat(shuntData, equalTo(this.NODE_DATA[0]));
+    },
+
+    'test deleteStub click triggers delete':function(){
+        var deleteTriggered;
+        this.view.loadConfigurationData(this.NODE_DATA);
+
+        $(this.view).one('delete-stub.swivelView', function (event, stub) {
+            deleteTriggered = true;
+        });
+
+        this.view.configTree.find('.stub:first').find('button').click();
+        assertThat(deleteTriggered, is(true));
+    },
+
+    'test deleteStub sends related shunt data': function () {
+        var stubData;
+        this.view.loadConfigurationData(this.NODE_DATA);
+
+        $(this.view).one('delete-stub.swivelView', function (event, stub) {
+            stubData = stub;
+        });
+
+        this.view.configTree.find('.stub:first').find('button').click();
+        assertThat(stubData, equalTo(this.NODE_DATA[0].stubs[0]));
     }
 });

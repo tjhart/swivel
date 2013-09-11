@@ -20,6 +20,12 @@ body > header {
     height: 500px;
 }
 
+button.delete {
+    width: 23px;
+    margin-left: 10px;
+    background: url("../js/lib/jstree-v.pre1.0/themes/default/d.png") -18px -53px no-repeat !important;
+}
+
 body > footer {
     text-align: center;
     padding: 25px 25px 25px 25px;

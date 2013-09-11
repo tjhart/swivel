@@ -24,6 +24,6 @@ requirejs.config({
         //HACKTAG:TJH - the minifier ignores dynamic calls to require
         require(fileDependencies, startApp);
     } else {
-        require(['HtmlClientController', 'HtmlClientView', 'tempSwivelServer'], startApp);
+        require(['HtmlClientController', 'HtmlClientView', 'SwivelServer'], startApp);
     }
 })(window.location.href);

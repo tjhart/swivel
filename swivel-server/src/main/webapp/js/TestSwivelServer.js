@@ -22,7 +22,10 @@ define(function () {
             return ajaxResultBuilder({
                 'some/path': {
                     shunt: 'some shunt description',
-                    stubs: ['some stub description', 'some other stub description']
+                    stubs: [
+                        {id: 1, description: 'some stub description'},
+                        {id: 2, description: 'some other stub description'}
+                    ]
                 }
             });
         }

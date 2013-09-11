@@ -14,16 +14,16 @@ requirejs.config({
 
 (function (href) {
     var loadedFromFile = href.match(/^file:/),
-        fileDependencies = ['HtmlClient', 'TestSwivelServer'];
+        fileDependencies = ['HtmlClientController', 'HtmlClientView', 'TestSwivelServer'];
 
-    function startApp(HtmlClient, SwivelServer) {
-        new HtmlClient(new SwivelServer(href.substr(0, href.lastIndexOf('/'))));
+    function startApp(HtmlClientController, HtmlClientView, SwivelServer) {
+        new HtmlClientController(new SwivelServer(href.substr(0, href.lastIndexOf('/'))), new HtmlClientView());
     }
 
     if (loadedFromFile) {
         //HACKTAG:TJH - the minifier ignores dynamic calls to require
         require(fileDependencies, startApp);
     } else {
-        require(['HtmlClient', 'SwivelServer'], startApp);
+        require(['HtmlClientController', 'HtmlClientView', 'SwivelServer'], startApp);
     }
 })(window.location.href);

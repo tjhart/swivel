@@ -109,12 +109,13 @@ public class ConfigurationResource {
                     handlerMap.put(SHUNT_KEY, shuntRequestHandler.toString());
                 }
                 if (handlerMap.containsKey(RequestRouter.STUB_NODE)) {
-                    Collection<String> stubDescriptions =
+                    Collection<Map<String, Object>> stubDescriptions =
                             Lists.collect((List<StubRequestHandler>) handlerMap.remove(RequestRouter.STUB_NODE),
-                                    new Block<StubRequestHandler, String>() {
+                                    new Block<StubRequestHandler, Map<String, Object>>() {
                                         @Override
-                                        public String invoke(StubRequestHandler stubRequestHandler) {
-                                            return stubRequestHandler.toString();
+                                        public Map<String, Object> invoke(StubRequestHandler stubRequestHandler) {
+                                            return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId(),
+                                                    "description", stubRequestHandler.toString());
                                         }
                                     });
                     if (!stubDescriptions.isEmpty()) {

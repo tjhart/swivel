@@ -39,11 +39,23 @@ RequireJSTestCase('swivel Server Tests', {
 
         verify(this.mockJQuery.ajax)(allOf(
             hasMember('url', equalTo(this.BASE_URL + '/rest/config')),
-            hasMember('accept', equalTo('application/json'))
+            hasMember('accept', equalTo('application/json')),
+            hasMember('type', equalTo('GET'))
         ));
     },
 
     'test getConfig returns promise': function () {
         assertThat(this.swivelServer.getConfig(), equalTo(this.ajaxResult));
+    },
+
+    'test deleteShunt calls expected URL on server': function () {
+        this.swivelServer.deleteShunt('some/path');
+
+        verify(this.mockJQuery.ajax)(
+            allOf(
+                hasMember('url', equalTo(this.BASE_URL + '/rest/config/shunt/some/path')),
+                hasMember('type', equalTo('DELETE'))
+            )
+        );
     }
 });

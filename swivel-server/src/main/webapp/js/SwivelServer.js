@@ -5,7 +5,7 @@ define(['jQuery'], function ($) {
         this.getConfig = function () {
             return $.ajax({
                 url: [baseUrl, this.CONFIG_PATH].join('/'),
-                method: 'GET',
+                type: 'GET',
                 accept: 'application/json'
             });
         };
@@ -13,7 +13,7 @@ define(['jQuery'], function ($) {
         this.deleteShunt = function (path) {
             return $.ajax({
                 url: [baseUrl, this.CONFIG_PATH, 'shunt', path].join('/'),
-                method: 'DELETE'
+                type: 'DELETE'
             });
         }
     };

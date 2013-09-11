@@ -39,7 +39,7 @@ RequireJSTestCase('swivel Server Tests', {
 
         verify(this.mockJQuery.ajax)(allOf(
             hasMember('url', equalTo(this.BASE_URL + '/rest/config')),
-            hasMember('accepts', equalTo('application/json'))
+            hasMember('accept', equalTo('application/json'))
         ));
     },
 

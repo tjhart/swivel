@@ -122,8 +122,13 @@ public class RequestRouter {
     }
 
     public void deleteShunt(URI localURI) {
-        ShuntRequestHandler shuntRequestHandler = (ShuntRequestHandler) uriHandlers.get(localURI.getPath())
+        String path = localURI.getPath();
+        Map<String, Object> handlerMap = uriHandlers.get(path);
+        ShuntRequestHandler shuntRequestHandler = (ShuntRequestHandler) handlerMap
                 .remove(SHUNT_NODE);
+        if (handlerMap.isEmpty()) {
+            uriHandlers.remove(path);
+        }
 
         logger.debug(String.format("Removed <%1$s> from <%2$s>", shuntRequestHandler, localURI));
     }

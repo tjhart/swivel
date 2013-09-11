@@ -63,10 +63,13 @@ public class ConfigurationResource {
 
     @DELETE
     @Path("shunt/{localPath: .*}")
-    public void deleteShunt(@PathParam("localPath") URI localPath) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Map<String, Object>> deleteShunt(@PathParam("localPath") URI localPath) {
         logger.debug(String.format("Removing shunt for %1$s", localPath));
 
         router.deleteShunt(localPath);
+
+        return getConfiguration();
     }
 
     @POST

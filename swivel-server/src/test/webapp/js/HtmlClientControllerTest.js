@@ -100,15 +100,15 @@ RequireJSTestCase('HtmlClientController tests', {
 
     'test delete-shunt success loads configuration': function () {
         var doneHandler;
-        this.client.loadConfiguration = mockFunction();
+        this.client.loadConfigurationSuccess = mockFunction();
         when(this.ajaxResult.done)(typeOf('function')).then(function (handler) {
             doneHandler = handler;
             return this;
         });
 
         this.r.$(this.mockView).trigger('delete-shunt.swivelView', {path:'some/path'});
-        doneHandler();
+        doneHandler('data');
 
-        verify(this.client.loadConfiguration)();
+        verify(this.client.loadConfigurationSuccess)('data');
     }
 });

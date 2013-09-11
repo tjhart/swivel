@@ -6,8 +6,6 @@ define(['jQuery', 'jsTree'], function ($) {
 
         this.loadConfigurationData = function (data) {
             this.configTree.find('.path').each(function (index, dom) {
-                console.log('dom');
-                console.log(dom);
                 view.configTree.jstree('delete_node', dom);
             });
             $.each(data, function (index, item) {

@@ -39,8 +39,8 @@ define(['jQuery'], function ($) {
         })
             .on('delete-shunt.swivelView', function (event, shuntData) {
                 swivelServer.deleteShunt(shuntData.path)
-                    .done(function () {
-                        client.loadConfiguration()
+                    .done(function (data) {
+                        client.loadConfigurationSuccess(data);
                     });
             });
     };

@@ -13,7 +13,8 @@ define(['jQuery'], function ($) {
         this.deleteShunt = function (path) {
             return $.ajax({
                 url: [baseUrl, this.CONFIG_PATH, 'shunt', path].join('/'),
-                type: 'DELETE'
+                type: 'DELETE',
+                accept: 'application/json'
             });
         }
     };

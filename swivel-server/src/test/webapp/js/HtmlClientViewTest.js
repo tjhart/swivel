@@ -63,10 +63,9 @@ RequireJSTestCase('HtmlClientView tests', {
         this.view.decorateTree = mockFunction();
 
         when(this.view.configTree).find(anything()).thenReturn(this.mockJQueryObject);
-        when(this.view.configTree).jstree('create_node', this.view.rootNode, anything(), anything())
+        when(this.view.configTree).jstree('create_node', anything(), anything(), anything())
             .thenReturn(mockPathNode);
-        when(this.view.configTree).jstree('create_node', mockPathNode, anything(), anything())
-            .thenReturn(mockPathNode);
+        when(mockPathNode).data(anything(), anything()).thenReturn(mockPathNode);
         this.view.loadConfigurationData(this.NODE_DATA);
 
         verify(this.view.configTree).jstree('create_node', mockPathNode, 'inside', allOf(
@@ -81,10 +80,9 @@ RequireJSTestCase('HtmlClientView tests', {
         this.view.decorateTree = mockFunction();
 
         when(this.view.configTree).find(anything()).thenReturn(this.mockJQueryObject);
-        when(this.view.configTree).jstree('create_node', this.view.rootNode, anything(), anything())
+        when(this.view.configTree).jstree('create_node', anything(), anything(), anything())
             .thenReturn(mockPathNode);
-        when(this.view.configTree).jstree('create_node', mockPathNode, anything(), anything())
-            .thenReturn(mockPathNode);
+        when(mockPathNode).data(anything(), anything()).thenReturn(mockPathNode);
 
         this.view.loadConfigurationData(this.NODE_DATA);
         verify(this.view.configTree).jstree('create_node', mockPathNode, 'last', allOf(
@@ -106,6 +104,7 @@ RequireJSTestCase('HtmlClientView tests', {
             .thenReturn(mockStubsNode);
         when(this.view.configTree).jstree('create_node', mockStubsNode, anything(), anything())
             .thenReturn(mockStubsNode);
+        when(mockPathNode).data(anything(), anything()).thenReturn(mockPathNode);
 
         this.view.loadConfigurationData(this.NODE_DATA);
         verify(this.view.configTree).jstree('create_node', mockStubsNode, 'last', allOf(

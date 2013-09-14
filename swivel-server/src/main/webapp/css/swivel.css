@@ -1,12 +1,12 @@
 @import "source-sans-pro-fontfacekit/stylesheet.css";
 
 body {
-    font-family: "SourceSansProRegular", sans-serif;
+    font-family: "SourceSansProLight", sans-serif;
 }
 
 body > header {
     background-color: black;
-    color: #4D9CB2;
+    color: lightgray;
     font-weight: bold;
     font-size: 24px;
     padding: 25px 25px 25px 25px;
@@ -15,15 +15,35 @@ body > header {
 
 .content {
     margin: 10px 100px 10px 100px;
-    border-style: groove;
-    box-shadow: 10px 10px 5px darkgray;
+    border-style: solid;
+    border: #000000 solid thin;
     height: 500px;
+    border-radius: 10px;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    float: left;
 }
 
 button.delete {
-    width: 23px;
-    margin-left: 10px;
-    background: url("../js/lib/jstree-v.pre1.0/themes/default/d.png") -18px -53px no-repeat !important;
+    background: url(images/delete.png) no-repeat;
+}
+
+button.add {
+    background: url(images/add.png) no-repeat;
+}
+
+button:hover {
+    background-position: 0 -32px;
+}
+
+.shunt button, .stub button {
+    margin-left: 3px;
 }
 
 body > footer {

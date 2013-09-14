@@ -13,7 +13,8 @@ define(['jQuery', 'jsTree'], function ($) {
                     data: item.path,
                     state: 'open',
                     attr: {class: 'path'}
-                }), i, stubNode, stub;
+                })
+                    .data('path-data', item), i, stubNode, stub;
                 if (item.shunt) {
                     view.configTree.jstree('create_node', pathNode, 'inside', {
                         data: ['shunt: ', item.shunt].join(''),
@@ -43,20 +44,43 @@ define(['jQuery', 'jsTree'], function ($) {
         };
 
         this.decorateTree = function () {
-            var $removeShunt = $('<button class="delete"></button>')
+            function getPath(e) {
+                return $(e.target)
+                    .closest('.path')
+                    .data('path-data');
+            }
+
+            var $removeShunt = $('<button class="delete" title="Delete"></button>'), $removeStub, $removePath,
+                $add = $('<button class="add" title="Add..."></button>')
                     .click(function (e) {
-                        $view.trigger('delete-shunt.swivelView', $(e.target).closest('.shunt').data('shunt-data'));
-                    }),
-                $removeStub = $('<button class="delete"></button>')
-                    .click(function (e) {
-                        $view.trigger('delete-stub.swivelView', $(e.target).closest('.stub').data('stub-data'));
+                        console.log('adding to path');
+                        console.log(getPath(e));
                     });
+            $removeStub = $removeShunt.clone()
+                .click(function (e) {
+                    $view.trigger('delete-stub.swivelView', $(e.target)
+                        .closest('.stub')
+                        .data('stub-data'));
+                });
+            $removePath = $removeShunt.clone()
+                .click(function (e) {
+                    $view.trigger('delete-path.swivelView', getPath(e));
+                });
+            $removeShunt.click(function (e) {
+                $view.trigger('delete-shunt.swivelView', $(e.target)
+                    .closest('.shunt').
+                    data('shunt-data'));
+            });
             this.configTree.find('.shunt')
                 .find('a')
                 .append($removeShunt);
             this.configTree.find('.stub')
                 .find('a')
                 .append($removeStub);
+            this.configTree.find('.path')
+                .find('a:first')
+                .append($add)
+                .append($removePath);
         };
 
         this.configTree = $('.currentConfig')

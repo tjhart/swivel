@@ -7,13 +7,20 @@ define(function () {
                 {id: 1, description: 'some stub description'},
                 {id: 2, description: 'some other stub description'}
             ]
+        },
+        'some/other/path': {
+            shunt: 'some shunt description',
+            stubs: [
+                {id: 1, description: 'some stub description'},
+                {id: 2, description: 'some other stub description'}
+            ]
         }
     };
     return function () {
         function ajaxResultBuilder(data) {
             return {
                 done: function (handler) {
-                    handler(data);
+                    setTimeout(function () {handler(data)}, 0);
                     return this;
                 },
 
@@ -22,7 +29,7 @@ define(function () {
                 },
 
                 always: function (handler) {
-                    handler(data);
+                    setTimeout(function () {handler(data)}, 0);
                     return this;
                 }
             }

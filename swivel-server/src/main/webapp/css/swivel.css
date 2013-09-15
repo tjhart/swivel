@@ -1,12 +1,13 @@
 @import "source-sans-pro-fontfacekit/stylesheet.css";
 
 body {
-    font-family: "SourceSansProLight", sans-serif;
+    font-family: "SourceSansProRegular", sans-serif;
+    margin: 0;
 }
 
 body > header {
-    background-color: black;
-    color: lightgray;
+    background-color: #e0d6a7;
+    color: #443f29;
     font-weight: bold;
     font-size: 24px;
     padding: 25px 25px 25px 25px;
@@ -16,7 +17,7 @@ body > header {
 .content {
     margin: 10px 100px 10px 100px;
     border-style: solid;
-    border: #000000 solid thin;
+    border: #443f29 solid thin;
     height: 500px;
     border-radius: 10px;
 }

@@ -44,7 +44,7 @@ RequireJSTestCase('HtmlClientView tests', {
     'test loadConfigurationData creates path node': function () {
         var mockPathNode = mock(this.r.$);
         this.view.configTree = mock(this.r.$);
-        this.view.decorateTree = mockFunction();
+        this.view.addClickEvents = mockFunction();
 
         when(this.view.configTree).jstree('create_node', anything(), anything(), anything())
             .thenReturn(mockPathNode);
@@ -52,7 +52,7 @@ RequireJSTestCase('HtmlClientView tests', {
         this.view.loadConfigurationData(this.NODE_DATA);
 
         verify(this.view.configTree).jstree('create_node', this.view.rootNode, 'last', allOf(
-            hasMember('data', equalTo(this.NODE_DATA[0].path)),
+            hasMember('data', containsString(this.NODE_DATA[0].path)),
             hasMember('state', equalTo('open'))
         ));
     },
@@ -60,7 +60,7 @@ RequireJSTestCase('HtmlClientView tests', {
     'test loadConfigurationData creates shunt leaf': function () {
         var mockPathNode = mock(this.r.$);
         this.view.configTree = mock(this.r.$);
-        this.view.decorateTree = mockFunction();
+        this.view.addClickEvents = mockFunction();
 
         when(this.view.configTree).find(anything()).thenReturn(this.mockJQueryObject);
         when(this.view.configTree).jstree('create_node', anything(), anything(), anything())
@@ -69,7 +69,7 @@ RequireJSTestCase('HtmlClientView tests', {
         this.view.loadConfigurationData(this.NODE_DATA);
 
         verify(this.view.configTree).jstree('create_node', mockPathNode, 'inside', allOf(
-            hasMember('data', equalTo('shunt: ' + this.NODE_DATA[0].shunt)),
+            hasMember('data', containsString('shunt: ' + this.NODE_DATA[0].shunt)),
             hasMember('attr', hasMember('class', equalTo('shunt')))
         ));
     },
@@ -77,7 +77,7 @@ RequireJSTestCase('HtmlClientView tests', {
     'test loadConfigurationData creates stub nodes': function () {
         var mockPathNode = mock(this.r.$);
         this.view.configTree = mock(this.r.$);
-        this.view.decorateTree = mockFunction();
+        this.view.addClickEvents = mockFunction();
 
         when(this.view.configTree).find(anything()).thenReturn(this.mockJQueryObject);
         when(this.view.configTree).jstree('create_node', anything(), anything(), anything())
@@ -95,7 +95,7 @@ RequireJSTestCase('HtmlClientView tests', {
     'test loadConfigurationData creates stub leafs': function () {
         var mockPathNode = mock(this.r.$), mockStubsNode = mock(this.r.$);
         this.view.configTree = mock(this.r.$);
-        this.view.decorateTree = mockFunction();
+        this.view.addClickEvents = mockFunction();
 
         when(this.view.configTree).find(anything()).thenReturn(this.mockJQueryObject);
         when(this.view.configTree).jstree('create_node', this.view.rootNode, anything(), anything())
@@ -108,11 +108,11 @@ RequireJSTestCase('HtmlClientView tests', {
 
         this.view.loadConfigurationData(this.NODE_DATA);
         verify(this.view.configTree).jstree('create_node', mockStubsNode, 'last', allOf(
-            hasMember('data', equalTo(this.NODE_DATA[0].stubs[0].description)),
+            hasMember('data', containsString(this.NODE_DATA[0].stubs[0].description)),
             hasMember('attr', hasMember('class', equalTo('stub')))
         ));
         verify(this.view.configTree).jstree('create_node', mockStubsNode, 'last', allOf(
-            hasMember('data', equalTo(this.NODE_DATA[0].stubs[1].description)),
+            hasMember('data', containsString(this.NODE_DATA[0].stubs[1].description)),
             hasMember('attr', hasMember('class', equalTo('stub')))
         ));
     },

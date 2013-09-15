@@ -1,6 +1,8 @@
 "use strict";
 
 define(['jQuery', 'jsTree'], function ($) {
+    var ADD_BUTTON = '<button class="add" title="Add"></button>',
+        DELETE_BUTTON = '<button class="delete" title="Delete"></button>';
     return function () {
         var view = this, $view = $(this);
 
@@ -10,14 +12,16 @@ define(['jQuery', 'jsTree'], function ($) {
             });
             $.each(data, function (index, item) {
                 var pathNode = view.configTree.jstree('create_node', view.rootNode, 'last', {
-                    data: item.path,
+                    data: [ADD_BUTTON,
+                        DELETE_BUTTON,
+                        item.path].join(''),
                     state: 'open',
                     attr: {class: 'path'}
                 })
                     .data('path-data', item), i, stubNode, stub;
                 if (item.shunt) {
                     view.configTree.jstree('create_node', pathNode, 'inside', {
-                        data: ['shunt: ', item.shunt].join(''),
+                        data: [DELETE_BUTTON, 'shunt: ', item.shunt].join(''),
                         attr: {class: 'shunt'}
                     })
                         .data('shunt-data', item);
@@ -31,7 +35,7 @@ define(['jQuery', 'jsTree'], function ($) {
                     for (i = 0; i < item.stubs.length; i++) {
                         stub = item.stubs[i];
                         view.configTree.jstree('create_node', stubNode, 'last', {
-                            data: stub.description,
+                            data: [DELETE_BUTTON, stub.description].join(''),
                             attr: {class: 'stub'}
                         })
                             .data('stub-data', stub);
@@ -39,48 +43,42 @@ define(['jQuery', 'jsTree'], function ($) {
                 }
             });
 
-            this.decorateTree();
+            this.addClickEvents();
             this.configTree.jstree('open_node', this.rootNode, null, true);
         };
 
-        this.decorateTree = function () {
+        this.addClickEvents = function () {
             function getPath(e) {
                 return $(e.target)
                     .closest('.path')
                     .data('path-data');
             }
 
-            var $removeShunt = $('<button class="delete" title="Delete"></button>'), $removeStub, $removePath,
-                $add = $('<button class="add" title="Add..."></button>')
-                    .click(function (e) {
-                        console.log('adding to path');
-                        console.log(getPath(e));
-                    });
-            $removeStub = $removeShunt.clone()
+            this.configTree.find('.shunt button.delete')
+                .click(function (e) {
+                    $view.trigger('delete-shunt.swivelView', $(e.target)
+                        .closest('.shunt').
+                        data('shunt-data'));
+                });
+            this.configTree.find('.stub button.delete')
                 .click(function (e) {
                     $view.trigger('delete-stub.swivelView', $(e.target)
                         .closest('.stub')
                         .data('stub-data'));
                 });
-            $removePath = $removeShunt.clone()
+            this.configTree.find('.path button.add')
+                .click(function (e) {
+                    view.displayAddPathDialog(getPath(e));
+                });
+            this.configTree.find('.path button.delete')
                 .click(function (e) {
                     $view.trigger('delete-path.swivelView', getPath(e));
                 });
-            $removeShunt.click(function (e) {
-                $view.trigger('delete-shunt.swivelView', $(e.target)
-                    .closest('.shunt').
-                    data('shunt-data'));
-            });
-            this.configTree.find('.shunt')
-                .find('a')
-                .append($removeShunt);
-            this.configTree.find('.stub')
-                .find('a')
-                .append($removeStub);
-            this.configTree.find('.path')
-                .find('a:first')
-                .append($add)
-                .append($removePath);
+        };
+
+        this.displayAddPathDialog = function (path) {
+            console.log('displayAddPathDialog');
+            console.log(path);
         };
 
         this.configTree = $('.currentConfig')
@@ -89,7 +87,7 @@ define(['jQuery', 'jsTree'], function ($) {
                 $view.trigger('loaded.swivelView')
             })
             .jstree({
-                core: {},
+                core: {html_titles: true},
                 plugins: ['themes', 'json_data'],
                 json_data: {data: [
                     {data: 'Configuration', state: 'open', attr: {id: 'configRoot'}}

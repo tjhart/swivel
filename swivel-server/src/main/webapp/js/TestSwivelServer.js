@@ -69,6 +69,11 @@ define(function () {
             }
 
             return ajaxResultBuilder(data);
+        };
+
+        this.putShunt = function (shuntData) {
+            data[shuntData.path].shunt = 'shunting to: ' + shuntData.remoteURI;
+            return ajaxResultBuilder(data);
         }
     }
 });

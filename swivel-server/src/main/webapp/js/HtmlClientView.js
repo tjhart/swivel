@@ -66,6 +66,9 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                         .closest('.stub')
                         .data('stub-data'));
                 });
+            //REDTAG:TJH - consider just sending an event to the controller.
+            //If a shunt already exists, shouldn't we warn the user
+            //that it will be replaced?
             $configTree.find('.path button.add')
                 .click(function (e) {
                     view.targetPath = getPath(e);
@@ -83,7 +86,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
         this.addElement = function () {
             var remoteURIField = this.$addElementForm.find('[name="remoteURI"]');
             $addElementDialog.dialog('close');
-            $view.trigger('add-shunt.swivelView', {
+            $view.trigger('put-shunt.swivelView', {
                 path: view.targetPath.path,
                 remoteURI: remoteURIField.val()
             });

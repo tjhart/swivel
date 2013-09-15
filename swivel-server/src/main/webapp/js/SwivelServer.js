@@ -26,6 +26,10 @@ define(['jQuery'], function ($) {
                 type: 'DELETE',
                 accept: 'application/json'
             });
+        };
+
+        this.putShunt = function(shuntDescription){
+            throw "Not yet implemented";
         }
     };
 

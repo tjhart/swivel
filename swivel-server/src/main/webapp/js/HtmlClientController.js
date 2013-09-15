@@ -37,17 +37,20 @@ define(['jQuery'], function ($) {
             view.loadConfigurationData(viewData);
         };
 
-        $(view).one('loaded.swivelView', function () {
+        $(view).one('loaded.swivelView',function () {
             client.loadConfiguration();
-        })
-            .on('delete-shunt.swivelView', function (event, shuntData) {
+        }).on('delete-shunt.swivelView',function (event, shuntData) {
                 swivelServer.deleteShunt(shuntData.path)
                     .done(function (data) {
                         client.loadConfigurationSuccess(data);
                     });
-            })
-            .on('delete-stub.swivelView', function (event, stubData) {
+            }).on('delete-stub.swivelView',function (event, stubData) {
                 swivelServer.deleteStub(stubData)
+                    .done(function (data) {
+                        client.loadConfigurationSuccess(data);
+                    });
+            }).on('put-shunt.swivelView', function (event, shuntData) {
+                swivelServer.putShunt(shuntData)
                     .done(function (data) {
                         client.loadConfigurationSuccess(data);
                     });

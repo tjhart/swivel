@@ -249,9 +249,9 @@ RequireJSTestCase('HtmlClientView tests', {
         verify(this.mockAddElementDialog).dialog('close');
     },
 
-    'test addElement triggers add-shunt event': function () {
+    'test addElement triggers put-shunt event': function () {
         var addShuntTriggered = false;
-        this.r.$(this.view).one('add-shunt.swivelView', function () {
+        this.r.$(this.view).one('put-shunt.swivelView', function () {
             addShuntTriggered = true;
         });
 
@@ -262,7 +262,7 @@ RequireJSTestCase('HtmlClientView tests', {
 
     'test addElement trigger includes expected object': function () {
         var eventObject;
-        this.r.$(this.view).one('add-shunt.swivelView', function (event, shuntDescription) {
+        this.r.$(this.view).one('put-shunt.swivelView', function (event, shuntDescription) {
             eventObject = shuntDescription;
         });
 

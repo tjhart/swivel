@@ -4,7 +4,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.hamcrest.Matcher;
 
 import javax.script.ScriptException;
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Map;
 

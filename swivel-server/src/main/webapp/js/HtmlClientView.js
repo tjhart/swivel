@@ -96,9 +96,9 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
         //can be null in testing situations
         if ($configTree) {
             $configTree.one('loaded.jstree', function () {
-                    view.rootNode = $('#configRoot');
-                    $view.trigger('loaded.swivelView')
-                })
+                view.rootNode = $('#configRoot');
+                $view.trigger('loaded.swivelView')
+            })
                 .jstree({
                     core: {html_titles: true},
                     plugins: ['themes', 'json_data'],
@@ -127,6 +127,23 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                         click: function () { view.addElement(); }
                     }
                 ]
+            });
+
+            $addElementDialog.find('#shuntButton').click(function () {
+                $('.shuntElements').removeClass('hidden');
+                $('.stubElements').addClass('hidden');
+            });
+            $addElementDialog.find('#stubButton').click(function () {
+                $('.stubElements').removeClass('hidden');
+                $('.shuntElements').addClass('hidden');
+            });
+            $addElementDialog.find('#staticButton').click(function () {
+                $('.staticInput').removeClass('hidden');
+                $('.scriptInput').addClass('hidden');
+            });
+            $addElementDialog.find('#scriptButton').click(function () {
+                $('.scriptInput').removeClass('hidden');
+                $('.staticInput').addClass('hidden');
             });
         }
     };

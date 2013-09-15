@@ -67,6 +67,8 @@ RequireJSTestCase('HtmlClientView tests', {
         when(this.mockConfigTree)
             .jstree()
             .thenReturn(this.mockConfigTree);
+        when(this.mockAddElementDialog).find(anything())
+            .thenReturn(this.mockJQueryObject);
 
         this.view = new this.r.HtmlClientView(this.mockConfigTree, this.mockAddElementDialog);
         this.view.$addElementForm = this.mockJQueryObject;

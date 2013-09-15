@@ -44,6 +44,8 @@ public class MatcherFactory {
 
         List<Matcher<HttpUriRequest>> matchers = new ArrayList<Matcher<HttpUriRequest>>(STATIC_MATCHER_COUNT);
         matchers.add(hasMethod(equalTo(stubDescription.get(METHOD_KEY))));
+        //REDTAG:TJH - like a bone-head I removed the URI matching without thinking about
+        //parameter matching. new requirement
 
         matchers.add(buildOptionalMatcher(localURI, stubDescription));
         return allOf(matchers.toArray(new Matcher[matchers.size()]));

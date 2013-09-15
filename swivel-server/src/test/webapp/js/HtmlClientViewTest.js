@@ -19,35 +19,20 @@ RequireJSTestCase('HtmlClientView tests', {
         /*:DOC +=
          <ul>
          <li class="path">
-         <ins>&nbsp;</ins>
-         <a href="#">
-         <ins>&nbsp;</ins>
          <button class="treeButton add" title="Add"></button>
          <button class="treeButton delete" title="Delete"></button>
          some/path
-         </a>
          <ul>
          <li class="shunt">
-         <ins>&nbsp;</ins>
-         <a href="#">
-         <ins>&nbsp;</ins>
          <button class="treeButton delete" title="Delete"></button>
          shunt: some shunt description
-         </a>
          </li>
          <li class="stubs">
-         <ins>&nbsp;</ins>
-         <a href="#">
-         <ins>&nbsp;</ins>
          stubs
-         </a>
          <ul>
          <li class="stub">
-         <ins>&nbsp;</ins>
-         <a href="#">
-         <ins>&nbsp;</ins>
          <button class="treeButton delete" title="Delete"></button>
-         some stub description</a>
+         some stub description
          </li>
          </ul>
          </li>

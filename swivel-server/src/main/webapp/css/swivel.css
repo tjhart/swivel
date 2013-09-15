@@ -31,8 +31,8 @@ body > header {
     cursor: pointer;
     width: 16px;
     height: 16px;
-    margin-right: 5px;
-    float: left;
+    margin-left: 5px;
+    float: right;
 }
 
 .treeButton.delete {
@@ -45,10 +45,6 @@ body > header {
 
 .treeButton:hover {
     background-position: 0 -32px;
-}
-
-.shunt .treeButton, .stub .treeButton {
-    margin-left: 3px;
 }
 
 body > footer {

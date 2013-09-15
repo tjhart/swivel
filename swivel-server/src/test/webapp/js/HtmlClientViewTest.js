@@ -25,12 +25,18 @@ RequireJSTestCase('HtmlClientView tests', {
 
         var that = this;
 
-        this.view = new this.r.HtmlClientView();
+        this.mockAddElementDialog = mock(this.r.$);
+        this.mockJQueryObject = mock(this.r.$);
+
+        when(this.mockJQueryObject)
+            .find(anything())
+            .thenReturn(this.mockJQueryObject);
+        this.view = new this.r.HtmlClientView(this.mockAddElementDialog);
+        this.view.$addElementForm = this.mockJQueryObject;
+        this.view.targetPath = {path: 'some/path'};
         $(this.view).on('loaded.swivelView', function () {
             that.loadTriggered = true;
         });
-
-        this.mockJQueryObject = mock(this.r.$);
     },
 
     'test construction configures tree': function () {
@@ -163,5 +169,81 @@ RequireJSTestCase('HtmlClientView tests', {
 
         this.view.configTree.find('.stub:first').find('button').click();
         assertThat(stubData, equalTo(this.NODE_DATA[0].stubs[0]));
+    },
+
+    'test construction configures addElement dialog': function () {
+        verify(this.mockAddElementDialog).dialog(allOf(
+            hasMember('autoOpen', is(false)),
+            hasMember('modal', is(true)),
+            hasMember('draggable', is(false)),
+            hasMember('resizable', is(false)),
+            hasMember('width', is(600))
+        ));
+    },
+
+    'test addElementDialog cancel button closes dialog': function () {
+        var dialogButtons;
+        when(this.mockAddElementDialog).dialog(anything()).then(function (opts) {
+            dialogButtons = opts.buttons;
+            return this;
+        });
+
+        new this.r.HtmlClientView(this.mockAddElementDialog);
+        dialogButtons[0].click();
+
+        verify(this.mockAddElementDialog).dialog('close');
+    },
+
+    'test addElementDialog add defers to addElement': function () {
+        var dialogButtons;
+        when(this.mockAddElementDialog).dialog(anything()).then(function (opts) {
+            dialogButtons = opts.buttons;
+            return this;
+        });
+
+        var view = new this.r.HtmlClientView(this.mockAddElementDialog);
+        view.addElement = mockFunction();
+        dialogButtons[1].click();
+
+        verify(view.addElement)();
+    },
+
+    'test addElement closes dialog': function () {
+        this.view.addElement();
+
+        verify(this.mockAddElementDialog).dialog('close');
+    },
+
+    'test addElement triggers add-shunt event': function () {
+        var addShuntTriggered = false;
+        $(this.view).one('add-shunt.swivelView', function () {
+            addShuntTriggered = true;
+        });
+
+        this.view.addElement();
+
+        assertThat(addShuntTriggered, is(true));
+    },
+
+    'test add-shunt trigger includes expected object': function () {
+        var eventObject;
+        $(this.view).one('add-shunt.swivelView', function (event, shuntDescription) {
+            eventObject = shuntDescription;
+        });
+
+        when(this.mockJQueryObject).val()
+            .thenReturn('some/remote/uri');
+        this.view.addElement();
+
+        assertThat(eventObject, allOf(
+            hasMember('path', equalTo(this.view.targetPath.path)),
+            hasMember('remoteURI', equalTo('some/remote/uri'))
+        ));
+    },
+
+    'test add-shunt clears remoteURI field':function(){
+        this.view.addElement();
+
+        verify(this.mockJQueryObject).val('');
     }
 });

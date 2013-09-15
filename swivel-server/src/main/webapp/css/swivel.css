@@ -1,5 +1,9 @@
 @import "source-sans-pro-fontfacekit/stylesheet.css";
 
+.hidden {
+    display: none;
+}
+
 body {
     font-family: "SourceSansProRegular", sans-serif;
     margin: 0;
@@ -22,7 +26,7 @@ body > header {
     border-radius: 10px;
 }
 
-button {
+.treeButton {
     border: none;
     cursor: pointer;
     width: 16px;
@@ -31,19 +35,19 @@ button {
     float: left;
 }
 
-button.delete {
+.treeButton.delete {
     background: url(images/delete.png) no-repeat;
 }
 
-button.add {
+.treeButton.add {
     background: url(images/add.png) no-repeat;
 }
 
-button:hover {
+.treeButton:hover {
     background-position: 0 -32px;
 }
 
-.shunt button, .stub button {
+.shunt .treeButton, .stub .treeButton {
     margin-left: 3px;
 }
 

@@ -1,9 +1,9 @@
 "use strict";
 
-define(['jQuery', 'jsTree'], function ($) {
-    var ADD_BUTTON = '<button class="add" title="Add"></button>',
-        DELETE_BUTTON = '<button class="delete" title="Delete"></button>';
-    return function () {
+define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
+    var ADD_BUTTON = '<button class="treeButton add" title="Add"></button>',
+        DELETE_BUTTON = '<button class="treeButton delete" title="Delete"></button>';
+    return function ($addElementDialog) {
         var view = this, $view = $(this);
 
         this.loadConfigurationData = function (data) {
@@ -68,7 +68,11 @@ define(['jQuery', 'jsTree'], function ($) {
                 });
             this.configTree.find('.path button.add')
                 .click(function (e) {
-                    view.displayAddPathDialog(getPath(e));
+                    view.targetPath = getPath(e);
+                    $addElementDialog.dialog('option', {
+                        title: ['Add configuration element to: ', targetPath.path].join('')
+                    });
+                    $addElementDialog.dialog('open');
                 });
             this.configTree.find('.path button.delete')
                 .click(function (e) {
@@ -76,9 +80,14 @@ define(['jQuery', 'jsTree'], function ($) {
                 });
         };
 
-        this.displayAddPathDialog = function (path) {
-            console.log('displayAddPathDialog');
-            console.log(path);
+        this.addElement = function () {
+            var remoteURIField = this.$addElementForm.find('[name="remoteURI"]');
+            $addElementDialog.dialog('close');
+            $view.trigger('add-shunt.swivelView', {
+                path: view.targetPath.path,
+                remoteURI: remoteURIField.val()
+            });
+            remoteURIField.val('');
         };
 
         this.configTree = $('.currentConfig')
@@ -93,5 +102,28 @@ define(['jQuery', 'jsTree'], function ($) {
                     {data: 'Configuration', state: 'open', attr: {id: 'configRoot'}}
                 ]}
             });
+
+        //can be null in testing situations
+        if($addElementDialog){
+            this.$addElementForm = $addElementDialog.find('form')
+
+            $addElementDialog.dialog({
+                autoOpen: false,
+                modal: true,
+                draggable: false,
+                resizable: false,
+                width: 600,
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        click: function () {$addElementDialog.dialog('close');}
+                    },
+                    {
+                        text: 'Add',
+                        click: function () { view.addElement(); }
+                    }
+                ]
+            });
+        }
     };
 });

@@ -11,15 +11,13 @@ import java.io.IOException;
 import java.net.URI;
 
 
-public class ShuntRequestHandler implements RequestHandler<HttpRequestBase>{
+public class ShuntRequestHandler implements RequestHandler<HttpRequestBase> {
 
     public static final String CONTENT_BASE_HEADER = "Content-base";
     protected Logger logger = Logger.getLogger(ShuntRequestHandler.class);
     protected final URI baseUri;
 
-    public ShuntRequestHandler(URI baseUri) {
-        this.baseUri = baseUri;
-    }
+    public ShuntRequestHandler(URI baseUri) { this.baseUri = baseUri; }
 
     public HttpResponse handle(HttpRequestBase request, URI matchedURI, HttpClient client) {
         try {

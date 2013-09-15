@@ -18,34 +18,34 @@ RequireJSTestCase('HtmlClientView tests', {
     setUp: function () {
         /*:DOC +=
          <ul>
-         <li class="path jstree-open">
-         <ins class="jstree-icon">&nbsp;</ins>
+         <li class="path">
+         <ins>&nbsp;</ins>
          <a href="#">
-         <ins class="jstree-icon">&nbsp;</ins>
+         <ins>&nbsp;</ins>
          <button class="treeButton add" title="Add"></button>
          <button class="treeButton delete" title="Delete"></button>
          some/path
          </a>
          <ul>
-         <li class="shunt jstree-leaf">
-         <ins class="jstree-icon">&nbsp;</ins>
+         <li class="shunt">
+         <ins>&nbsp;</ins>
          <a href="#">
-         <ins class="jstree-icon">&nbsp;</ins>
+         <ins>&nbsp;</ins>
          <button class="treeButton delete" title="Delete"></button>
          shunt: some shunt description
          </a>
          </li>
-         <li class="stubs jstree-open jstree-last">
-         <ins class="jstree-icon">&nbsp;</ins>
+         <li class="stubs">
+         <ins>&nbsp;</ins>
          <a href="#">
-         <ins class="jstree-icon">&nbsp;</ins>
+         <ins>&nbsp;</ins>
          stubs
          </a>
          <ul>
-         <li class="stub jstree-leaf">
-         <ins class="jstree-icon">&nbsp;</ins>
+         <li class="stub">
+         <ins>&nbsp;</ins>
          <a href="#">
-         <ins class="jstree-icon">&nbsp;</ins>
+         <ins>&nbsp;</ins>
          <button class="treeButton delete" title="Delete"></button>
          some stub description</a>
          </li>
@@ -58,7 +58,13 @@ RequireJSTestCase('HtmlClientView tests', {
         this.r.jsHamcrest.Integration.JsTestDriver();
         this.r.jsMockito.Integration.JsTestDriver();
 
-        var that = this;
+        this.pathData = {path: 'some/path'};
+        this.shuntData = {};
+        this.stubData = {};
+
+        this.r.$('.path').data('path-data', this.pathData);
+        this.r.$('.stub').data('stub-data', this.stubData);
+        this.r.$('.shunt').data('shunt-data', this.shuntData);
 
         this.mockAddElementDialog = mock(this.r.$);
         this.mockConfigTree = mock(this.r.$);
@@ -167,86 +173,52 @@ RequireJSTestCase('HtmlClientView tests', {
         ));
     },
 
-    'test addClickEvents registers handler for shunt deletion': function () {
-        var shuntDeleteButton = mock(this.r.$), deleteHandler;
+    'test shunt delete button triggers as expected': function () {
+        var $deleteShuntButton = this.r.$('.shunt button.delete'), triggeredData;
+
         when(this.mockConfigTree)
             .find('.shunt button.delete')
-            .thenReturn(shuntDeleteButton);
-        when(shuntDeleteButton)
-            .click(typeOf('function'))
-            .then(function (handler) {
-                deleteHandler = handler;
-            });
-
+            .thenReturn($deleteShuntButton);
         this.view.addClickEvents();
-
-        verify(shuntDeleteButton).click(typeOf('function'));
-    },
-
-    'test delete-shunt click handler finds shunt-data': function () {
-        var myShuntData = {}, shuntDeleteButton = mock(this.r.$), deleteHandler, deleteEventData;
-
-        this.r.$('.shunt')
-            .data('shunt-data', myShuntData);
-        when(this.mockConfigTree)
-            .find('.shunt button.delete')
-            .thenReturn(shuntDeleteButton);
-        when(shuntDeleteButton)
-            .click(typeOf('function'))
-            .then(function (handler) {
-                deleteHandler = handler;
-            });
-
-        this.r.$(this.view).one('delete-shunt.swivelView', function (e, data) {
-            deleteEventData = data;
+        this.r.$(this.view).one('delete-shunt.swivelView', function(event, data){
+            triggeredData = data;
         });
 
-        this.view.addClickEvents();
+        $deleteShuntButton.click();
 
-        deleteHandler({target: this.r.$('.shunt button.delete')});
-
-        assertThat(deleteEventData, equalTo(myShuntData));
+        assertThat(triggeredData, equalTo(this.shuntData));
     },
 
-    'test addClickEvents registers handler for stub deletion':function(){
-        var stubDeleteButton = mock(this.r.$), deleteHandler;
+    'test stub delete button triggers as expected': function () {
+        var $deleteStubButton = this.r.$('.stub button.delete'), triggeredData;
+
         when(this.mockConfigTree)
             .find('.stub button.delete')
-            .thenReturn(stubDeleteButton);
-        when(stubDeleteButton)
-            .click(typeOf('function'))
-            .then(function (handler) {
-                deleteHandler = handler;
-            });
-
+            .thenReturn($deleteStubButton);
         this.view.addClickEvents();
-
-        verify(stubDeleteButton).click(typeOf('function'));
-    },
-
-    'test deleteStub click handler finds stub-data': function () {
-        var myStubtData = {}, stubDeleteButton = mock(this.r.$), deleteHandler, deleteEventData;
-
-        this.r.$('.stub')
-            .data('stub-data', myStubtData);
-        when(this.mockConfigTree)
-            .find('.stub button.delete')
-            .thenReturn(stubDeleteButton);
-        when(stubDeleteButton)
-            .click(typeOf('function'))
-            .then(function (handler) {
-                deleteHandler = handler;
-            });
-
-        this.r.$(this.view).one('delete-stub.swivelView', function (e, data) {
-            deleteEventData = data;
+        this.r.$(this.view).one('delete-stub.swivelView', function(event, data){
+            triggeredData = data;
         });
 
+        $deleteStubButton.click();
+
+        assertThat(triggeredData, equalTo(this.stubData));
+    },
+
+    'test delete path button triggers as expected':function(){
+        var $deletePathButton = this.r.$('.path button.delete'), triggeredData;
+
+        when(this.mockConfigTree)
+            .find('.path button.delete')
+            .thenReturn($deletePathButton);
         this.view.addClickEvents();
+        this.r.$(this.view).one('delete-path.swivelView', function(event, data){
+            triggeredData = data;
+        });
 
-        deleteHandler({target: this.r.$('.stub button.delete')});
+        $deletePathButton.click();
 
-        assertThat(deleteEventData, equalTo(myStubtData));
+        assertThat(triggeredData, equalTo(this.pathData));
     },
 
     'test construction configures addElement dialog': function () {
@@ -303,7 +275,7 @@ RequireJSTestCase('HtmlClientView tests', {
         assertThat(addShuntTriggered, is(true));
     },
 
-    'test add-shunt trigger includes expected object': function () {
+    'test addElement trigger includes expected object': function () {
         var eventObject;
         this.r.$(this.view).one('add-shunt.swivelView', function (event, shuntDescription) {
             eventObject = shuntDescription;
@@ -319,9 +291,46 @@ RequireJSTestCase('HtmlClientView tests', {
         ));
     },
 
-    'test add-shunt clears remoteURI field': function () {
+    'test addElement clears remoteURI field': function () {
         this.view.addElement();
 
         verify(this.mockJQueryObject).val('');
+    },
+
+    'test path add event handler sets target path': function () {
+        var $pathAddButton = this.r.$('.path button.add');
+
+        when(this.mockConfigTree).find('.path button.add')
+            .thenReturn($pathAddButton);
+        this.view.addClickEvents();
+
+        $pathAddButton.click();
+
+        assertThat(this.view.targetPath, equalTo(this.pathData));
+    },
+
+    'test path add event handler sets dialog title':function(){
+        var $pathAddButton = this.r.$('.path button.add');
+
+        when(this.mockConfigTree).find('.path button.add')
+            .thenReturn($pathAddButton);
+        this.view.addClickEvents();
+
+        $pathAddButton.click();
+
+        verify(this.mockAddElementDialog).dialog('option',
+            hasMember('title', containsString(this.pathData.path)));
+    },
+
+    'test path add event handler opens dialog':function(){
+        var $pathAddButton = this.r.$('.path button.add');
+
+        when(this.mockConfigTree).find('.path button.add')
+            .thenReturn($pathAddButton);
+        this.view.addClickEvents();
+
+        $pathAddButton.click();
+
+        verify(this.mockAddElementDialog).dialog('open');
     }
 });

@@ -20,6 +20,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -42,22 +43,19 @@ public class ConfigurationResource {
     @PUT
     @Path("shunt/{localPath: .*}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response putShunt(@PathParam("localPath") URI localPath, Map<String, String> json)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Map<String, Object>> putShunt(@PathParam("localPath") URI localPath, Map<String, String> json)
             throws URISyntaxException {
         try {
             String remoteURL = json.get(REMOTE_URI_KEY);
             logger.debug(String.format("Configuring shunt: proxying %1$s to %2$s", localPath, remoteURL));
 
             router.setShunt(localPath, new ShuntRequestHandler(new URI(remoteURL)));
-            return Response.ok().build();
+            return getConfiguration();
         } catch (IllegalArgumentException iae) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity(iae.getMessage())
-                    .build();
+            throw new WebApplicationException(iae, Response.Status.CONFLICT);
         } catch (ClassCastException cce) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity(cce.getMessage())
-                    .build();
+            throw new WebApplicationException(cce, Response.Status.CONFLICT);
         }
     }
 

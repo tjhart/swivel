@@ -1,6 +1,6 @@
 "use strict";
 
-define(['jQuery'], function ($) {
+define(['jQuery', 'json2'], function ($, json2) {
     var SwivelServer = function (baseUrl) {
         this.getConfig = function () {
             return $.ajax({
@@ -28,8 +28,14 @@ define(['jQuery'], function ($) {
             });
         };
 
-        this.putShunt = function(shuntDescription){
-            throw "Not yet implemented";
+        this.putShunt = function (shuntDescription) {
+            return $.ajax({
+                url: [baseUrl, this.CONFIG_PATH, 'shunt', shuntDescription.path].join('/'),
+                type: 'PUT',
+                contentType: 'application/json',
+                accept: 'application/json',
+                data: json2.stringify({remoteURI: shuntDescription.remoteURI})
+            });
         }
     };
 

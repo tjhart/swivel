@@ -114,14 +114,38 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
         };
 
         this.addStub = function () {
-            var data = {};
+            function collect(data, item) {
+                var $item = $(item), val, name;
+                name = $item.attr('name');
+                if (name.match(/ContentType$/)) {
+                    name = 'contentType';
+                } else if (name.match(/Script$/)) {
+                    name = 'script';
+                }
+                val = $item.val();
+                if (val && val.length) {
+                    data[name] = val;
+                }
+            }
+
+            var data = {path: this.targetPath.path, when: {}, then: {}}, whenType, thenType;
             $addStubDialog.dialog('close');
-            this.$addStubForm.find('[name]').each(function (index, item) {
-                var $item = $(item);
-                data[$item.attr('name')] = $item.val();
-                $item.val('');
-            });
+            whenType = this.$addStubForm.find('.when .static').hasClass('hidden')
+                ? '.script'
+                : '.static';
+            this.$addStubForm.find(['.when', whenType, '[name]'].join(' '))
+                .not('[type="radio"]')
+                .each(function (index, item) { collect(data.when, item); });
+            thenType = this.$addStubForm.find('.then .static').hasClass('hidden')
+                ? '.script'
+                : '.static';
+            this.$addStubForm.find(['.then', thenType, '[name]'].join(' '))
+                .not('[type="radio"]')
+                .each(function (index, item) { collect(data.then, item); });
             $view.trigger('add-stub.swivelView', data);
+            this.$addStubForm.find('[name]').not('[type="radio"]').each(function (index, item) {
+                $(item).val('');
+            });
         };
 
         //can be null in testing situations
@@ -158,13 +182,21 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     }] }));
         }
 
-        $('#staticButton').click(function () {
-            $('.staticInput').removeClass('hidden');
-            $('.scriptInput').addClass('hidden');
+        $('#staticWhen').click(function () {
+            $('.when .static').removeClass('hidden');
+            $('.when .script').addClass('hidden');
         });
-        $('#scriptButton').click(function () {
-            $('.scriptInput').removeClass('hidden');
-            $('.staticInput').addClass('hidden');
+        $('#scriptWhen').click(function () {
+            $('.when .script').removeClass('hidden');
+            $('.when .static').addClass('hidden');
+        });
+        $('#staticThen').click(function () {
+            $('.then .static').removeClass('hidden');
+            $('.then .script').addClass('hidden');
+        });
+        $('#scriptThen').click(function () {
+            $('.then .script').removeClass('hidden');
+            $('.then .static').addClass('hidden');
         });
     };
 });

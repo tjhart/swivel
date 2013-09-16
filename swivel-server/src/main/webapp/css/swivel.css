@@ -28,11 +28,11 @@ body > header {
     min-width: 500px;
 }
 
-.jstree{
-    margin:5px 0 5px 5px;
+.jstree {
+    margin: 5px 0 5px 5px;
 }
 
-.path button{
+.path button {
     border: none;
     float: right;
     cursor: pointer;
@@ -42,7 +42,6 @@ body > header {
     background-color: #e0d6a7;
     color: #443f29;
 }
-
 
 .treeButton {
     width: 16px;
@@ -66,11 +65,11 @@ body > footer {
     margin-bottom: 20px;
 }
 
-.scriptInput {
+.script {
     margin: 10px 5px 0 5px;
 }
 
-.when > * {
+.when > *, .then > * {
     margin-left: 10px;
 }
 
@@ -87,6 +86,6 @@ textarea {
     height: 150px;
 }
 
-.scriptInput textarea{
-    margin-left:5px;
+.script textarea {
+    margin-left: 5px;
 }

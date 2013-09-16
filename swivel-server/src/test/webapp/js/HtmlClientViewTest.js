@@ -41,11 +41,12 @@ RequireJSTestCase('HtmlClientView tests', {
          </li>
          </ul>
 
-         <button id="staticButton"/>
-         <button id="scriptButton"/>
 
          <form>
-         <div class="staticInput">
+         <input id="staticWhen" type="radio" name="whenType"/>
+         <input id="scriptWhen" type="radio" name="whenType"/>
+         <div class="when">
+         <div class="static">
          <label for="method">Method:</label>
          <select id="method" name="method">
          <option value="">(any)</option>
@@ -55,14 +56,28 @@ RequireJSTestCase('HtmlClientView tests', {
          <option>DELETE</option>
          </select>
          <label for="contentType">Content Type:</label>
-         <input id="contentType" type="text" name="contentType"/>
+         <input id="contentType" type="text" name="requestContentType"/>
          <label for="remoteAddr">Remote Address:</label>
          <input id="remoteAddr" type="text" name="remoteAddr"/>
          <label for="content">Content:</label>
          <textarea id="content" name="content"></textarea>
          </div>
-         <div class="scriptInput hidden">
-         <label>Script:<textarea name="script"></textarea></label>
+         <div class="script hidden">
+         <textarea name="whenScript"></textarea>
+         </div>
+         </div>
+         <div id="then" class="then">
+         <input id="staticThen" type="radio" name="thenType" value="static" checked/>
+         <input id="scriptThen" type="radio" name="thenType" value="script"/>
+         <div class="static">
+         <input id="statusCode" type="text" name="statusCode"/>
+         <input id="reason" type="text" name="reason"/>
+         <input id="contentType2" type="text" name="responseContentType"/>
+         <textarea id="entity" name="entity"></textarea>
+         </div>
+         <div class="script hidden">
+         <textarea name="thenScript"></textarea>
+         </div>
          </div>
          </form>         */
         this.r.jsHamcrest.Integration.JsTestDriver();
@@ -83,6 +98,9 @@ RequireJSTestCase('HtmlClientView tests', {
 
         when(this.mockJQueryObject)
             .find(anything())
+            .thenReturn(this.mockJQueryObject);
+        when(this.mockJQueryObject)
+            .not(anything())
             .thenReturn(this.mockJQueryObject);
         when(this.mockConfigTree)
             .one(anything(), anything())
@@ -388,17 +406,17 @@ RequireJSTestCase('HtmlClientView tests', {
     },
 
     'test staticButton click shows staticInput and hides scriptInput': function () {
-        this.r.$('#staticButton').click();
+        this.r.$('#staticWhen').click();
 
-        assertThat(this.r.$('.staticInput').hasClass('hidden'), is(false));
-        assertThat(this.r.$('.scriptInput').hasClass('hidden'), is(true));
+        assertThat(this.r.$('.when .static').hasClass('hidden'), is(false));
+        assertThat(this.r.$('.when .script').hasClass('hidden'), is(true));
     },
 
     'test scriptButton click shows scriptInput ahd hides staticInput': function () {
-        this.r.$('#scriptButton').click();
+        this.r.$('#scriptWhen').click();
 
-        assertThat(this.r.$('.scriptInput').hasClass('hidden'), is(false));
-        assertThat(this.r.$('.staticInput').hasClass('hidden'), is(true));
+        assertThat(this.r.$('.when .script').hasClass('hidden'), is(false));
+        assertThat(this.r.$('.when .static').hasClass('hidden'), is(true));
     },
 
     'test addStub closes dialog': function () {
@@ -407,25 +425,83 @@ RequireJSTestCase('HtmlClientView tests', {
         verify(this.mockAddStubDialog).dialog('close');
     },
 
-    'test addStub triggers add-stub with expected data': function () {
-        var addShuntData, $form = this.r.$('form');
+    'test addStub triggers add-stub with expected when static data': function () {
+        var addStubData, $form = this.r.$('form');
         this.r.$(this.view).one('add-stub.swivelView', function (event, data) {
-            addShuntData = data;
+            addStubData = data;
         });
 
+        this.r.$('#staticWhen').click();
         this.view.$addStubForm = $form;
         $form.find('[name="method"]').val('PUT');
-        $form.find('[name="contentType"]').val('application/xml');
+        $form.find('[name="requestContentType"]').val('application/xml');
         $form.find('[name="remoteAddr"]').val('127.0.0.1');
         $form.find('[name="content"]').val('<doc><tag></tag></doc>');
 
         this.view.addStub();
 
-        assertThat(addShuntData, allOf(
+        assertThat(addStubData.when, allOf(
             hasMember('method', equalTo('PUT')),
             hasMember('contentType', equalTo('application/xml')),
             hasMember('remoteAddr', equalTo('127.0.0.1')),
             hasMember('content', equalTo('<doc><tag></tag></doc>'))
+        ));
+    },
+
+    'test addStub triggers add-stub with expected when script data': function () {
+        var addStubData, $form = this.r.$('form');
+        this.r.$(this.view).one('add-stub.swivelView', function (event, data) {
+            addStubData = data;
+        });
+
+        this.r.$('#scriptWhen').click();
+        this.view.$addStubForm = $form;
+        $form.find('[name="whenScript"]').val('some script');
+
+        this.view.addStub();
+
+        assertThat(addStubData.when, allOf(
+            hasMember('script', equalTo('some script'))
+        ));
+    },
+
+    'test addStub triggers add-stub with expected then static data': function () {
+        var addStubData, $form = this.r.$('form');
+        this.r.$(this.view).one('add-stub.swivelView', function (event, data) {
+            addStubData = data;
+        });
+
+        this.r.$('#staticThen').click();
+        this.view.$addStubForm = $form;
+        $form.find('[name="statusCode"]').val('200');
+        $form.find('[name="reason"]').val('OK');
+        $form.find('[name="responseContentType"]').val('application/xml');
+        $form.find('[name="entity"]').val('<doc><tag></tag></doc>');
+
+        this.view.addStub();
+
+        assertThat(addStubData.then, allOf(
+            hasMember('statusCode', equalTo('200')),
+            hasMember('reason', equalTo('OK')),
+            hasMember('contentType', equalTo('application/xml')),
+            hasMember('entity', equalTo('<doc><tag></tag></doc>'))
+        ));
+    },
+
+    'test addStub triggers add-stub with expected then script data': function () {
+        var addStubData, $form = this.r.$('form');
+        this.r.$(this.view).one('add-stub.swivelView', function (event, data) {
+            addStubData = data;
+        });
+
+        this.r.$('#scriptThen').click();
+        this.view.$addStubForm = $form;
+        $form.find('[name="thenScript"]').val('some script');
+
+        this.view.addStub();
+
+        assertThat(addStubData.then, allOf(
+            hasMember('script', equalTo('some script'))
         ));
     },
 
@@ -440,7 +516,7 @@ RequireJSTestCase('HtmlClientView tests', {
 
         this.view.addStub();
 
-        $form.find('[name]').each(function (index, item) {
+        $form.find('[name]').not('[type="radio"]').each(function (index, item) {
             assertThat(that.r.$(item).val(), equalTo(''));
         });
     }

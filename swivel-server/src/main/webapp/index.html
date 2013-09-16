@@ -27,15 +27,14 @@
         </form>
     </div>
     <div id="addStubDialog" class="dialog">
-        <div><label for="when">When:</label></div>
-
-        <div id="when" class="when">
-            <div class="type">
-                <label>Static:<input id="staticButton" type="radio" name="whenType" value="static" checked/></label>
-                <label>Script:<input id="scriptButton" type="radio" name="whenType" value="script"/></label>
-            </div>
-            <form>
-                <table class="staticInput">
+        <form>
+            <div><label for="when">When:</label></div>
+            <div id="when" class="when">
+                <div class="type">
+                    <label>Static:<input id="staticWhen" type="radio" name="whenType" value="static" checked/></label>
+                    <label>Script:<input id="scriptWhen" type="radio" name="whenType" value="script"/></label>
+                </div>
+                <table class="static">
                     <tbody>
                     <tr>
                         <td><label for="method">Method:</label></td>
@@ -52,7 +51,7 @@
                     <tr>
                         <td><label for="contentType">Content Type:</label></td>
                         <td>
-                            <input id="contentType" type="text" name="contentType"/>
+                            <input id="contentType" type="text" name="requestContentType"/>
                         </td>
                     </tr>
                     <tr>
@@ -67,11 +66,47 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="scriptInput hidden">
-                    <label>Script:<textarea name="script"></textarea></label>
+                <div class="script hidden">
+                    <label>Script:<textarea name="whenScript"></textarea></label>
                 </div>
-            </form>
-        </div>
+            </div>
+            <div><label for="then">Then:</label></div>
+            <div id="then" class="then">
+                <div class="type">
+                    <label>Static:<input id="staticThen" type="radio" name="thenType" value="static" checked/></label>
+                    <label>Script:<input id="scriptThen" type="radio" name="thenType" value="script"/></label>
+                </div>
+                <table class="static">
+                    <tbody>
+                    <tr>
+                        <td><label for="statusCode">Status Code:</label></td>
+                        <td>
+                            <input id="statusCode" type="text" name="statusCode"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="reason">Reason:</label></td>
+                        <td>
+                            <input id="reason" type="text" name="reason"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="contentType2">Content Type:</label></td>
+                        <td><input id="contentType2" type="text" name="responseContentType"/></td>
+                    </tr>
+                    <tr>
+                        <td><label for="entity">Entity:</label></td>
+                        <td>
+                            <textarea id="entity" name="entity"></textarea>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="script hidden">
+                    <label>Script:<textarea name="thenScript"></textarea></label>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 

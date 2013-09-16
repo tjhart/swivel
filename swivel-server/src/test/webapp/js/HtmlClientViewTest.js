@@ -211,18 +211,7 @@ RequireJSTestCase('HtmlClientView tests', {
     },
 
     'test construction configures addElement dialog': function () {
-        var dialogOpts;
-
-        when(this.mockAddShuntDialog).dialog()
-            .then(function () {
-                if (typeof arguments[0] === 'object') {
-                    dialogOpts = arguments[0];
-                }
-            });
-
-        new this.r.HtmlClientView(this.mockConfigTree, this.mockAddShuntDialog);
-
-        assertThat(dialogOpts, allOf(
+        verify(this.mockAddShuntDialog).dialog(allOf(
             hasMember('autoOpen', is(false)),
             hasMember('modal', is(true)),
             hasMember('draggable', is(false)),
@@ -233,7 +222,7 @@ RequireJSTestCase('HtmlClientView tests', {
 
     'test addElementDialog add defers to addElement': function () {
         var dialogButtons;
-        when(this.mockAddShuntDialog).dialog('option', anything()).then(function (op, opts) {
+        when(this.mockAddShuntDialog).dialog(anything()).then(function (opts) {
             dialogButtons = opts.buttons;
             return this;
         });

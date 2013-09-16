@@ -15,6 +15,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
             text: 'Cancel',
             click: function () {$(this).dialog('close');}
         };
+
     return function ($configTree, $addShuntDialog, $addStubDialog) {
         var view = this, $view = $(this);
 
@@ -131,32 +132,34 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
         if ($addShuntDialog) {
             this.$remoteURI = $addShuntDialog.find('[name="remoteURI"]');
 
-            $addShuntDialog.dialog(DIALOG_OPTS);
-            $addShuntDialog.dialog('option', {
-                buttons: [ DIALOG_CANCEL_BUTTON, {
-                    text: 'Add Shunt',
-                    click: function () { view.addShunt(); }
-                } ]
-            });
+            $addShuntDialog.dialog($.extend({},
+                DIALOG_OPTS,
+                {
+                    buttons: [ DIALOG_CANCEL_BUTTON, {
+                        text: 'Add Shunt',
+                        click: function () { view.addShunt(); }
+                    } ]
+                }
+            ));
+        }
 
-            if ($addStubDialog) {
-                $addStubDialog.dialog(DIALOG_OPTS);
-                $addStubDialog.dialog('option', {
+        if ($addStubDialog) {
+            $addStubDialog.dialog($.extend({},
+                DIALOG_OPTS,
+                {
                     buttons: [DIALOG_CANCEL_BUTTON, {
                         text: 'Add Stub',
                         click: function () {view.addStub();}
                     }]
-                });
-
-                $addStubDialog.find('#staticButton').click(function () {
-                    $('.staticInput').removeClass('hidden');
-                    $('.scriptInput').addClass('hidden');
-                });
-                $addStubDialog.find('#scriptButton').click(function () {
-                    $('.scriptInput').removeClass('hidden');
-                    $('.staticInput').addClass('hidden');
-                });
-            }
+                }));
+            $addStubDialog.find('#staticButton').click(function () {
+                $('.staticInput').removeClass('hidden');
+                $('.scriptInput').addClass('hidden');
+            });
+            $addStubDialog.find('#scriptButton').click(function () {
+                $('.scriptInput').removeClass('hidden');
+                $('.staticInput').addClass('hidden');
+            });
         }
     };
 });

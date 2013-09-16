@@ -19,7 +19,8 @@ RequireJSTestCase('HtmlClientView tests', {
         /*:DOC +=
          <ul>
          <li class="path">
-         <button class="treeButton add" title="Add"></button>
+         <button class="addShunt" title="Add"></button>
+         <button class="addStub" title="Add"></button>
          <button class="treeButton delete" title="Delete"></button>
          some/path
          <ul>
@@ -51,7 +52,8 @@ RequireJSTestCase('HtmlClientView tests', {
         this.r.$('.stub').data('stub-data', this.stubData);
         this.r.$('.shunt').data('shunt-data', this.shuntData);
 
-        this.mockAddElementDialog = mock(this.r.$);
+        this.mockAddShuntDialog = mock(this.r.$);
+        this.mockAddStubDialog = mock(this.r.$);
         this.mockConfigTree = mock(this.r.$);
         this.mockJQueryObject = mock(this.r.$);
 
@@ -67,11 +69,11 @@ RequireJSTestCase('HtmlClientView tests', {
         when(this.mockConfigTree)
             .jstree()
             .thenReturn(this.mockConfigTree);
-        when(this.mockAddElementDialog).find(anything())
+        when(this.mockAddShuntDialog).find(anything())
             .thenReturn(this.mockJQueryObject);
 
-        this.view = new this.r.HtmlClientView(this.mockConfigTree, this.mockAddElementDialog);
-        this.view.$addElementForm = this.mockJQueryObject;
+        this.view = new this.r.HtmlClientView(this.mockConfigTree, this.mockAddShuntDialog);
+        this.view.$remoteURI = this.mockJQueryObject;
         this.view.targetPath = {path: 'some/path'};
     },
 
@@ -167,7 +169,7 @@ RequireJSTestCase('HtmlClientView tests', {
             .find('.shunt button.delete')
             .thenReturn($deleteShuntButton);
         this.view.addClickEvents();
-        this.r.$(this.view).one('delete-shunt.swivelView', function(event, data){
+        this.r.$(this.view).one('delete-shunt.swivelView', function (event, data) {
             triggeredData = data;
         });
 
@@ -183,7 +185,7 @@ RequireJSTestCase('HtmlClientView tests', {
             .find('.stub button.delete')
             .thenReturn($deleteStubButton);
         this.view.addClickEvents();
-        this.r.$(this.view).one('delete-stub.swivelView', function(event, data){
+        this.r.$(this.view).one('delete-stub.swivelView', function (event, data) {
             triggeredData = data;
         });
 
@@ -192,14 +194,14 @@ RequireJSTestCase('HtmlClientView tests', {
         assertThat(triggeredData, equalTo(this.stubData));
     },
 
-    'test delete path button triggers as expected':function(){
+    'test delete path button triggers as expected': function () {
         var $deletePathButton = this.r.$('.path button.delete'), triggeredData;
 
         when(this.mockConfigTree)
             .find('.path button.delete')
             .thenReturn($deletePathButton);
         this.view.addClickEvents();
-        this.r.$(this.view).one('delete-path.swivelView', function(event, data){
+        this.r.$(this.view).one('delete-path.swivelView', function (event, data) {
             triggeredData = data;
         });
 
@@ -209,7 +211,18 @@ RequireJSTestCase('HtmlClientView tests', {
     },
 
     'test construction configures addElement dialog': function () {
-        verify(this.mockAddElementDialog).dialog(allOf(
+        var dialogOpts;
+
+        when(this.mockAddShuntDialog).dialog()
+            .then(function () {
+                if (typeof arguments[0] === 'object') {
+                    dialogOpts = arguments[0];
+                }
+            });
+
+        new this.r.HtmlClientView(this.mockConfigTree, this.mockAddShuntDialog);
+
+        assertThat(dialogOpts, allOf(
             hasMember('autoOpen', is(false)),
             hasMember('modal', is(true)),
             hasMember('draggable', is(false)),
@@ -218,37 +231,24 @@ RequireJSTestCase('HtmlClientView tests', {
         ));
     },
 
-    'test addElementDialog cancel button closes dialog': function () {
-        var dialogButtons;
-        when(this.mockAddElementDialog).dialog(anything()).then(function (opts) {
-            dialogButtons = opts.buttons;
-            return this;
-        });
-
-        new this.r.HtmlClientView(this.mockConfigTree, this.mockAddElementDialog);
-        dialogButtons[0].click();
-
-        verify(this.mockAddElementDialog).dialog('close');
-    },
-
     'test addElementDialog add defers to addElement': function () {
         var dialogButtons;
-        when(this.mockAddElementDialog).dialog(anything()).then(function (opts) {
+        when(this.mockAddShuntDialog).dialog('option', anything()).then(function (op, opts) {
             dialogButtons = opts.buttons;
             return this;
         });
 
-        var view = new this.r.HtmlClientView(this.mockConfigTree, this.mockAddElementDialog);
-        view.addElement = mockFunction();
+        var view = new this.r.HtmlClientView(this.mockConfigTree, this.mockAddShuntDialog);
+        view.addShunt = mockFunction();
         dialogButtons[1].click();
 
-        verify(view.addElement)();
+        verify(view.addShunt)();
     },
 
     'test addElement closes dialog': function () {
-        this.view.addElement();
+        this.view.addShunt();
 
-        verify(this.mockAddElementDialog).dialog('close');
+        verify(this.mockAddShuntDialog).dialog('close');
     },
 
     'test addElement triggers put-shunt event': function () {
@@ -257,7 +257,7 @@ RequireJSTestCase('HtmlClientView tests', {
             addShuntTriggered = true;
         });
 
-        this.view.addElement();
+        this.view.addShunt();
 
         assertThat(addShuntTriggered, is(true));
     },
@@ -270,7 +270,7 @@ RequireJSTestCase('HtmlClientView tests', {
 
         when(this.mockJQueryObject).val()
             .thenReturn('some/remote/uri');
-        this.view.addElement();
+        this.view.addShunt();
 
         assertThat(eventObject, allOf(
             hasMember('path', equalTo(this.view.targetPath.path)),
@@ -279,15 +279,15 @@ RequireJSTestCase('HtmlClientView tests', {
     },
 
     'test addElement clears remoteURI field': function () {
-        this.view.addElement();
+        this.view.addShunt();
 
         verify(this.mockJQueryObject).val('');
     },
 
     'test path add event handler sets target path': function () {
-        var $pathAddButton = this.r.$('.path button.add');
+        var $pathAddButton = this.r.$('.path button.addShunt');
 
-        when(this.mockConfigTree).find('.path button.add')
+        when(this.mockConfigTree).find('.path button.addShunt')
             .thenReturn($pathAddButton);
         this.view.addClickEvents();
 
@@ -296,28 +296,28 @@ RequireJSTestCase('HtmlClientView tests', {
         assertThat(this.view.targetPath, equalTo(this.pathData));
     },
 
-    'test path add event handler sets dialog title':function(){
-        var $pathAddButton = this.r.$('.path button.add');
+    'test path add event handler sets dialog title': function () {
+        var $pathAddButton = this.r.$('.path button.addShunt');
 
-        when(this.mockConfigTree).find('.path button.add')
+        when(this.mockConfigTree).find('.path button.addShunt')
             .thenReturn($pathAddButton);
         this.view.addClickEvents();
 
         $pathAddButton.click();
 
-        verify(this.mockAddElementDialog).dialog('option',
+        verify(this.mockAddShuntDialog).dialog('option',
             hasMember('title', containsString(this.pathData.path)));
     },
 
-    'test path add event handler opens dialog':function(){
-        var $pathAddButton = this.r.$('.path button.add');
+    'test path add event handler opens dialog': function () {
+        var $pathAddButton = this.r.$('.path button.addShunt');
 
-        when(this.mockConfigTree).find('.path button.add')
+        when(this.mockConfigTree).find('.path button.addShunt')
             .thenReturn($pathAddButton);
         this.view.addClickEvents();
 
         $pathAddButton.click();
 
-        verify(this.mockAddElementDialog).dialog('open');
+        verify(this.mockAddShuntDialog).dialog('open');
     }
 });

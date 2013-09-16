@@ -6,6 +6,7 @@
 
 body {
     font-family: "SourceSansProRegular", sans-serif;
+    font-size: 18px;
     margin: 0;
 }
 
@@ -24,23 +25,31 @@ body > header {
     border: #443f29 solid thin;
     height: 500px;
     border-radius: 10px;
+    min-width: 500px;
 }
 
-.treeButton {
+.jstree{
+    margin:5px 0 5px 5px;
+}
+
+.path button{
     border: none;
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    margin-left: 5px;
     float: right;
+    cursor: pointer;
+    margin-left: 5px;
+    height: 16px;
+
+    background-color: #e0d6a7;
+    color: #443f29;
+}
+
+
+.treeButton {
+    width: 16px;
 }
 
 .treeButton.delete {
     background: url(images/delete.png) no-repeat;
-}
-
-.treeButton.add {
-    background: url(images/add.png) no-repeat;
 }
 
 .treeButton:hover {
@@ -52,24 +61,32 @@ body > footer {
     padding: 25px 25px 25px 25px;
 }
 
-#addElementDialog .type{
-    margin-top:10px;
-    margin-bottom:20px;
+.dialog .type {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.scriptInput {
+    margin: 10px 5px 0 5px;
 }
 
 .when > * {
-    margin-left:10px;
+    margin-left: 10px;
 }
 
-tbody td:first-child{
+tbody td:first-child {
     text-align: right;
 }
 
-input[type="text"], textarea{
-    width:300px;
+input[type="text"], textarea {
+    width: 300px;
 }
 
-textarea{
+textarea {
     vertical-align: text-top;
     height: 150px;
+}
+
+.scriptInput textarea{
+    margin-left:5px;
 }

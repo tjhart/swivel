@@ -1,9 +1,21 @@
 "use strict";
 
 define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
-    var ADD_BUTTON = '<button class="treeButton add" title="Add"></button>',
-        DELETE_BUTTON = '<button class="treeButton delete" title="Delete"></button>';
-    return function ($configTree, $addElementDialog) {
+    var ADD_SHUNT_BUTTON = '<button class="addShunt" title="Add Shunt">Add Shunt</button>',
+        ADD_STUB_BUTTON = '<button class="addStub" title="Add Stub">Add Stub</button>',
+        DELETE_BUTTON = '<button class="treeButton delete" title="Delete"></button>',
+        DIALOG_OPTS = {
+            autoOpen: false,
+            modal: true,
+            draggable: false,
+            resizable: false,
+            width: 600
+        },
+        DIALOG_CANCEL_BUTTON = {
+            text: 'Cancel',
+            click: function () {$(this).dialog('close');}
+        };
+    return function ($configTree, $addShuntDialog, $addStubDialog) {
         var view = this, $view = $(this);
 
         this.loadConfigurationData = function (data) {
@@ -12,7 +24,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
             });
             $.each(data, function (index, item) {
                 var pathNode = $configTree.jstree('create_node', view.rootNode, 'last', {
-                    data: [ADD_BUTTON,
+                    data: [ADD_STUB_BUTTON, ADD_SHUNT_BUTTON,
                         DELETE_BUTTON,
                         item.path].join(''),
                     state: 'open',
@@ -69,28 +81,36 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
             //REDTAG:TJH - consider just sending an event to the controller.
             //If a shunt already exists, shouldn't we warn the user
             //that it will be replaced?
-            $configTree.find('.path button.add')
+            $configTree.find('.path button.addShunt')
                 .click(function (e) {
                     view.targetPath = getPath(e);
-                    $addElementDialog.dialog('option', {
-                        title: ['Add configuration element to: ', view.targetPath.path].join('')
+                    $addShuntDialog.dialog('option', {
+                        title: ['Add/replace shunt at: ', view.targetPath.path].join('')
                     });
-                    $addElementDialog.dialog('open');
+                    $addShuntDialog.dialog('open');
                 });
             $configTree.find('.path button.delete')
                 .click(function (e) {
                     $view.trigger('delete-path.swivelView', getPath(e));
                 });
+            $configTree.find('.path button.addStub')
+                .click(function (e) {
+                    view.targetPath = getPath(e);
+                    $addStubDialog.dialog('open');
+                });
         };
 
-        this.addElement = function () {
-            var remoteURIField = this.$addElementForm.find('[name="remoteURI"]');
-            $addElementDialog.dialog('close');
+        this.addShunt = function () {
+            $addShuntDialog.dialog('close');
             $view.trigger('put-shunt.swivelView', {
                 path: view.targetPath.path,
-                remoteURI: remoteURIField.val()
+                remoteURI: view.$remoteURI.val()
             });
-            remoteURIField.val('');
+            view.$remoteURI.val('');
+        };
+
+        this.addStub = function () {
+            throw "Not yet implemented";
         };
 
         //can be null in testing situations
@@ -108,43 +128,35 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                 });
         }
 
-        if ($addElementDialog) {
-            this.$addElementForm = $addElementDialog.find('form');
+        if ($addShuntDialog) {
+            this.$remoteURI = $addShuntDialog.find('[name="remoteURI"]');
 
-            $addElementDialog.dialog({
-                autoOpen: false,
-                modal: true,
-                draggable: false,
-                resizable: false,
-                width: 600,
-                buttons: [
-                    {
-                        text: 'Cancel',
-                        click: function () {$addElementDialog.dialog('close');}
-                    },
-                    {
-                        text: 'Add',
-                        click: function () { view.addElement(); }
-                    }
-                ]
+            $addShuntDialog.dialog(DIALOG_OPTS);
+            $addShuntDialog.dialog('option', {
+                buttons: [ DIALOG_CANCEL_BUTTON, {
+                    text: 'Add Shunt',
+                    click: function () { view.addShunt(); }
+                } ]
             });
 
-            $addElementDialog.find('#shuntButton').click(function () {
-                $('.shuntElements').removeClass('hidden');
-                $('.stubElements').addClass('hidden');
-            });
-            $addElementDialog.find('#stubButton').click(function () {
-                $('.stubElements').removeClass('hidden');
-                $('.shuntElements').addClass('hidden');
-            });
-            $addElementDialog.find('#staticButton').click(function () {
-                $('.staticInput').removeClass('hidden');
-                $('.scriptInput').addClass('hidden');
-            });
-            $addElementDialog.find('#scriptButton').click(function () {
-                $('.scriptInput').removeClass('hidden');
-                $('.staticInput').addClass('hidden');
-            });
+            if ($addStubDialog) {
+                $addStubDialog.dialog(DIALOG_OPTS);
+                $addStubDialog.dialog('option', {
+                    buttons: [DIALOG_CANCEL_BUTTON, {
+                        text: 'Add Stub',
+                        click: function () {view.addStub();}
+                    }]
+                });
+
+                $addStubDialog.find('#staticButton').click(function () {
+                    $('.staticInput').removeClass('hidden');
+                    $('.scriptInput').addClass('hidden');
+                });
+                $addStubDialog.find('#scriptButton').click(function () {
+                    $('.scriptInput').removeClass('hidden');
+                    $('.staticInput').addClass('hidden');
+                });
+            }
         }
     };
 });

@@ -23,7 +23,7 @@ requirejs.config({
 
     function startApp($, HtmlClientController, HtmlClientView, SwivelServer) {
         new HtmlClientController(new SwivelServer(href.substr(0, href.lastIndexOf('/'))),
-            new HtmlClientView($('#currentConfig'), $('#addElementDialog')));
+            new HtmlClientView($('#currentConfig'), $('#addShuntDialog'), $('#addStubDialog')));
     }
 
     if (loadedFromFile) {

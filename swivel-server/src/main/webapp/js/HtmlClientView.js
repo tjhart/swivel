@@ -97,6 +97,9 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
             $configTree.find('.path button.addStub')
                 .click(function (e) {
                     view.targetPath = getPath(e);
+                    $addStubDialog.dialog('option', {
+                        title: ['Add stub at: ', view.targetPath.path].join('')
+                    });
                     $addStubDialog.dialog('open');
                 });
         };
@@ -111,55 +114,57 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
         };
 
         this.addStub = function () {
-            throw "Not yet implemented";
+            var data = {};
+            $addStubDialog.dialog('close');
+            this.$addStubForm.find('[name]').each(function (index, item) {
+                var $item = $(item);
+                data[$item.attr('name')] = $item.val();
+                $item.val('');
+            });
+            $view.trigger('add-stub.swivelView', data);
         };
 
         //can be null in testing situations
         if ($configTree) {
-            $configTree.one('loaded.jstree', function () {
+            $configTree.one('loaded.jstree',function () {
                 view.rootNode = $('#configRoot');
                 $view.trigger('loaded.swivelView')
-            })
-                .jstree({
+            }).jstree({
                     core: {html_titles: true},
                     plugins: ['themes', 'json_data'],
                     json_data: {data: [
                         {data: 'Configuration', state: 'open', attr: {id: 'configRoot'}}
-                    ]}
-                });
+                    ]} });
         }
 
         if ($addShuntDialog) {
             this.$remoteURI = $addShuntDialog.find('[name="remoteURI"]');
 
             $addShuntDialog.dialog($.extend({},
-                DIALOG_OPTS,
-                {
+                DIALOG_OPTS, {
                     buttons: [ DIALOG_CANCEL_BUTTON, {
                         text: 'Add Shunt',
                         click: function () { view.addShunt(); }
-                    } ]
-                }
-            ));
+                    }] }));
         }
 
         if ($addStubDialog) {
+            this.$addStubForm = $addStubDialog.find('form');
             $addStubDialog.dialog($.extend({},
-                DIALOG_OPTS,
-                {
+                DIALOG_OPTS, {
                     buttons: [DIALOG_CANCEL_BUTTON, {
                         text: 'Add Stub',
                         click: function () {view.addStub();}
-                    }]
-                }));
-            $addStubDialog.find('#staticButton').click(function () {
-                $('.staticInput').removeClass('hidden');
-                $('.scriptInput').addClass('hidden');
-            });
-            $addStubDialog.find('#scriptButton').click(function () {
-                $('.scriptInput').removeClass('hidden');
-                $('.staticInput').addClass('hidden');
-            });
+                    }] }));
         }
+
+        $('#staticButton').click(function () {
+            $('.staticInput').removeClass('hidden');
+            $('.scriptInput').addClass('hidden');
+        });
+        $('#scriptButton').click(function () {
+            $('.scriptInput').removeClass('hidden');
+            $('.staticInput').addClass('hidden');
+        });
     };
 });

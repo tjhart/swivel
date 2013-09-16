@@ -34,40 +34,43 @@
                 <label>Static:<input id="staticButton" type="radio" name="whenType" value="static" checked/></label>
                 <label>Script:<input id="scriptButton" type="radio" name="whenType" value="script"/></label>
             </div>
-            <table class="staticInput">
-                <tbody>
-                <tr>
-                    <td><label for="method">Method:</label></td>
-                    <td>
-                        <select id="method" name="method">
-                            <option>GET</option>
-                            <option>PUT</option>
-                            <option>POST</option>
-                            <option>DELETE</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="contentType">Content Type:</label></td>
-                    <td>
-                        <input id="contentType" type="text" name="contentType"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="remoteAddr">Remote Address:</label></td>
-                    <td><input id="remoteAddr" type="text" name="remoteAddr"/></td>
-                </tr>
-                <tr>
-                    <td><label for="content">Content:</label></td>
-                    <td>
-                        <textarea id="content" name="content"></textarea>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <div class="scriptInput hidden">
-                <label>Script:<textarea name="script"></textarea></label>
-            </div>
+            <form>
+                <table class="staticInput">
+                    <tbody>
+                    <tr>
+                        <td><label for="method">Method:</label></td>
+                        <td>
+                            <select id="method" name="method">
+                                <option value="">(any)</option>
+                                <option>GET</option>
+                                <option>PUT</option>
+                                <option>POST</option>
+                                <option>DELETE</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="contentType">Content Type:</label></td>
+                        <td>
+                            <input id="contentType" type="text" name="contentType"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="remoteAddr">Remote Address:</label></td>
+                        <td><input id="remoteAddr" type="text" name="remoteAddr"/></td>
+                    </tr>
+                    <tr>
+                        <td><label for="content">Content:</label></td>
+                        <td>
+                            <textarea id="content" name="content"></textarea>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="scriptInput hidden">
+                    <label>Script:<textarea name="script"></textarea></label>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -40,7 +40,31 @@ RequireJSTestCase('HtmlClientView tests', {
          </ul>
          </li>
          </ul>
-         */
+
+         <button id="staticButton"/>
+         <button id="scriptButton"/>
+
+         <form>
+         <div class="staticInput">
+         <label for="method">Method:</label>
+         <select id="method" name="method">
+         <option value="">(any)</option>
+         <option>GET</option>
+         <option>PUT</option>
+         <option>POST</option>
+         <option>DELETE</option>
+         </select>
+         <label for="contentType">Content Type:</label>
+         <input id="contentType" type="text" name="contentType"/>
+         <label for="remoteAddr">Remote Address:</label>
+         <input id="remoteAddr" type="text" name="remoteAddr"/>
+         <label for="content">Content:</label>
+         <textarea id="content" name="content"></textarea>
+         </div>
+         <div class="scriptInput hidden">
+         <label>Script:<textarea name="script"></textarea></label>
+         </div>
+         </form>         */
         this.r.jsHamcrest.Integration.JsTestDriver();
         this.r.jsMockito.Integration.JsTestDriver();
 
@@ -71,8 +95,10 @@ RequireJSTestCase('HtmlClientView tests', {
             .thenReturn(this.mockConfigTree);
         when(this.mockAddShuntDialog).find(anything())
             .thenReturn(this.mockJQueryObject);
+        when(this.mockAddStubDialog).find(anything())
+            .thenReturn(this.mockJQueryObject);
 
-        this.view = new this.r.HtmlClientView(this.mockConfigTree, this.mockAddShuntDialog);
+        this.view = new this.r.HtmlClientView(this.mockConfigTree, this.mockAddShuntDialog, this.mockAddStubDialog);
         this.view.$remoteURI = this.mockJQueryObject;
         this.view.targetPath = {path: 'some/path'};
     },
@@ -220,27 +246,27 @@ RequireJSTestCase('HtmlClientView tests', {
         ));
     },
 
-    'test addElementDialog add defers to addElement': function () {
+    'test addShuntDialog add defers to addElement': function () {
         var dialogButtons;
         when(this.mockAddShuntDialog).dialog(anything()).then(function (opts) {
             dialogButtons = opts.buttons;
             return this;
         });
 
-        var view = new this.r.HtmlClientView(this.mockConfigTree, this.mockAddShuntDialog);
+        var view = new this.r.HtmlClientView(this.mockConfigTree, this.mockAddShuntDialog, this.mockAddStubDialog);
         view.addShunt = mockFunction();
         dialogButtons[1].click();
 
         verify(view.addShunt)();
     },
 
-    'test addElement closes dialog': function () {
+    'test addShunt closes dialog': function () {
         this.view.addShunt();
 
         verify(this.mockAddShuntDialog).dialog('close');
     },
 
-    'test addElement triggers put-shunt event': function () {
+    'test addShunt triggers put-shunt event': function () {
         var addShuntTriggered = false;
         this.r.$(this.view).one('put-shunt.swivelView', function () {
             addShuntTriggered = true;
@@ -251,7 +277,7 @@ RequireJSTestCase('HtmlClientView tests', {
         assertThat(addShuntTriggered, is(true));
     },
 
-    'test addElement trigger includes expected object': function () {
+    'test addShunt trigger includes expected object': function () {
         var eventObject;
         this.r.$(this.view).one('put-shunt.swivelView', function (event, shuntDescription) {
             eventObject = shuntDescription;
@@ -267,13 +293,13 @@ RequireJSTestCase('HtmlClientView tests', {
         ));
     },
 
-    'test addElement clears remoteURI field': function () {
+    'test addShunt clears remoteURI field': function () {
         this.view.addShunt();
 
         verify(this.mockJQueryObject).val('');
     },
 
-    'test path add event handler sets target path': function () {
+    'test path addShunt event handler sets target path': function () {
         var $pathAddButton = this.r.$('.path button.addShunt');
 
         when(this.mockConfigTree).find('.path button.addShunt')
@@ -285,7 +311,7 @@ RequireJSTestCase('HtmlClientView tests', {
         assertThat(this.view.targetPath, equalTo(this.pathData));
     },
 
-    'test path add event handler sets dialog title': function () {
+    'test path addShunt event handler sets dialog title': function () {
         var $pathAddButton = this.r.$('.path button.addShunt');
 
         when(this.mockConfigTree).find('.path button.addShunt')
@@ -298,7 +324,7 @@ RequireJSTestCase('HtmlClientView tests', {
             hasMember('title', containsString(this.pathData.path)));
     },
 
-    'test path add event handler opens dialog': function () {
+    'test path addShunt event handler opens dialog': function () {
         var $pathAddButton = this.r.$('.path button.addShunt');
 
         when(this.mockConfigTree).find('.path button.addShunt')
@@ -308,5 +334,114 @@ RequireJSTestCase('HtmlClientView tests', {
         $pathAddButton.click();
 
         verify(this.mockAddShuntDialog).dialog('open');
+    },
+
+    'test path addStub event handler sets target path': function () {
+        var $pathAddStubButton = this.r.$('.path button.addStub');
+
+        when(this.mockConfigTree).find('.path button.addStub')
+            .thenReturn($pathAddStubButton);
+        this.view.addClickEvents();
+
+        $pathAddStubButton.click();
+
+        assertThat(this.view.targetPath, equalTo(this.pathData));
+    },
+
+    'test path addStub event handler sets dialog title': function () {
+        var $pathAddStubButton = this.r.$('.path button.addStub');
+
+        when(this.mockConfigTree).find('.path button.addStub')
+            .thenReturn($pathAddStubButton);
+        this.view.addClickEvents();
+
+        $pathAddStubButton.click();
+
+        verify(this.mockAddStubDialog).dialog('option',
+            hasMember('title', containsString(this.pathData.path)));
+    },
+
+    'test path addStub event handler opens dialog': function () {
+        var $pathAddStubButton = this.r.$('.path button.addStub');
+
+        when(this.mockConfigTree).find('.path button.addStub')
+            .thenReturn($pathAddStubButton);
+        this.view.addClickEvents();
+
+        $pathAddStubButton.click();
+
+        verify(this.mockAddStubDialog).dialog('open');
+    },
+
+    'test addStub dialog add button defers to addStub': function () {
+        var dialogButtons;
+        when(this.mockAddStubDialog).dialog(anything()).then(function (opts) {
+            dialogButtons = opts.buttons;
+            return this;
+        });
+
+        var view = new this.r.HtmlClientView(this.mockConfigTree, this.mockAddShuntDialog, this.mockAddStubDialog);
+        view.addStub = mockFunction();
+        dialogButtons[1].click();
+
+        verify(view.addStub)();
+    },
+
+    'test staticButton click shows staticInput and hides scriptInput': function () {
+        this.r.$('#staticButton').click();
+
+        assertThat(this.r.$('.staticInput').hasClass('hidden'), is(false));
+        assertThat(this.r.$('.scriptInput').hasClass('hidden'), is(true));
+    },
+
+    'test scriptButton click shows scriptInput ahd hides staticInput': function () {
+        this.r.$('#scriptButton').click();
+
+        assertThat(this.r.$('.scriptInput').hasClass('hidden'), is(false));
+        assertThat(this.r.$('.staticInput').hasClass('hidden'), is(true));
+    },
+
+    'test addStub closes dialog': function () {
+        this.view.addStub();
+
+        verify(this.mockAddStubDialog).dialog('close');
+    },
+
+    'test addStub triggers add-stub with expected data': function () {
+        var addShuntData, $form = this.r.$('form');
+        this.r.$(this.view).one('add-stub.swivelView', function (event, data) {
+            addShuntData = data;
+        });
+
+        this.view.$addStubForm = $form;
+        $form.find('[name="method"]').val('PUT');
+        $form.find('[name="contentType"]').val('application/xml');
+        $form.find('[name="remoteAddr"]').val('127.0.0.1');
+        $form.find('[name="content"]').val('<doc><tag></tag></doc>');
+
+        this.view.addStub();
+
+        assertThat(addShuntData, allOf(
+            hasMember('method', equalTo('PUT')),
+            hasMember('contentType', equalTo('application/xml')),
+            hasMember('remoteAddr', equalTo('127.0.0.1')),
+            hasMember('content', equalTo('<doc><tag></tag></doc>'))
+        ));
+    },
+
+    'test addStub clears form': function () {
+        var that = this, $form = this.r.$('form');
+
+        this.view.$addStubForm = $form;
+        $form.find('[name="method"]').val('PUT');
+        $form.find('[name="contentType"]').val('application/xml');
+        $form.find('[name="remoteAddr"]').val('127.0.0.1');
+        $form.find('[name="content"]').val('<doc><tag></tag></doc>');
+
+        this.view.addStub();
+
+        $form.find('[name]').each(function (index, item) {
+            assertThat(that.r.$(item).val(), equalTo(''));
+        });
     }
 });

@@ -155,7 +155,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                 $view.trigger('loaded.swivelView')
             }).jstree({
                     core: {html_titles: true},
-                    plugins: ['themes', 'json_data'],
+                    plugins: ['json_data', 'themeroller'],
                     json_data: {data: [
                         {data: 'Configuration', state: 'open', attr: {id: 'configRoot'}}
                     ]} });

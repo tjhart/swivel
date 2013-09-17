@@ -32,16 +32,16 @@ body > header {
     margin: 5px 0 5px 5px;
 }
 
-/*.path button {*/
-    /*border: none;*/
-    /*float: right;*/
-    /*cursor: pointer;*/
-    /*margin-left: 5px;*/
-    /*height: 16px;*/
+.path button {
+    border: none;
+    float: right;
+    cursor: pointer;
+    margin-left: 5px;
+    height: 16px;
 
-    /*background-color: #e0d6a7;*/
-    /*color: #443f29;*/
-/*}*/
+    background-color: #e0d6a7;
+    color: #443f29;
+}
 
 .treeButton {
     width: 16px;

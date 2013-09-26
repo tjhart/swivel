@@ -1,8 +1,12 @@
 package com.tjh.swivel.config;
 
+import com.tjh.swivel.config.model.When;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.net.URISyntaxException;
+
+import static com.tjh.swivel.config.Swivel.post;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -22,10 +26,21 @@ public class SwivelConfigurerTest {
     }
 
     @Test
-    public void whenCapturesPreconditions(){
-//        swivelConfigurer
-//                .when(post("data").to("some/uri"))
-//                .then(returnCode(204).reason("OK"));
-//        ;
+    public void whenCapturesWhen() throws URISyntaxException {
+        When when = post("data").to("some/uri");
+        swivelConfigurer
+                .when(when);
+
+        assertThat(swivelConfigurer.getWhen(), equalTo(when));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setWhenVerifiesURI(){
+        swivelConfigurer.setWhen(post("data"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setWhenVerifiesURIIsNotEmpty() throws URISyntaxException {
+        swivelConfigurer.setWhen(post("data").to(""));
     }
 }

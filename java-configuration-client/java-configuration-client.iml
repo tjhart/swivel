@@ -21,6 +21,8 @@
     <orderEntry type="library" scope="TEST" name="hamcrest-core-1.3" level="project" />
     <orderEntry type="library" exported="" name="vanderbilt-utilities-1.10-SNAPSHOT" level="project" />
     <orderEntry type="library" exported="" name="cglib-nodep-2.1_3" level="project" />
+    <orderEntry type="library" exported="" name="stax-api-1.0.1" level="project" />
+    <orderEntry type="library" exported="" name="jettison-1.1" level="project" />
   </component>
 </module>
 

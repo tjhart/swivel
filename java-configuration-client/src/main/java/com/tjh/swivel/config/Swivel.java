@@ -5,12 +5,21 @@ import com.tjh.swivel.config.model.HttpResponseCode;
 import com.tjh.swivel.config.model.Then;
 import com.tjh.swivel.config.model.When;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 public class Swivel {
 
-    public static When get() { return new When(HttpMethod.GET); }
+    public static When get(String uri) throws URISyntaxException { return new When(HttpMethod.GET).at(uri); }
 
     public static When put(String data) {
         return new When(HttpMethod.PUT).withContent(data);
+    }
+
+    public static When put(URI uri) {
+        When put = put((String) null);
+        put.setURI(uri);
+        return put;
     }
 
     public static When post(String data) {

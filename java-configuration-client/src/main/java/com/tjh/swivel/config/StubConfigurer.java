@@ -29,9 +29,9 @@ public class StubConfigurer {
         return this;
     }
 
-    public void thenReturn(Then then) {
+    public int thenReturn(Then then) {
         setThen(then);
-        this.swivelConfigurer.configure(new Stub(when, this.then));
+        return this.swivelConfigurer.configure(new Stub(when, this.then));
     }
 
     //<editor-fold desc="Object">

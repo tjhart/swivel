@@ -1,5 +1,6 @@
 package com.tjh.swivel.config.model;
 
+import org.codehaus.jettison.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -63,5 +64,49 @@ public class WhenTest {
     @Test(expected = IllegalArgumentException.class)
     public void contructionThrowsOnNullMethod() {
         new When(null);
+    }
+
+    @Test
+    public void toJSONIncludesMethod() throws JSONException {
+        assertThat(when
+                .toJSON()
+                .getString(When.METHOD_KEY),
+                equalTo(METHOD.getMethodName()));
+    }
+
+    @Test
+    public void toJSONIncludesScript() throws JSONException {
+        assertThat(when
+                .matches(SCRIPT)
+                .toJSON()
+                .getString(When.SCRIPT_KEY),
+                equalTo(SCRIPT));
+    }
+
+    @Test
+    public void toJSONIncludesContent() throws JSONException {
+        assertThat(when
+                .withContent(CONTENT)
+                .toJSON()
+                .getString(When.CONTENT_KEY),
+                equalTo(CONTENT));
+    }
+
+    @Test
+    public void toJSONIncludesContentType() throws JSONException {
+        assertThat(when
+                .as(CONTENT_TYPE)
+                .toJSON()
+                .getString(When.CONTENT_TYPE_KEY),
+                equalTo(CONTENT_TYPE));
+    }
+
+    @Test
+    public void toJSONIncludesRemoteAddress() throws JSONException {
+        assertThat(when
+                .from(REMOTE_ADDRESS)
+                .toJSON()
+                .getString(When.REMOTE_ADDRESS_KEY),
+                equalTo(REMOTE_ADDRESS));
     }
 }

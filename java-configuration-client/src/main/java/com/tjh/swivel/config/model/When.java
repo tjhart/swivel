@@ -1,10 +1,19 @@
 package com.tjh.swivel.config.model;
 
+import org.codehaus.jettison.json.JSONObject;
+import vanderbilt.util.Maps;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 public class When {
-    private HttpMethod method;
+    public static final String METHOD_KEY = "method";
+    public static final String SCRIPT_KEY = "script";
+    public static final String CONTENT_KEY = "content";
+    public static final String CONTENT_TYPE_KEY = "contentType";
+    public static final String REMOTE_ADDRESS_KEY = "remoteAddr";
+    private final HttpMethod method;
     private String content;
     private String contentType;
     private String remoteAddress;
@@ -16,6 +25,20 @@ public class When {
             throw new IllegalArgumentException("method cannot be null");
         }
         this.method = method;
+    }
+
+    public JSONObject toJSON() {
+        Map<String, Object> jsonMap = Maps.<String, Object>asMap(METHOD_KEY, method.getMethodName());
+
+        if (script != null) {
+            jsonMap.put(SCRIPT_KEY, script);
+        } else {
+            jsonMap.putAll(Maps.<String, Object>asMap(
+                    CONTENT_KEY, content,
+                    CONTENT_TYPE_KEY, contentType,
+                    REMOTE_ADDRESS_KEY, remoteAddress));
+        }
+        return new JSONObject(jsonMap);
     }
 
     //<editor-fold desc="builder">

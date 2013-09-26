@@ -2,17 +2,31 @@ package com.tjh.swivel.config;
 
 import com.tjh.swivel.config.model.Stub;
 import com.tjh.swivel.config.model.When;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.util.EntityUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 public class SwivelConfigurer {
+    public static final String STUB_CONFIG_URI = "rest/config/stub";
+    public static final String ID_KEY = "id";
+
     protected final URL swivelURI;
 
     protected ClientConnectionManager clientConnectionManager = new BasicClientConnectionManager();
@@ -22,9 +36,28 @@ public class SwivelConfigurer {
         this.swivelURI = new URL(swivelURI);
     }
 
-    public int configure(Stub stub) {
-        int result = 0;
-        return result;
+    public int configure(Stub stub) throws IOException {
+        try {
+            HttpPost request = new HttpPost(
+                    stubConfigURL(stub.getURI()));
+            request.setEntity(new StringEntity(stub.toJSON().toString(), ContentType.APPLICATION_JSON));
+            HttpEntity responseEntity = getClient()
+                    .execute(request)
+                    .getEntity();
+            return new JSONObject(EntityUtils.toString(responseEntity))
+                    .getInt(ID_KEY);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String stubConfigURL(URI uri) {
+        return String.format("%1$s/%2$s/%3$s", swivelURI.toExternalForm(), STUB_CONFIG_URI, uri);
+    }
+
+    public void deleteStub(String path, int stubID) throws URISyntaxException, IOException {
+        getClient()
+                .execute(new HttpDelete(stubConfigURL(new URI(path)) + "?id=" + stubID));
     }
 
     public StubConfigurer when(When when) { return new StubConfigurer(this, when); }
@@ -41,7 +74,6 @@ public class SwivelConfigurer {
         SwivelConfigurer that = (SwivelConfigurer) o;
 
         return swivelURI.equals(that.swivelURI);
-
     }
 
     @Override
@@ -55,7 +87,6 @@ public class SwivelConfigurer {
         return sb.toString();
     }
     //</editor-fold>
-
 
     public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;

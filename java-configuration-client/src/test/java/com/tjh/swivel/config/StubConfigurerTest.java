@@ -6,6 +6,7 @@ import com.tjh.swivel.config.model.When;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -53,14 +54,14 @@ public class StubConfigurerTest {
     }
 
     @Test
-    public void thenCapturesThen(){
+    public void thenCapturesThen() throws IOException {
         stubConfigurer.thenReturn(mockThen);
 
         assertThat(stubConfigurer.getThen(), equalTo(mockThen));
     }
 
     @Test
-    public void thenDefersToConfigurer(){
+    public void thenDefersToConfigurer() throws IOException {
         stubConfigurer.thenReturn(mockThen);
 
         verify(mockSwivelConfigurer).configure(new Stub(mockWhen, mockThen));

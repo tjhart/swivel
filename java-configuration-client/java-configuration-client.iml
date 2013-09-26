@@ -23,6 +23,7 @@
     <orderEntry type="library" exported="" name="cglib-nodep-2.1_3" level="project" />
     <orderEntry type="library" exported="" name="stax-api-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="jettison-1.1" level="project" />
+    <orderEntry type="library" exported="" name="log4j-1.2.17" level="project" />
   </component>
 </module>
 

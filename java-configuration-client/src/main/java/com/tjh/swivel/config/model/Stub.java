@@ -1,8 +1,13 @@
 package com.tjh.swivel.config.model;
 
+import org.codehaus.jettison.json.JSONObject;
 import vanderbilt.util.Maps;
 
+import java.net.URI;
+
 public class Stub {
+    public static final String WHEN_KEY = "when";
+    public static final String THEN_KEY = "then";
     private final When when;
     private final Then then;
 
@@ -13,6 +18,12 @@ public class Stub {
         this.when = when;
         this.then = then;
     }
+
+    public JSONObject toJSON() {
+        return new JSONObject(Maps.asMap(WHEN_KEY, when.toJSON(), THEN_KEY, then.toJSON()));
+    }
+
+    public URI getURI() { return when.getUri(); }
 
     //<editor-fold desc="Object">
     @Override

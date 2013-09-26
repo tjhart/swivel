@@ -4,6 +4,7 @@ import com.tjh.swivel.config.model.Stub;
 import com.tjh.swivel.config.model.Then;
 import com.tjh.swivel.config.model.When;
 
+import java.io.IOException;
 import java.net.URI;
 
 public class StubConfigurer {
@@ -29,9 +30,9 @@ public class StubConfigurer {
         return this;
     }
 
-    public int thenReturn(Then then) {
+    public int thenReturn(Then then) throws IOException {
         setThen(then);
-        return this.swivelConfigurer.configure(new Stub(when, this.then));
+        return swivelConfigurer.configure(new Stub(when, this.then));
     }
 
     //<editor-fold desc="Object">

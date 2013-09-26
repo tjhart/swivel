@@ -1,5 +1,6 @@
 package com.tjh.swivel.config.model;
 
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import vanderbilt.util.Maps;
 
@@ -28,17 +29,24 @@ public class When {
     }
 
     public JSONObject toJSON() {
-        Map<String, Object> jsonMap = Maps.<String, Object>asMap(METHOD_KEY, method.getMethodName());
+        try {
+            JSONObject jsonObject = new JSONObject(Maps.asMap(METHOD_KEY, method.getMethodName()));
 
-        if (script != null) {
-            jsonMap.put(SCRIPT_KEY, script);
-        } else {
-            jsonMap.putAll(Maps.<String, Object>asMap(
-                    CONTENT_KEY, content,
-                    CONTENT_TYPE_KEY, contentType,
-                    REMOTE_ADDRESS_KEY, remoteAddress));
+            if (script != null) {
+                jsonObject.put(SCRIPT_KEY, script);
+            } else {
+                Map<String, Object> optionalValues = Maps.<String, Object>asMap(
+                        CONTENT_KEY, content,
+                        CONTENT_TYPE_KEY, contentType,
+                        REMOTE_ADDRESS_KEY, remoteAddress);
+                for (Map.Entry<String, Object> entry : optionalValues.entrySet()) {
+                    jsonObject.putOpt(entry.getKey(), entry.getValue());
+                }
+            }
+            return jsonObject;
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
-        return new JSONObject(jsonMap);
     }
 
     //<editor-fold desc="builder">

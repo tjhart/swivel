@@ -1,5 +1,6 @@
 package com.tjh.swivel.config;
 
+import com.tjh.swivel.config.model.Stub;
 import com.tjh.swivel.config.model.When;
 
 import java.net.MalformedURLException;
@@ -10,6 +11,11 @@ public class SwivelConfigurer {
 
     public SwivelConfigurer(String swivelURI) throws MalformedURLException {
         this.swivelURI = new URL(swivelURI);
+    }
+
+    public int configure(Stub stub) {
+        int result = 0;
+        return result;
     }
 
     public StubConfigurer when(When when) { return new StubConfigurer(this, when); }

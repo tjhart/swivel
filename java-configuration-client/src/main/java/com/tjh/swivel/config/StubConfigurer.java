@@ -1,5 +1,7 @@
 package com.tjh.swivel.config;
 
+import com.tjh.swivel.config.model.Stub;
+import com.tjh.swivel.config.model.Then;
 import com.tjh.swivel.config.model.When;
 
 import java.net.URI;
@@ -7,6 +9,7 @@ import java.net.URI;
 public class StubConfigurer {
     private final SwivelConfigurer swivelConfigurer;
     private When when;
+    private Then then;
 
     public StubConfigurer(SwivelConfigurer swivelConfigurer) {
         if (swivelConfigurer == null) {
@@ -20,6 +23,16 @@ public class StubConfigurer {
         setWhen(when);
     }
 
+
+    public StubConfigurer when(When when) {
+        setWhen(when);
+        return this;
+    }
+
+    public void thenReturn(Then then) {
+        setThen(then);
+        this.swivelConfigurer.configure(new Stub(when, this.then));
+    }
 
     //<editor-fold desc="Object">
     @Override
@@ -62,4 +75,8 @@ public class StubConfigurer {
     public When getWhen() { return when; }
 
     public SwivelConfigurer getSwivelConfigurer() { return swivelConfigurer; }
+
+    public Then getThen() { return then; }
+
+    public void setThen(Then then) { this.then = then; }
 }

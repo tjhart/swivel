@@ -1,0 +1,52 @@
+package com.tjh.swivel.config.model;
+
+import vanderbilt.util.Maps;
+
+public class Stub {
+    private final When when;
+    private final Then then;
+
+    public Stub(When when, Then then) {
+        if (when == null || then == null) {
+            throw new IllegalArgumentException("arguments cannot be null:" + Maps.asMap("when", when, "then", then));
+        }
+        this.when = when;
+        this.then = then;
+    }
+
+    //<editor-fold desc="Object">
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Stub)) return false;
+
+        Stub stub = (Stub) o;
+
+        return when.equals(stub.when)
+                && then.equals(stub.then);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = when.hashCode();
+        result = 31 * result + then.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Stub{");
+        sb.append("when=").append(when);
+        sb.append(", then=").append(then);
+        sb.append('}');
+        return sb.toString();
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="bean">
+    public When getWhen() { return when; }
+
+    public Then getThen() { return then; }
+    //</editor-fold>
+}

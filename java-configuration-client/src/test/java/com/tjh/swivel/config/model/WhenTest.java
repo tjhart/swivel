@@ -26,37 +26,42 @@ public class WhenTest {
     }
 
     @Test
-    public void constructionTakesMethod(){
+    public void constructionTakesMethod() {
         assertThat(when.getMethod(), sameInstance(METHOD));
     }
 
     @Test
-    public void withContentCapturesContent(){
+    public void withContentCapturesContent() {
         assertThat(when.withContent(CONTENT).getContent(), equalTo(CONTENT));
     }
 
     @Test
-    public void asSetsContentType(){
+    public void asSetsContentType() {
         assertThat(when.as(CONTENT_TYPE).getContentType(), equalTo(CONTENT_TYPE));
     }
 
     @Test
-    public void fromSetsRemoteAddr(){
+    public void fromSetsRemoteAddr() {
         assertThat(when.from(REMOTE_ADDRESS).getRemoteAddress(), equalTo(REMOTE_ADDRESS));
     }
 
     @Test
-    public void matchesSetsScript(){
+    public void matchesSetsScript() {
         assertThat(when.matches(SCRIPT).getScript(), equalTo(SCRIPT));
     }
 
     @Test(expected = IllegalStateException.class)
-    public void setContentThrowsIfMethodDoesNotAcceptData(){
+    public void setContentThrowsIfMethodDoesNotAcceptData() {
         new When(HttpMethod.GET).setContent(CONTENT);
     }
 
     @Test
-    public void toSetsURI() throws URISyntaxException {
-        assertThat(when.to(SOME_URI).getUri(), equalTo(URI.create(SOME_URI)));
+    public void atSetsURI() throws URISyntaxException {
+        assertThat(when.at(SOME_URI).getUri(), equalTo(URI.create(SOME_URI)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void contructionThrowsOnNullMethod() {
+        new When(null);
     }
 }

@@ -2,28 +2,39 @@ package com.tjh.swivel.config;
 
 import com.tjh.swivel.config.model.When;
 
-import java.net.URI;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class SwivelConfigurer {
-    protected final String swivelURI;
-    private When when;
+    protected final URL swivelURI;
 
-    public SwivelConfigurer(String swivelURI) {
-        this.swivelURI = swivelURI;
+    public SwivelConfigurer(String swivelURI) throws MalformedURLException {
+        this.swivelURI = new URL(swivelURI);
     }
 
-    public SwivelConfigurer when(When when) {
-        setWhen(when);
-        return this;
+    public StubConfigurer when(When when) { return new StubConfigurer(this, when); }
+
+    //<editor-fold desc="Object">
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SwivelConfigurer)) return false;
+
+        SwivelConfigurer that = (SwivelConfigurer) o;
+
+        return swivelURI.equals(that.swivelURI);
+
     }
 
-    public void setWhen(When when) {
-        URI uri = when.getUri();
-        if (uri == null || uri.getPath().length() == 0) {
-            throw new IllegalArgumentException("Swivel stubs must be related to a URI:" + when);
-        }
-        this.when = when;
-    }
+    @Override
+    public int hashCode() { return swivelURI.hashCode(); }
 
-    public When getWhen() { return when; }
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("SwivelConfigurer{");
+        sb.append("swivelURI='").append(swivelURI).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+    //</editor-fold>
 }

@@ -12,6 +12,9 @@ public class When {
     private URI uri;
 
     public When(HttpMethod method) {
+        if (method == null) {
+            throw new IllegalArgumentException("method cannot be null");
+        }
         this.method = method;
     }
 
@@ -36,7 +39,7 @@ public class When {
         return this;
     }
 
-    public When to(String uriString) throws URISyntaxException {
+    public When at(String uriString) throws URISyntaxException {
         setURI(uriString);
         return this;
     }

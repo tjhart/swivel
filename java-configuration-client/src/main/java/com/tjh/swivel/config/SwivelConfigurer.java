@@ -19,8 +19,6 @@ import org.codehaus.jettison.json.JSONObject;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 public class SwivelConfigurer {
@@ -39,7 +37,7 @@ public class SwivelConfigurer {
     public int configure(Stub stub) throws IOException {
         try {
             HttpPost request = new HttpPost(
-                    stubConfigURL(stub.getURI()));
+                    stubConfigURL(stub.getURI().toString()));
             request.setEntity(new StringEntity(stub.toJSON().toString(), ContentType.APPLICATION_JSON));
             HttpEntity responseEntity = getClient()
                     .execute(request)
@@ -51,13 +49,13 @@ public class SwivelConfigurer {
         }
     }
 
-    private String stubConfigURL(URI uri) {
+    private String stubConfigURL(String uri) {
         return String.format("%1$s/%2$s/%3$s", swivelURI.toExternalForm(), STUB_CONFIG_URI, uri);
     }
 
-    public void deleteStub(String path, int stubID) throws URISyntaxException, IOException {
+    public void deleteStub(String path, int stubID) throws IOException {
         getClient()
-                .execute(new HttpDelete(stubConfigURL(new URI(path)) + "?id=" + stubID));
+                .execute(new HttpDelete(stubConfigURL(path) + "?id=" + stubID));
     }
 
     public StubConfigurer when(When when) { return new StubConfigurer(this, when); }

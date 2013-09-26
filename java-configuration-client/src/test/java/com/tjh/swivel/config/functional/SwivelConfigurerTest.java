@@ -31,7 +31,7 @@ public class SwivelConfigurerTest {
     }
 
     @After
-    public void after() throws IOException, URISyntaxException {
+    public void after() throws IOException{
         if (stubID != null) {
             swivelConfigurer
                     .deleteStub(path, stubID);

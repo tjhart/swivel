@@ -11,6 +11,11 @@ subprojects {
         mavenRepo name: 'snapshots', url: 'http://repo.mc.vanderbilt.edu/nexus/content/repositories/snapshots'
         mavenCentral()
     }
+
+    dependencies{
+        testCompile group: 'junit', name: 'junit', version: '4.11'
+        testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
+    }
 }
 
 task wrapper(type: Wrapper){

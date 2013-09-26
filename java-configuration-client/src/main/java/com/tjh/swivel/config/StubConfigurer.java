@@ -1,7 +1,6 @@
 package com.tjh.swivel.config;
 
 import com.tjh.swivel.config.model.When;
-import vanderbilt.util.Maps;
 
 import java.net.URI;
 
@@ -9,13 +8,16 @@ public class StubConfigurer {
     private final SwivelConfigurer swivelConfigurer;
     private When when;
 
-    public StubConfigurer(SwivelConfigurer swivelConfigurer, When when) {
-        if (swivelConfigurer == null || when == null) {
-            throw new IllegalArgumentException(
-                    "Both arguments are required: " + Maps.asMap("swivelConfigurer", swivelConfigurer, "when", when));
+    public StubConfigurer(SwivelConfigurer swivelConfigurer) {
+        if (swivelConfigurer == null) {
+            throw new IllegalArgumentException("swivelConfigurer cannot be null");
         }
         this.swivelConfigurer = swivelConfigurer;
-        this.when = when;
+    }
+
+    public StubConfigurer(SwivelConfigurer swivelConfigurer, When when) {
+        this(swivelConfigurer);
+        setWhen(when);
     }
 
 
@@ -28,14 +30,14 @@ public class StubConfigurer {
         StubConfigurer that = (StubConfigurer) o;
 
         return swivelConfigurer.equals(that.swivelConfigurer)
-                && when.equals(that.when);
+                && !(when != null ? !when.equals(that.when) : that.when != null);
 
     }
 
     @Override
     public int hashCode() {
         int result = swivelConfigurer.hashCode();
-        result = 31 * result + when.hashCode();
+        result = 31 * result + (when != null ? when.hashCode() : 0);
         return result;
     }
 

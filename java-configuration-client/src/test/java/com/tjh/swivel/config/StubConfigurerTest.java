@@ -4,15 +4,18 @@ import com.tjh.swivel.config.model.When;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import static com.tjh.swivel.config.Swivel.post;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class StubConfigurerTest {
 
+    private static final URI SOME_URI = URI.create("some/path");
     private StubConfigurer stubConfigurer;
     private SwivelConfigurer mockSwivelConfigurer;
     private When mockWhen;
@@ -21,6 +24,8 @@ public class StubConfigurerTest {
     public void setUp(){
         mockSwivelConfigurer = mock(SwivelConfigurer.class);
         mockWhen = mock(When.class);
+
+        when(mockWhen.getUri()).thenReturn(SOME_URI);
 
         stubConfigurer = new StubConfigurer(mockSwivelConfigurer, mockWhen);
     }

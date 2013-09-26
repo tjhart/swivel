@@ -1,7 +1,18 @@
 package com.tjh.swivel.config.model;
 
+import org.codehaus.jettison.json.JSONObject;
+import vanderbilt.util.Maps;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Then {
 
+    public static final String SCRIPT_KEY = "script";
+    public static final String STATUS_CODE_KEY = "statusCode";
+    public static final String REASON_KEY = "reason";
+    public static final String CONTENT_KEY = "content";
+    public static final String CONTENT_TYPE_KEY = "contentType";
     private final HttpResponseCode responseCode;
     private final String script;
     private String content;
@@ -23,8 +34,22 @@ public class Then {
         this.responseCode = null;
     }
 
-    public HttpResponseCode getResponseCode() { return responseCode; }
+    public JSONObject toJSON() {
+        Map<String, Object> jsonMap = new HashMap<String, Object>(3);
 
+        if (script != null) {
+            jsonMap.put(SCRIPT_KEY, script);
+        } else {
+            jsonMap.putAll(Maps.<String, Object>asMap(
+                    STATUS_CODE_KEY, responseCode.getCode(),
+                    REASON_KEY, responseCode.getReason(),
+                    CONTENT_KEY, content,
+                    CONTENT_TYPE_KEY, contentType));
+        }
+        return new JSONObject(jsonMap);
+    }
+
+    //<editor-fold desc="builder">
     public Then withContent(String content) {
         setContent(content);
         return this;
@@ -34,6 +59,10 @@ public class Then {
         setContentType(contentType);
         return this;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="bean">
+    public HttpResponseCode getResponseCode() { return responseCode; }
 
     public String getContent() { return content; }
 
@@ -44,4 +73,5 @@ public class Then {
     public void setContentType(String contentType) { this.contentType = contentType; }
 
     public String getScript() { return script; }
+    //</editor-fold>
 }

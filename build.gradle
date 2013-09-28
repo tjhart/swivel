@@ -3,6 +3,7 @@ subprojects {
     apply plugin: 'maven'
 
     sourceCompatibility = '1.6'
+    group = 'com.tjh.swivel'
     version = '1.0-SNAPSHOT'
 
     repositories {

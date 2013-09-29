@@ -12,29 +12,37 @@ public class Swivel {
 
     public static When get(String uri) throws URISyntaxException { return new When(HttpMethod.GET).at(uri); }
 
-    public static When put(String data) {
-        return new When(HttpMethod.PUT).withContent(data);
-    }
-
     public static When put(URI uri) {
-        When put = put((String) null);
-        put.setURI(uri);
-        return put;
+        try {
+            return put().at(uri.toString());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static When post(String data) {
-        return new When(HttpMethod.POST).withContent(data);
+    public static When put() {return new When(HttpMethod.PUT);}
+
+    public static When put(String data) { return new When(HttpMethod.PUT).withContent(data); }
+
+    public static When post() {return new When(HttpMethod.POST);}
+
+    public static When post(URI uri) {
+        try {
+            return post().at(uri.toString());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static When delete() { return new When(HttpMethod.DELETE); }
+    public static When post(String data) { return new When(HttpMethod.POST).withContent(data); }
 
-    public static Then responseCode(HttpResponseCode responseCode) {
-        return new Then(responseCode);
+    public static When delete(String uri) throws URISyntaxException {
+        return new When(HttpMethod.DELETE).at(uri);
     }
 
-    public static Then execute(String script) {
-        return new Then(script);
-    }
+    public static Then responseCode(HttpResponseCode responseCode) { return new Then(responseCode); }
+
+    public static Then execute(String script) { return new Then(script); }
 
     public static Then ok() { return new Then(HttpResponseCode.OK); }
 

@@ -24,7 +24,7 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
             if (!result) {
                 StringDescription mismatchDescription = new StringDescription();
                 matcher.describeMismatch(request, mismatchDescription);
-                matchDescription = matchDescription.toString();
+                matchDescription = mismatchDescription.toString();
             }
 
             logger.debug("Stub match result: " + matchDescription);

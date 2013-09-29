@@ -1,6 +1,7 @@
 package com.tjh.swivel.controller;
 
 import com.tjh.swivel.model.RequestHandler;
+import com.tjh.swivel.model.ResponseFactory;
 import com.tjh.swivel.model.ShuntRequestHandler;
 import com.tjh.swivel.model.StubRequestHandler;
 import org.apache.http.HttpResponse;
@@ -61,11 +62,12 @@ public class RequestRouter {
 
     private ClientConnectionManager clientConnectionManager;
     private HttpParams httpParams = new BasicHttpParams();
+    private ResponseFactory responseFactory;
 
     @SuppressWarnings({"ConstantConditions", "unchecked"})
     public HttpResponse route(HttpRequestBase request) {
         logger.debug("Routing " + request);
-        RequestHandler result = null;
+        RequestHandler requestHandler = null;
         Deque<String> pathElements = new LinkedList<String>(Arrays.asList(toKeys(request.getURI())));
         String matchedPath;
         do {
@@ -73,22 +75,33 @@ public class RequestRouter {
             logger.debug("checking for handlers at " + matchedPath);
             if (uriHandlers.containsKey(matchedPath)) {
                 Map<String, Object> stringObjectMap = uriHandlers.get(matchedPath);
-                result = findStub(stringObjectMap, request);
-                if (result == null && stringObjectMap.containsKey(SHUNT_NODE)) {
-                    result = (RequestHandler) stringObjectMap.get(SHUNT_NODE);
-                    if (result != null) {
-                        logger.debug("found shunt " + result);
+                requestHandler = findStub(stringObjectMap, request);
+                if (requestHandler == null && stringObjectMap.containsKey(SHUNT_NODE)) {
+                    requestHandler = (RequestHandler) stringObjectMap.get(SHUNT_NODE);
+                    if (requestHandler != null) {
+                        logger.debug("found shunt " + requestHandler);
                     }
-                } else {
-                    logger.debug("found stub " + result);
+                } else if (requestHandler != null) {
+                    logger.debug("found stub " + requestHandler);
                 }
             }
             pathElements.removeLast();
         }
-        while (result == null && !pathElements.isEmpty());
-        logger.debug(String.format("Routing <%1$s> to <%2$s>. Matched path is: <%3$s>", request, result, matchedPath));
+        while (requestHandler == null && !pathElements.isEmpty());
 
-        return result.handle(request, URI.create(matchedPath), createClient());
+        HttpResponse response;
+        if (requestHandler == null) {
+            logger.debug("No handler found");
+            response = responseFactory.createResponse(404,
+                    "Not Found: Swivel found no handlers along path " + request.getURI());
+        } else {
+
+            logger.debug(String.format("Routing <%1$s> to <%2$s>. Matched path is: <%3$s>", request, requestHandler,
+                    matchedPath));
+            response = requestHandler.handle(request, URI.create(matchedPath), createClient());
+        }
+
+        return response;
     }
 
     @SuppressWarnings("unchecked")
@@ -173,6 +186,8 @@ public class RequestRouter {
     public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
     }
+
+    public void setResponseFactory(ResponseFactory responseFactory) { this.responseFactory = responseFactory; }
 
     public void setHttpParams(HttpParams httpParams) { this.httpParams = httpParams; }
     //</editor-fold>

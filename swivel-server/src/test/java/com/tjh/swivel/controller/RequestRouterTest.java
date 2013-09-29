@@ -1,7 +1,9 @@
 package com.tjh.swivel.controller;
 
+import com.tjh.swivel.model.ResponseFactory;
 import com.tjh.swivel.model.ShuntRequestHandler;
 import com.tjh.swivel.model.StubRequestHandler;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -39,6 +41,8 @@ public class RequestRouterTest {
     @Before
     public void setUp() throws Exception {
         requestRouter = new RequestRouter();
+
+        requestRouter.setResponseFactory(new ResponseFactory());
         mockRequestBase = mock(HttpRequestBase.class);
         mockRequestHandler = mock(ShuntRequestHandler.class);
         mockStubHandler = mock(StubRequestHandler.class);
@@ -130,9 +134,6 @@ public class RequestRouterTest {
         RequestRouter requestRouterSpy = spy(requestRouter);
         HttpClient mockHttpClient = mock(HttpClient.class);
 
-//        doReturn(mockStubHandler)
-//                .when(requestRouterSpy)
-//                .findStub(anyMap(), any(HttpUriRequest.class));
         doReturn(mockHttpClient)
                 .when(requestRouterSpy)
                 .createClient();
@@ -140,5 +141,13 @@ public class RequestRouterTest {
         requestRouterSpy.route(mockRequestBase);
 
         verify(mockStubHandler).handle(mockRequestBase, LOCAL_URI, mockHttpClient);
+    }
+
+    @Test
+    public void routeReturnsNotFound(){
+
+        HttpResponse response = requestRouter.route(mockRequestBase);
+
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(404));
     }
 }

@@ -9,5 +9,6 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     <bean id="clientConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
 
     <bean id="requestRouter" class="com.tjh.swivel.controller.RequestRouter"
-          p:clientConnectionManager-ref="clientConnectionManager"/>
+          p:clientConnectionManager-ref="clientConnectionManager"
+          p:responseFactory-ref="responseFactory"/>
 </beans>

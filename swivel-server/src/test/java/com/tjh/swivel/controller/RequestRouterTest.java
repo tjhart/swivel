@@ -19,7 +19,9 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -120,5 +122,23 @@ public class RequestRouterTest {
                 .get(LOCAL_URI.getPath())
                 .get(RequestRouter.STUB_NODE),
                 not(hasItem(mockStubHandler)));
+    }
+
+    @Test
+    public void routeFindsStub() {
+        requestRouter.addStub(LOCAL_URI, mockStubHandler);
+        RequestRouter requestRouterSpy = spy(requestRouter);
+        HttpClient mockHttpClient = mock(HttpClient.class);
+
+//        doReturn(mockStubHandler)
+//                .when(requestRouterSpy)
+//                .findStub(anyMap(), any(HttpUriRequest.class));
+        doReturn(mockHttpClient)
+                .when(requestRouterSpy)
+                .createClient();
+
+        requestRouterSpy.route(mockRequestBase);
+
+        verify(mockStubHandler).handle(mockRequestBase, LOCAL_URI, mockHttpClient);
     }
 }

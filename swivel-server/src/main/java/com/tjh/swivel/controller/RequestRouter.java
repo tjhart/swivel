@@ -70,12 +70,17 @@ public class RequestRouter {
         String matchedPath;
         do {
             matchedPath = Strings.join(pathElements.toArray(new String[pathElements.size()]), "/");
+            logger.debug("checking for handlers at " + matchedPath);
             if (uriHandlers.containsKey(matchedPath)) {
-                logger.debug("checking handlers at " + matchedPath);
                 Map<String, Object> stringObjectMap = uriHandlers.get(matchedPath);
                 result = findStub(stringObjectMap, request);
                 if (result == null && stringObjectMap.containsKey(SHUNT_NODE)) {
                     result = (RequestHandler) stringObjectMap.get(SHUNT_NODE);
+                    if (result != null) {
+                        logger.debug("found shunt " + result);
+                    }
+                } else {
+                    logger.debug("found stub " + result);
                 }
             }
             pathElements.removeLast();
@@ -87,7 +92,7 @@ public class RequestRouter {
     }
 
     @SuppressWarnings("unchecked")
-    private RequestHandler findStub(Map<String, Object> stringObjectMap, final HttpUriRequest request) {
+    RequestHandler findStub(Map<String, Object> stringObjectMap, final HttpUriRequest request) {
         return Lists.find((Collection<StubRequestHandler>) stringObjectMap.get(STUB_NODE),
                 new Block<StubRequestHandler, Boolean>() {
                     @Override

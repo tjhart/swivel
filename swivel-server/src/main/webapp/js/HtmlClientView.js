@@ -121,6 +121,8 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     name = 'contentType';
                 } else if (name.match(/Script$/)) {
                     name = 'script';
+                } else if (name.match(/content2/)) {
+                    name = 'content';
                 }
                 val = $item.val();
                 if (val && val.length) {

@@ -11,6 +11,7 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import vanderbilt.util.Block;
 import vanderbilt.util.Block2;
@@ -32,9 +33,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RequestRouter {
 
+    private static Logger logger = Logger.getLogger(RequestRouter.class);
+
     public static final String SHUNT_NODE = "^shunt";
     public static final String STUB_NODE = "^stub";
-    private Logger logger = Logger.getLogger(RequestRouter.class);
 
     protected final Map<String, Map<String, Object>> uriHandlers = new PopulatingMap<String, Map<String, Object>>(
             new ConcurrentHashMap<String, Map<String, Object>>(),
@@ -62,12 +64,14 @@ public class RequestRouter {
 
     @SuppressWarnings({"ConstantConditions", "unchecked"})
     public HttpResponse route(HttpRequestBase request) {
+        logger.debug("Routing " + request);
         RequestHandler result = null;
         Deque<String> pathElements = new LinkedList<String>(Arrays.asList(toKeys(request.getURI())));
         String matchedPath;
         do {
             matchedPath = Strings.join(pathElements.toArray(new String[pathElements.size()]), "/");
             if (uriHandlers.containsKey(matchedPath)) {
+                logger.debug("checking handlers at " + matchedPath);
                 Map<String, Object> stringObjectMap = uriHandlers.get(matchedPath);
                 result = findStub(stringObjectMap, request);
                 if (result == null && stringObjectMap.containsKey(SHUNT_NODE)) {
@@ -88,6 +92,9 @@ public class RequestRouter {
                 new Block<StubRequestHandler, Boolean>() {
                     @Override
                     public Boolean invoke(StubRequestHandler requestHandler) {
+                        if (Level.DEBUG.equals(logger.getEffectiveLevel())) {
+                            logger.debug("Checking Stub " + requestHandler);
+                        }
                         return requestHandler.matches(request);
                     }
                 });

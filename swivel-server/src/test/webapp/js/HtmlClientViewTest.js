@@ -73,7 +73,7 @@ RequireJSTestCase('HtmlClientView tests', {
          <input id="statusCode" type="text" name="statusCode"/>
          <input id="reason" type="text" name="reason"/>
          <input id="contentType2" type="text" name="responseContentType"/>
-         <textarea id="entity" name="entity"></textarea>
+         <textarea id="content2" name="content2"></textarea>
          </div>
          <div class="script hidden">
          <textarea name="thenScript"></textarea>
@@ -476,7 +476,7 @@ RequireJSTestCase('HtmlClientView tests', {
         $form.find('[name="statusCode"]').val('200');
         $form.find('[name="reason"]').val('OK');
         $form.find('[name="responseContentType"]').val('application/xml');
-        $form.find('[name="entity"]').val('<doc><tag></tag></doc>');
+        $form.find('[name="content2"]').val('<doc><tag></tag></doc>');
 
         this.view.addStub();
 
@@ -484,7 +484,7 @@ RequireJSTestCase('HtmlClientView tests', {
             hasMember('statusCode', equalTo('200')),
             hasMember('reason', equalTo('OK')),
             hasMember('contentType', equalTo('application/xml')),
-            hasMember('entity', equalTo('<doc><tag></tag></doc>'))
+            hasMember('content', equalTo('<doc><tag></tag></doc>'))
         ));
     },
 

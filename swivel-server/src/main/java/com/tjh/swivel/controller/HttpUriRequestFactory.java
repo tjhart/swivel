@@ -7,13 +7,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import vanderbilt.util.Sets;
 import vanderbilt.util.Strings;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -39,18 +39,18 @@ public class HttpUriRequestFactory {
         return result;
     }
 
-    public HttpRequestBase createPutRequest(URI uri, HttpServletRequest request, InputStream body) throws IOException {
+    public HttpRequestBase createPutRequest(URI uri, HttpServletRequest request, String body) throws IOException {
         HttpPut result = new HttpPut(createURI(uri, request));
         populateRequest(result, request);
-        result.setEntity(new InputStreamEntity(body, request.getContentLength()));
+        result.setEntity(new StringEntity(body, ContentType.create(request.getContentType())));
 
         return result;
     }
 
-    public HttpRequestBase createPostRequest(URI uri, HttpServletRequest request, InputStream body) throws IOException {
+    public HttpRequestBase createPostRequest(URI uri, HttpServletRequest request, String body) throws IOException {
         HttpPost result = new HttpPost(createURI(uri, request));
         populateRequest(result, request);
-        result.setEntity(new InputStreamEntity(body, request.getContentLength()));
+        result.setEntity(new StringEntity(body, ContentType.create(request.getContentType())));
 
         return result;
     }

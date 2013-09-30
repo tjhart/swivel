@@ -1,7 +1,7 @@
-RequireJSTestCase('HtmlClientController tests', {
-    HtmlClientController: 'HtmlClientController',
+RequireJSTestCase('MainPageController tests', {
+    MainPageController: 'MainPageController',
     SwivelServer: 'SwivelServer',
-    HtmlClientView: 'HtmlClientView',
+    MainPageView: 'MainPageView',
 
     $: 'jQuery',
     jsHamcrest: 'jsHamcrest',
@@ -32,14 +32,14 @@ RequireJSTestCase('HtmlClientController tests', {
         };
 
         this.mockSwivelServer = mock(this.r.SwivelServer);
-        this.mockView = mock(this.r.HtmlClientView);
+        this.mockView = mock(this.r.MainPageView);
 
         when(this.mockSwivelServer).getConfig().thenReturn(this.ajaxResult);
         when(this.mockSwivelServer).deleteShunt().thenReturn(this.ajaxResult);
         when(this.mockSwivelServer).deleteStub().thenReturn(this.ajaxResult);
         when(this.mockSwivelServer).putShunt().thenReturn(this.ajaxResult);
 
-        this.client = new this.r.HtmlClientController(this.mockSwivelServer, this.mockView);
+        this.client = new this.r.MainPageController(this.mockSwivelServer, this.mockView);
     },
 
     'test listens for view load': function () {
@@ -93,14 +93,14 @@ RequireJSTestCase('HtmlClientController tests', {
             ));
     },
 
-    'test delete-shunt listener defers to server': function () {
+    'test delete shunt listener defers to server': function () {
         var shuntData = {path: 'some/path'};
         this.r.$(this.mockView).trigger('delete-shunt.swivelView', shuntData);
 
         verify(this.mockSwivelServer).deleteShunt('some/path');
     },
 
-    'test delete-shunt success loads configuration': function () {
+    'test delete shunt success loads configuration': function () {
         var doneHandler;
         this.client.loadConfigurationSuccess = mockFunction();
         when(this.ajaxResult.done)(typeOf('function')).then(function (handler) {
@@ -114,14 +114,14 @@ RequireJSTestCase('HtmlClientController tests', {
         verify(this.client.loadConfigurationSuccess)('data');
     },
 
-    'test delete-stub listener defers to server': function () {
+    'test delete stub listener defers to server': function () {
         var stubData = {path: 'some/path', id: 1};
         this.r.$(this.mockView).trigger('delete-stub.swivelView', stubData);
 
         verify(this.mockSwivelServer).deleteStub(stubData);
     },
 
-    'test delete-stub success loads configuration': function () {
+    'test delete stub success loads configuration': function () {
         var doneHandler;
         this.client.loadConfigurationSuccess = mockFunction();
         when(this.ajaxResult.done)(typeOf('function')).then(function (handler) {
@@ -135,25 +135,22 @@ RequireJSTestCase('HtmlClientController tests', {
         verify(this.client.loadConfigurationSuccess)('data');
     },
 
-    'test put-shunt listener defers to server': function () {
+    'test delete path listener deletes paths and stubs': function () {
+        var doneHandler, pathData = {path: 'some/path', stubs: [
+            {path: 'some/path', id: 1}
+        ]};
 
-        var shuntDescription = {path: 'some/path', remoteURI: 'remote/uri'};
-        this.r.$(this.mockView).trigger('put-shunt.swivelView', shuntDescription);
-
-        verify(this.mockSwivelServer).putShunt(shuntDescription);
-    },
-
-    'test put-shunt success loads configuration':function(){
-        var doneHandler;
         this.client.loadConfigurationSuccess = mockFunction();
-        when(this.ajaxResult.done)(typeOf('function')).then(function(handler){
+        when(this.ajaxResult.done)(typeOf('function')).then(function (handler) {
             doneHandler = handler;
-            return this;
         });
 
-        this.r.$(this.mockView).trigger('put-shunt.swivelView', {path: 'some/path'});
-        doneHandler('data');
+        this.r.$(this.mockView).trigger('delete-path.swivelView', pathData);
 
+        verify(this.mockSwivelServer).deleteStub(pathData.stubs[0]);
+        verify(this.mockSwivelServer).deleteShunt(pathData.path);
+
+        doneHandler('data');
         verify(this.client.loadConfigurationSuccess)('data');
     }
 });

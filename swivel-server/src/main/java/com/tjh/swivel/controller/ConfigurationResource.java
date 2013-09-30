@@ -112,7 +112,7 @@ public class ConfigurationResource {
                 if (handlerMap.containsKey(RequestRouter.SHUNT_NODE)) {
                     ShuntRequestHandler shuntRequestHandler =
                             (ShuntRequestHandler) handlerMap.remove(RequestRouter.SHUNT_NODE);
-                    handlerMap.put(SHUNT_KEY, shuntRequestHandler.toString());
+                    handlerMap.put(SHUNT_KEY, shuntRequestHandler.description());
                 }
                 if (handlerMap.containsKey(RequestRouter.STUB_NODE)) {
                     Collection<Map<String, Object>> stubDescriptions =
@@ -121,7 +121,7 @@ public class ConfigurationResource {
                                         @Override
                                         public Map<String, Object> invoke(StubRequestHandler stubRequestHandler) {
                                             return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId(),
-                                                    "description", stubRequestHandler.toString());
+                                                    "description", stubRequestHandler.description());
                                         }
                                     });
                     if (!stubDescriptions.isEmpty()) {

@@ -46,8 +46,7 @@ public class SwivelConfigurerTest {
     @After
     public void after() throws IOException {
         for (Integer stubID : stubIDs) {
-            swivelConfigurer
-                    .deleteStub(PATH, stubID);
+            swivelConfigurer.deleteStub(PATH, stubID);
         }
     }
 

@@ -33,11 +33,13 @@ public class ShuntRequestHandler implements RequestHandler<HttpRequestBase> {
     }
 
     protected HttpUriRequest createShuntRequest(HttpRequestBase request, URI matchedURI) {
-
         request.setURI(URIUtils.resolveUri(baseUri, request.getURI(), matchedURI));
 
         return request;
     }
+
+    @Override
+    public String description() { return "Shunting to" + baseUri; }
 
     //<editor-fold desc="Object">
     @Override

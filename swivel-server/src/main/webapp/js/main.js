@@ -19,11 +19,11 @@ requirejs.config({
 
 (function (href) {
     var loadedFromFile = href.match(/^file:/),
-        fileDependencies = ['jQuery', 'HtmlClientController', 'HtmlClientView', 'TestSwivelServer'];
+        fileDependencies = ['jQuery', 'MainPageController', 'MainPageView', 'TestSwivelServer'];
 
-    function startApp($, HtmlClientController, HtmlClientView, SwivelServer) {
-        new HtmlClientController(new SwivelServer(href.substr(0, href.lastIndexOf('/'))),
-            new HtmlClientView($('#currentConfig'), $('#addShuntDialog'), $('#addStubDialog')));
+    function startApp($, MainPageController, MainPageView, SwivelServer) {
+        new MainPageController(new SwivelServer(href.substr(0, href.lastIndexOf('/'))),
+            new MainPageView($('#currentConfig')));
     }
 
     if (loadedFromFile) {
@@ -31,6 +31,6 @@ requirejs.config({
         //the test data from being included in the minified version
         require(fileDependencies, startApp);
     } else {
-        require(['jQuery', 'HtmlClientController', 'HtmlClientView', 'SwivelServer'], startApp);
+        require(['jQuery', 'MainPageController', 'MainPageView', 'SwivelServer'], startApp);
     }
 })(window.location.href);

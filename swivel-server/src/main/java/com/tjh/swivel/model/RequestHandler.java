@@ -8,4 +8,6 @@ import java.net.URI;
 
 public interface RequestHandler<T extends HttpUriRequest> {
     HttpResponse handle(T request, URI matchedURI, HttpClient client);
+
+    String description();
 }

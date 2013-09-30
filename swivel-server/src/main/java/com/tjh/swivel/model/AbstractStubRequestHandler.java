@@ -38,6 +38,9 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     public abstract HttpResponse handle(HttpUriRequest request, URI matchedURI, HttpClient client);
 
     @Override
+    public String description() { return "Stub " + getId(); }
+
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("AbstractStubRequestHandler{");
         StringDescription stringDescription = new StringDescription();

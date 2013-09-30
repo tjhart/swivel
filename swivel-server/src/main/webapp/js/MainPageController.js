@@ -49,8 +49,11 @@ define(['jQuery'], function ($) {
                     .done(function (data) {
                         client.loadConfigurationSuccess(data);
                     });
-            }).on('put-shunt.swivelView', function (event, shuntData) {
-                swivelServer.putShunt(shuntData)
+            }).on('delete-path.swivelView', function (event, pathData) {
+                $.each(pathData.stubs, function (i, stub) {
+                    swivelServer.deleteStub(stub);
+                });
+                swivelServer.deleteShunt(pathData.path)
                     .done(function (data) {
                         client.loadConfigurationSuccess(data);
                     });

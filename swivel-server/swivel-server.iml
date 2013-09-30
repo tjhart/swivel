@@ -55,7 +55,6 @@
     <orderEntry type="library" exported="" name="spring-beans-3.2.2.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="jackson-mapper-asl-1.9.2" level="project" />
     <orderEntry type="library" exported="" name="httpcore-4.2.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="mockito-all-1.9.5" level="project" />
     <orderEntry type="library" exported="" name="cglib-nodep-2.1_3" level="project" />
     <orderEntry type="library" exported="" name="vanderbilt-utilities-1.10-SNAPSHOT" level="project" />
     <orderEntry type="library" exported="" name="jersey-core-1.17.1" level="project" />
@@ -71,6 +70,8 @@
     <orderEntry type="library" exported="" name="jackson-jaxrs-1.9.2" level="project" />
     <orderEntry type="library" exported="" name="jaxb-impl-2.2.3-1" level="project" />
     <orderEntry type="library" exported="" name="jettison-1.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="objenesis-1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="mockito-core-1.9.5" level="project" />
   </component>
 </module>
 

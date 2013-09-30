@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.log4j.Logger;
 import vanderbilt.util.Sets;
 import vanderbilt.util.Strings;
 
@@ -24,6 +25,7 @@ public class HttpUriRequestFactory {
 
     public static final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For";
     public static final Set<String> IGNORED_HEADERS = Sets.asConstantSet("Content-Length");
+    private static Logger LOGGER = Logger.getLogger(HttpUriRequestFactory.class);
 
     public HttpRequestBase createGetRequest(URI uri, HttpServletRequest request) {
         HttpGet result = new HttpGet(createURI(uri, request));

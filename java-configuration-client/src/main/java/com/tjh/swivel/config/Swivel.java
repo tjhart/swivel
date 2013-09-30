@@ -9,6 +9,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class Swivel {
+    public static final String APPLICATION_JSON = "application/json";
+    public static final String APPLICATION_XML = "application/xml";
+    public static final String APPLICATION_URL_ENCODED_FORM = "application/x-www-form-urlencoded";
 
     public static When get(String uri) throws URISyntaxException { return new When(HttpMethod.GET).at(uri); }
 

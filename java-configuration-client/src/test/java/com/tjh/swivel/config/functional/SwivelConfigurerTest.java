@@ -1,11 +1,13 @@
 package com.tjh.swivel.config.functional;
 
 import com.tjh.swivel.config.SwivelConfigurer;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -14,8 +16,10 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import static com.tjh.swivel.config.Swivel.APPLICATION_URL_ENCODED_FORM;
 import static com.tjh.swivel.config.Swivel.get;
 import static com.tjh.swivel.config.Swivel.ok;
 import static com.tjh.swivel.config.Swivel.post;
@@ -82,7 +86,6 @@ public class SwivelConfigurerTest {
                 .execute(httpPost)
                 .getEntity());
 
-        System.out.println("response = " + response);
         assertThat(response, equalTo("you matched data"));
 
         httpPost.setEntity(new StringEntity("some other data"));
@@ -90,9 +93,29 @@ public class SwivelConfigurerTest {
                 .execute(httpPost)
                 .getEntity());
 
-        System.out.println("response = " + response);
         assertThat(response, equalTo("you matched some other data"));
     }
 
+    @Test
+    public void scriptMatchingWorks() throws URISyntaxException, IOException {
+        stubIDs.add(swivelConfigurer
+                .when(post()
+                        .at(PATH)
+                        .as(APPLICATION_URL_ENCODED_FORM)
+                        .matches("(function(){" +
+                                "   var entity = Packages.org.apache.http.util.EntityUtils" +
+                                "       .toString(request.getEntity());\n" +
+                                "   java.lang.System.out.println('entity = ' + entity);\n" +
+                                "   return entity.matches('foo=bar');\n" +
+                                "})();"))
+                .thenReturn(ok()
+                        .withContent("it matched!")));
 
+        HttpPost httpPost = new HttpPost(SWIVEL_PROXY_URL + "/" + PATH);
+        httpPost.setEntity(new UrlEncodedFormEntity(Arrays.asList(new BasicNameValuePair("foo", "bar"))));
+        String response = EntityUtils.toString(new DefaultHttpClient()
+                .execute(httpPost)
+                .getEntity());
+        assertThat(response, equalTo("it matched!"));
+    }
 }

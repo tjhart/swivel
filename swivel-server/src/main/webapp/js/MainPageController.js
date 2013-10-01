@@ -51,7 +51,7 @@ define(['jQuery'], function ($) {
                     });
             }).on('delete-path.swivelView', function (event, pathData) {
                 $.each(pathData.stubs, function (i, stub) {
-                    swivelServer.deleteStub(stub);
+                    swivelServer.deleteStub(stub, true);
                 });
                 swivelServer.deleteShunt(pathData.path)
                     .done(function (data) {

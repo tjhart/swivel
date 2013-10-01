@@ -18,13 +18,14 @@ define(['jQuery', 'json2'], function ($, json2) {
             });
         };
 
-        this.deleteStub = function (stubData) {
+        this.deleteStub = function (stubData, syncronous) {
             var path = [baseUrl, this.CONFIG_PATH, 'stub', stubData.path].join('/'), url;
             url = [path, $.param({id: stubData.id})].join('?');
             return $.ajax({
                 url: url,
                 type: 'DELETE',
-                accept: 'application/json'
+                accept: 'application/json',
+                async: !(syncronous || false)
             });
         };
 

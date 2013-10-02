@@ -18,6 +18,7 @@ import vanderbilt.util.Maps;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -37,6 +38,7 @@ public class SwivelConfigurerTest {
     public static final JSONObject EXPECTED_JSON = new JSONObject(Maps.asMap("key", "val"));
     public static final int STUB_ID = 12345;
     public static final String EXPECTED_RESPONSE = new JSONObject(Maps.asMap("id", STUB_ID)).toString();
+    public static final String SOME_PATH = "some/path";
     private SwivelConfigurer swivelConfigurer;
     private When mockWhen;
     private HttpClient mockHttpClient;
@@ -147,4 +149,12 @@ public class SwivelConfigurerTest {
     public void configureReturnsStubID() throws IOException {
         assertThat(swivelConfigurerSpy.configure(mockStub), equalTo(STUB_ID));
     }
+
+    @Test
+    public void shuntReturnsShuntConfigurer() throws URISyntaxException {
+        ShuntConfigurer shuntConfigurer = swivelConfigurer.shunt(SOME_PATH);
+
+        assertThat(shuntConfigurer, equalTo(new ShuntConfigurer(swivelConfigurer, SOME_PATH)));
+    }
+
 }

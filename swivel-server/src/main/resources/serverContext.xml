@@ -9,7 +9,6 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     <import resource="routerContext.xml"/>
 
     <bean id="matcherFactory" class="com.tjh.swivel.model.MatcherFactory"/>
-    <bean id="responseFactory" class="com.tjh.swivel.model.ResponseFactory"/>
     <bean id="stubFactory" class="com.tjh.swivel.model.StubFactory"
           p:matcherFactory-ref="matcherFactory" p:responseFactory-ref="responseFactory"/>
 

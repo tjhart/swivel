@@ -19,6 +19,7 @@ import org.codehaus.jettison.json.JSONObject;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 public class SwivelConfigurer {
@@ -49,6 +50,11 @@ public class SwivelConfigurer {
         }
     }
 
+
+    public int configure(Shunt shunt) {
+        return 0;
+    }
+
     private String stubConfigURL(String uri) {
         return String.format("%1$s/%2$s/%3$s", swivelURI.toExternalForm(), STUB_CONFIG_URI, uri);
     }
@@ -59,6 +65,11 @@ public class SwivelConfigurer {
     }
 
     public StubConfigurer when(When when) { return new StubConfigurer(this, when); }
+
+
+    public ShuntConfigurer shunt(String localURI) throws URISyntaxException {
+        return new ShuntConfigurer(this, localURI);
+    }
 
     //useful for testing
     HttpClient getClient() { return new DefaultHttpClient(clientConnectionManager, httpParams);}
@@ -86,9 +97,11 @@ public class SwivelConfigurer {
     }
     //</editor-fold>
 
+    //<editor-fold desc="bean">
     public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
     }
 
     public void setHttpParams(HttpParams httpParams) { this.httpParams = httpParams; }
+    //</editor-fold>
 }

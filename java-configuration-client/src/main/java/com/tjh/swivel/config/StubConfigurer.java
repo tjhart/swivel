@@ -7,16 +7,15 @@ import com.tjh.swivel.config.model.When;
 import java.io.IOException;
 import java.net.URI;
 
+import static vanderbilt.util.Validators.notNull;
+
 public class StubConfigurer {
     private final SwivelConfigurer swivelConfigurer;
     private When when;
     private Then then;
 
     public StubConfigurer(SwivelConfigurer swivelConfigurer) {
-        if (swivelConfigurer == null) {
-            throw new IllegalArgumentException("swivelConfigurer cannot be null");
-        }
-        this.swivelConfigurer = swivelConfigurer;
+        this.swivelConfigurer = notNull("swivelConfigurer", swivelConfigurer);
     }
 
     public StubConfigurer(SwivelConfigurer swivelConfigurer, When when) {
@@ -32,8 +31,10 @@ public class StubConfigurer {
 
     public int thenReturn(Then then) throws IOException {
         setThen(then);
-        return swivelConfigurer.configure(new Stub(when, this.then));
+        return configure();
     }
+
+    public int configure() throws IOException {return swivelConfigurer.configure(new Stub(when, this.then));}
 
     //<editor-fold desc="Object">
     @Override
@@ -65,8 +66,9 @@ public class StubConfigurer {
     }
     //</editor-fold>
 
+    //<editor-fold desc="bean">
     public void setWhen(When when) {
-        URI uri = when.getUri();
+        URI uri = notNull("when", when).getUri();
         if (uri == null || uri.getPath().length() == 0) {
             throw new IllegalArgumentException("Swivel stubs must be related to a URI:" + when);
         }
@@ -79,5 +81,6 @@ public class StubConfigurer {
 
     public Then getThen() { return then; }
 
-    public void setThen(Then then) { this.then = then; }
+    public void setThen(Then then) { this.then = notNull("then", then); }
+    //</editor-fold>
 }

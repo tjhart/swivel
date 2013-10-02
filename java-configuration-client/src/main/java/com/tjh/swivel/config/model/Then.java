@@ -6,6 +6,8 @@ import vanderbilt.util.Maps;
 
 import java.util.Map;
 
+import static vanderbilt.util.Validators.notNull;
+
 public class Then {
 
     public static final String SCRIPT_KEY = "script";
@@ -19,18 +21,12 @@ public class Then {
     private String contentType;
 
     public Then(HttpResponseCode responseCode) {
-        if (responseCode == null) {
-            throw new IllegalArgumentException("responseCode cannot be null");
-        }
-        this.responseCode = responseCode;
+        this.responseCode = notNull("responseCode", responseCode);
         this.script = null;
     }
 
     public Then(String script) {
-        if (script == null) {
-            throw new IllegalArgumentException("script cannot be null");
-        }
-        this.script = script;
+        this.script = notNull("script", script);
         this.responseCode = null;
     }
 

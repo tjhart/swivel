@@ -8,6 +8,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import static vanderbilt.util.Validators.notNull;
+
 public class When {
     public static final String METHOD_KEY = "method";
     public static final String SCRIPT_KEY = "script";
@@ -21,11 +23,14 @@ public class When {
     private String script;
     private URI uri;
 
+    @Deprecated
     public When(HttpMethod method) {
-        if (method == null) {
-            throw new IllegalArgumentException("method cannot be null");
-        }
-        this.method = method;
+        this.method = notNull("method", method);
+    }
+
+    public When(HttpMethod method, URI uri) {
+        this.method = notNull("method", method);
+        this.uri = notNull("uri", uri);
     }
 
     public JSONObject toJSON() {
@@ -70,6 +75,7 @@ public class When {
         return this;
     }
 
+    @Deprecated
     public When at(String uriString) throws URISyntaxException {
         setURI(uriString);
         return this;
@@ -145,8 +151,10 @@ public class When {
 
     public URI getUri() { return uri; }
 
-    public void setURI(URI uri) { this.uri = uri; }
+    @Deprecated
+    public void setURI(URI uri) { this.uri = notNull("uri", uri); }
 
-    public void setURI(String uriString) throws URISyntaxException {this.uri = new URI(uriString);}
+    @Deprecated
+    public void setURI(String uriString) throws URISyntaxException {setURI(new URI(uriString));}
     //</editor-fold>
 }

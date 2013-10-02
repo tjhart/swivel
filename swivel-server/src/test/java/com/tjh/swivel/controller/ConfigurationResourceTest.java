@@ -122,6 +122,6 @@ public class ConfigurationResourceTest {
 
         Map<String, Map<String, Object>> configuration = configurationResource.getConfiguration();
 
-        assertThat((String) configuration.get(LOCAL_PATH).get("shunt"), equalTo(mockShuntHandler.toString()));
+        assertThat((String) configuration.get(LOCAL_PATH).get("shunt"), equalTo(mockShuntHandler.description()));
     }
 }

@@ -91,9 +91,11 @@ public class RequestRouterTest {
         verify(mockRequestHandler).handle(eq(mockRequestBase), any(URI.class), any(HttpClient.class));
     }
 
-    @Test(expected = RuntimeException.class)
-    public void routeThrowsOnUnknownURI() {
-        requestRouter.route(mockRequestBase);
+    @Test
+    public void routeReturnsUnknownOnUnknownURI() {
+        HttpResponse route = requestRouter.route(mockRequestBase);
+
+        assertThat(route.getStatusLine().getStatusCode(), equalTo(404));
     }
 
     @Test

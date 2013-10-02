@@ -8,6 +8,8 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 
     <bean id="clientConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
 
+    <bean id="responseFactory" class="com.tjh.swivel.model.ResponseFactory"/>
+
     <bean id="requestRouter" class="com.tjh.swivel.controller.RequestRouter"
           p:clientConnectionManager-ref="clientConnectionManager"
           p:responseFactory-ref="responseFactory"/>

@@ -5,6 +5,8 @@ import vanderbilt.util.Maps;
 
 import java.net.URI;
 
+import static vanderbilt.util.Validators.notNull;
+
 public class Stub {
     public static final String WHEN_KEY = "when";
     public static final String THEN_KEY = "then";
@@ -12,11 +14,8 @@ public class Stub {
     private final Then then;
 
     public Stub(When when, Then then) {
-        if (when == null || then == null) {
-            throw new IllegalArgumentException("arguments cannot be null:" + Maps.asMap("when", when, "then", then));
-        }
-        this.when = when;
-        this.then = then;
+        this.when = notNull("when", when);
+        this.then = notNull("then", then);
     }
 
     public JSONObject toJSON() {

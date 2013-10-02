@@ -27,7 +27,7 @@ public class ConfigurationResourceTest {
     @Before
     public void before() throws URISyntaxException {
         configurationResource.putShunt(LOCAL_URI,
-                Maps.asMap(ConfigurationResource.REMOTE_URI_KEY, "http://localhost:5984"));
+                Maps.asMap(ConfigurationResource.REMOTE_URL_KEY, "http://localhost:5984"));
     }
 
     @Test

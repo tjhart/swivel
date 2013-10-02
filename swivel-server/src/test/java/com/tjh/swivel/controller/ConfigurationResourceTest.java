@@ -27,7 +27,7 @@ public class ConfigurationResourceTest {
 
     public static final String REMOTE_URI = "http:/some/target/uri";
     public static final Map<String, String> SHUNT_JSON =
-            Maps.asConstantMap(ConfigurationResource.REMOTE_URI_KEY, REMOTE_URI);
+            Maps.asConstantMap(ConfigurationResource.REMOTE_URL_KEY, REMOTE_URI);
     public static final String LOCAL_PATH = "extra/path";
     public static final URI LOCAL_URI = URI.create(LOCAL_PATH);
     public static final int STUB_HANDLER_ID = 123;

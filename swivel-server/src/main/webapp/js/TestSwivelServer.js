@@ -72,7 +72,7 @@ define(function () {
         };
 
         this.putShunt = function (shuntData) {
-            data[shuntData.path].shunt = 'shunting to: ' + shuntData.remoteURI;
+            data[shuntData.path].shunt = 'shunting to: ' + shuntData.remoteURL;
             return ajaxResultBuilder(data);
         }
     }

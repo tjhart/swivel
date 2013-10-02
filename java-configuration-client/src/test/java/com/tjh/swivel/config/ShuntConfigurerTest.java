@@ -3,6 +3,7 @@ package com.tjh.swivel.config;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -64,7 +65,7 @@ public class ShuntConfigurerTest {
     }
 
     @Test
-    public void toSetsRemoteURL() throws MalformedURLException {
+    public void toSetsRemoteURL() throws IOException {
         shuntConfigurer.setLocalURI(LOCAL_URI);
         shuntConfigurer.to(REMOTE_URL);
 
@@ -72,7 +73,7 @@ public class ShuntConfigurerTest {
     }
 
     @Test
-    public void toDefersToConfigure() throws MalformedURLException {
+    public void toDefersToConfigure() throws IOException {
         shuntConfigurer.setLocalURI(LOCAL_URI);
         ShuntConfigurer shuntConfigurerSpy = spy(shuntConfigurer);
         shuntConfigurerSpy.to(REMOTE_URL);
@@ -81,7 +82,7 @@ public class ShuntConfigurerTest {
     }
 
     @Test
-    public void configureDefersToSwivelConfigurer(){
+    public void configureDefersToSwivelConfigurer() throws IOException {
         shuntConfigurer.setLocalURI(LOCAL_URI);
         shuntConfigurer.setRemoteURL(REMOTE_URL);
         shuntConfigurer.configure();

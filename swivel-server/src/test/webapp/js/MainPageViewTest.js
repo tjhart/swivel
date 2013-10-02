@@ -111,7 +111,7 @@ RequireJSTestCase('MainPageView tests', {
             .thenReturn(this.mockConfigTree);
 
         this.view = new this.r.MainPageView(this.mockConfigTree);
-        this.view.$remoteURI = this.mockJQueryObject;
+        this.view.$remoteURL = this.mockJQueryObject;
         this.view.targetPath = {path: 'some/path'};
     },
 

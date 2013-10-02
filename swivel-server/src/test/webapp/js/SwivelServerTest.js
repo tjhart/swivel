@@ -61,7 +61,7 @@ RequireJSTestCase('swivel Server Tests', {
     },
 
     'test putShunt calls expected URL on server': function () {
-        var shuntData = {path: 'local/uri', remoteURI: 'some/remote/uri'};
+        var shuntData = {path: 'local/uri', remoteURL: 'http://some/remote/url'};
         this.swivelServer.putShunt(shuntData);
 
         verify(this.mockJQuery.ajax)(
@@ -70,7 +70,7 @@ RequireJSTestCase('swivel Server Tests', {
                 hasMember('type', equalTo('PUT')),
                 hasMember('accept', equalTo('application/json')),
                 hasMember('contentType', equalTo('application/json')),
-                hasMember('data', equalTo(this.r.json2.stringify({remoteURI: shuntData.remoteURI})))
+                hasMember('data', equalTo(this.r.json2.stringify({remoteURL: shuntData.remoteURL})))
             )
         );
     }

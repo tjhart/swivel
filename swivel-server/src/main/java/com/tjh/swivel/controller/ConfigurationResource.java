@@ -32,7 +32,7 @@ import java.util.Map;
 
 @Path("config")
 public class ConfigurationResource {
-    public static final String REMOTE_URI_KEY = "remoteURI";
+    public static final String REMOTE_URL_KEY = "remoteURL";
     public static final String STUB_ID_KEY = "id";
     public static final String SHUNT_KEY = "shunt";
 
@@ -47,7 +47,7 @@ public class ConfigurationResource {
     public Map<String, Map<String, Object>> putShunt(@PathParam("localPath") URI localPath, Map<String, String> json)
             throws URISyntaxException {
         try {
-            String remoteURL = json.get(REMOTE_URI_KEY);
+            String remoteURL = json.get(REMOTE_URL_KEY);
             logger.debug(String.format("Configuring shunt: proxying %1$s to %2$s", localPath, remoteURL));
 
             router.setShunt(localPath, new ShuntRequestHandler(new URI(remoteURL)));

@@ -1,5 +1,6 @@
 package com.tjh.swivel.config;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -25,12 +26,12 @@ public class ShuntConfigurer {
         return this;
     }
 
-    public int to(URL remoteURL) {
+    public int to(URL remoteURL) throws IOException {
         setRemoteURL(remoteURL);
         return configure();
     }
 
-    public int configure() {return swivelConfigurer.configure(new Shunt(localURI, remoteURL));}
+    public int configure() throws IOException {return swivelConfigurer.configure(new Shunt(localURI, remoteURL));}
 
     //<editor-fold desc="Object">
     @Override

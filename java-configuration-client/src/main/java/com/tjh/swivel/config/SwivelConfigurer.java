@@ -1,14 +1,10 @@
 package com.tjh.swivel.config;
 
-import com.tjh.swivel.config.model.Stub;
 import com.tjh.swivel.config.model.When;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.params.BasicHttpParams;
@@ -23,52 +19,43 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class SwivelConfigurer {
-    public static final String STUB_CONFIG_URI = "rest/config/stub";
+    public static final String BASE_CONFIG_URI = "rest/config";
+    public static final String STUB_PATH = "stub";
+    public static final String SHUNT_PATH = "shunt";
     public static final String ID_KEY = "id";
 
-    protected final URL swivelURI;
+    protected final URL swivelURL;
 
     protected ClientConnectionManager clientConnectionManager = new BasicClientConnectionManager();
     protected HttpParams httpParams = new BasicHttpParams();
 
-    public SwivelConfigurer(String swivelURI) throws MalformedURLException {
-        this.swivelURI = new URL(swivelURI);
+    public SwivelConfigurer(String swivelURL) throws MalformedURLException {
+        this.swivelURL = new URL(swivelURL);
     }
 
-    public int configure(Stub stub) throws IOException {
+    public int configure(Behavior behavior) throws IOException {
         try {
-            HttpPost request = new HttpPost(
-                    stubConfigURL(stub.getURI().toString()));
-            request.setEntity(new StringEntity(stub.toJSON().toString(), ContentType.APPLICATION_JSON));
             HttpEntity responseEntity = getClient()
-                    .execute(request)
+                    .execute(behavior.toRequest(swivelURL))
                     .getEntity();
             return new JSONObject(EntityUtils.toString(responseEntity))
                     .getInt(ID_KEY);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public int configure(Shunt shunt) {
-        return 0;
-    }
-
-    private String stubConfigURL(String uri) {
-        return String.format("%1$s/%2$s/%3$s", swivelURI.toExternalForm(), STUB_CONFIG_URI, uri);
+        } catch (JSONException e) { throw new RuntimeException(e); }
     }
 
     public void deleteStub(String path, int stubID) throws IOException {
         getClient()
-                .execute(new HttpDelete(stubConfigURL(path) + "?id=" + stubID));
+                .execute(new HttpDelete(getConfigURL(path, STUB_PATH) + "?id=" + stubID));
     }
 
     public StubConfigurer when(When when) { return new StubConfigurer(this, when); }
 
-
     public ShuntConfigurer shunt(String localURI) throws URISyntaxException {
         return new ShuntConfigurer(this, localURI);
+    }
+
+    private String getConfigURL(String uri, String configType) {
+        return String.format("%1$s/%2$s/%3$s/%4$s", swivelURL.toExternalForm(), BASE_CONFIG_URI, configType, uri);
     }
 
     //useful for testing
@@ -82,16 +69,16 @@ public class SwivelConfigurer {
 
         SwivelConfigurer that = (SwivelConfigurer) o;
 
-        return swivelURI.equals(that.swivelURI);
+        return swivelURL.equals(that.swivelURL);
     }
 
     @Override
-    public int hashCode() { return swivelURI.hashCode(); }
+    public int hashCode() { return swivelURL.hashCode(); }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("SwivelConfigurer{");
-        sb.append("swivelURI='").append(swivelURI).append('\'');
+        sb.append("swivelURL='").append(swivelURL).append('\'');
         sb.append('}');
         return sb.toString();
     }

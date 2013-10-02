@@ -35,7 +35,7 @@ define(['jQuery', 'json2'], function ($, json2) {
                 type: 'PUT',
                 contentType: 'application/json',
                 accept: 'application/json',
-                data: json2.stringify({remoteURI: shuntDescription.remoteURI})
+                data: json2.stringify({remoteURL: shuntDescription.remoteURL})
             });
         }
     };

@@ -34,7 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RequestRouter {
 
-    private static Logger logger = Logger.getLogger(RequestRouter.class);
+    private static Logger LOGGER = Logger.getLogger(RequestRouter.class);
 
     public static final String SHUNT_NODE = "^shunt";
     public static final String STUB_NODE = "^stub";
@@ -64,44 +64,53 @@ public class RequestRouter {
     private HttpParams httpParams = new BasicHttpParams();
     private ResponseFactory responseFactory;
 
-    @SuppressWarnings({"ConstantConditions", "unchecked"})
     public HttpResponse route(HttpRequestBase request) {
-        logger.debug("Routing " + request);
+        LOGGER.debug("Routing " + request);
         RequestHandler requestHandler = null;
         Deque<String> pathElements = new LinkedList<String>(Arrays.asList(toKeys(request.getURI())));
         String matchedPath;
         do {
             matchedPath = Strings.join(pathElements.toArray(new String[pathElements.size()]), "/");
-            logger.debug("checking for handlers at " + matchedPath);
-            if (uriHandlers.containsKey(matchedPath)) {
-                Map<String, Object> stringObjectMap = uriHandlers.get(matchedPath);
-                requestHandler = findStub(stringObjectMap, request);
-                if (requestHandler == null && stringObjectMap.containsKey(SHUNT_NODE)) {
-                    requestHandler = (RequestHandler) stringObjectMap.get(SHUNT_NODE);
-                    if (requestHandler != null) {
-                        logger.debug("found shunt " + requestHandler);
-                    }
-                } else if (requestHandler != null) {
-                    logger.debug("found stub " + requestHandler);
-                }
-            }
+            requestHandler = findRequestHandler(request, matchedPath);
             pathElements.removeLast();
         }
         while (requestHandler == null && !pathElements.isEmpty());
 
+        return createResponse(request, requestHandler, matchedPath);
+    }
+
+    @SuppressWarnings("unchecked")
+    private HttpResponse createResponse(HttpRequestBase request, RequestHandler requestHandler, String matchedPath) {
         HttpResponse response;
         if (requestHandler == null) {
-            logger.debug("No handler found");
+            LOGGER.debug("No handler found");
             response = responseFactory.createResponse(404,
                     "Not Found: Swivel found no handlers along path " + request.getURI());
         } else {
 
-            logger.debug(String.format("Routing <%1$s> to <%2$s>. Matched path is: <%3$s>", request, requestHandler,
+            LOGGER.debug(String.format("Routing <%1$s> to <%2$s>. Matched path is: <%3$s>", request, requestHandler,
                     matchedPath));
             response = requestHandler.handle(request, URI.create(matchedPath), createClient());
         }
-
         return response;
+    }
+
+    private RequestHandler findRequestHandler(HttpRequestBase request, String matchedPath) {
+        RequestHandler result = null;
+        LOGGER.debug("checking for handlers at " + matchedPath);
+        if (uriHandlers.containsKey(matchedPath)) {
+            Map<String, Object> stringObjectMap = uriHandlers.get(matchedPath);
+            result = findStub(stringObjectMap, request);
+            if (result == null && stringObjectMap.containsKey(SHUNT_NODE)) {
+                result = (RequestHandler) stringObjectMap.get(SHUNT_NODE);
+                if (result != null) {
+                    LOGGER.debug("found shunt " + result);
+                }
+            } else if (result != null) {
+                LOGGER.debug("found stub " + result);
+            }
+        }
+        return result;
     }
 
     @SuppressWarnings("unchecked")
@@ -110,8 +119,8 @@ public class RequestRouter {
                 new Block<StubRequestHandler, Boolean>() {
                     @Override
                     public Boolean invoke(StubRequestHandler requestHandler) {
-                        if (Level.DEBUG.equals(logger.getEffectiveLevel())) {
-                            logger.debug("Checking Stub " + requestHandler);
+                        if (Level.DEBUG.equals(LOGGER.getEffectiveLevel())) {
+                            LOGGER.debug("Checking Stub " + requestHandler);
                         }
                         return requestHandler.matches(request);
                     }
@@ -130,25 +139,22 @@ public class RequestRouter {
                 return stubRequestHandler.getId() == stubHandlerId;
             }
         });
-        logger.debug(String.format("Removing <%1$s> from path <%2$s>", target, localUri));
+        LOGGER.debug(String.format("Removing <%1$s> from path <%2$s>", target, localUri));
         handlers.remove(target);
 
         if (handlers.isEmpty()) {
-            handlerMap.remove(STUB_NODE);
-            if (handlerMap.isEmpty()) {
-                uriHandlers.remove(path);
-            }
+            clean(path, handlerMap, STUB_NODE);
         }
     }
 
     public void setShunt(URI localURI, ShuntRequestHandler requestHandler) {
-        logger.debug(String.format("Setting shunt <%1$s> at <%2$s>", requestHandler, localURI));
+        LOGGER.debug(String.format("Setting shunt <%1$s> at <%2$s>", requestHandler, localURI));
         uriHandlers.get(localURI.getPath()).put(SHUNT_NODE, requestHandler);
     }
 
     @SuppressWarnings("unchecked")
     public void addStub(URI localUri, StubRequestHandler stubRequestHandler) {
-        logger.debug(String.format("Adding stub <%1$s> to <%2$s>", stubRequestHandler, localUri));
+        LOGGER.debug(String.format("Adding stub <%1$s> to <%2$s>", stubRequestHandler, localUri));
         ((List) uriHandlers.get(localUri.getPath())
                 .get(STUB_NODE))
                 .add(0, stubRequestHandler);
@@ -156,14 +162,16 @@ public class RequestRouter {
 
     public void deleteShunt(URI localURI) {
         String path = localURI.getPath();
-        Map<String, Object> handlerMap = uriHandlers.get(path);
-        ShuntRequestHandler shuntRequestHandler = (ShuntRequestHandler) handlerMap
-                .remove(SHUNT_NODE);
+        clean(path, uriHandlers.get(path), SHUNT_NODE);
+    }
+
+    private void clean(String path, Map<String, Object> handlerMap, String nodeType) {
+        Object shuntRequestHandler = handlerMap.remove(nodeType);
         if (handlerMap.isEmpty()) {
             uriHandlers.remove(path);
         }
 
-        logger.debug(String.format("Removed <%1$s> from <%2$s>", shuntRequestHandler, localURI));
+        LOGGER.debug(String.format("Removed <%1$s> from <%2$s>", shuntRequestHandler, path));
     }
 
     protected HttpClient createClient() { return new DefaultHttpClient(clientConnectionManager, httpParams); }

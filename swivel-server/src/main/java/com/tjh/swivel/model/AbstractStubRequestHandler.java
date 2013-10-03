@@ -5,16 +5,23 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
+import vanderbilt.util.Maps;
 
 import java.net.URI;
+import java.util.Map;
+
+import static vanderbilt.util.Validators.notNull;
 
 public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     private static Logger logger = Logger.getLogger(AbstractStubRequestHandler.class);
-    protected final Matcher<HttpUriRequest> matcher;
+    protected final WhenMatcher matcher;
+    private final Map<String, Object> then;
 
-    public AbstractStubRequestHandler(Matcher<HttpUriRequest> matcher) {this.matcher = matcher;}
+    public AbstractStubRequestHandler(WhenMatcher matcher, Map<String, Object> then) {
+        this.matcher = notNull("matcher", matcher);
+        this.then = notNull("then", then);
+    }
 
     @Override
     public boolean matches(HttpUriRequest request) {
@@ -32,6 +39,7 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
         return result;
     }
 
+    //<editor-fold desc="RequestHandler">
     @Override
     public int getId() { return System.identityHashCode(this); }
 
@@ -39,6 +47,16 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
 
     @Override
     public String description() { return "Stub " + getId(); }
+
+    @Override
+    public Map<String, Object> toMap() {
+        return Maps.<String, Object>asMap(
+                "id", getId(),
+                "when", matcher.getWhen(),
+                "then", then
+        );
+    }
+    //</editor-fold>
 
     @Override
     public String toString() {
@@ -50,4 +68,8 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
         sb.append('}');
         return sb.toString();
     }
+
+    public WhenMatcher getMatcher() { return matcher; }
+
+    public Map<String, Object> getThen() { return then; }
 }

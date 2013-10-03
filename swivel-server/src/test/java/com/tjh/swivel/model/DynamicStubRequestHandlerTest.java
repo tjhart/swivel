@@ -3,7 +3,6 @@ package com.tjh.swivel.model;
 import com.tjh.swivel.utils.ScriptWrapper;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -29,7 +28,7 @@ public class DynamicStubRequestHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        Matcher<HttpUriRequest> mockMatcher = mock(Matcher.class);
+        WhenMatcher mockMatcher = mock(WhenMatcher.class);
         dynamicResponseHandler = new DynamicStubRequestHandler(mockMatcher, SOURCE_SCRIPT);
         mockRequest = mock(HttpUriRequest.class);
     }

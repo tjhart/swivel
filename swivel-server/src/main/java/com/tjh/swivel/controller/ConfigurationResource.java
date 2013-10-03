@@ -24,8 +24,10 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -50,12 +52,14 @@ public class ConfigurationResource {
             String remoteURL = json.get(REMOTE_URL_KEY);
             LOGGER.debug(String.format("Configuring shunt: proxying %1$s to %2$s", localPath, remoteURL));
 
-            router.setShunt(localPath, new ShuntRequestHandler(new URI(remoteURL)));
+            router.setShunt(localPath, new ShuntRequestHandler(new URL(remoteURL)));
             return getConfiguration();
         } catch (IllegalArgumentException iae) {
             throw new WebApplicationException(iae, Response.Status.CONFLICT);
         } catch (ClassCastException cce) {
             throw new WebApplicationException(cce, Response.Status.CONFLICT);
+        } catch (MalformedURLException mue) {
+            throw new WebApplicationException(mue, Response.Status.BAD_REQUEST);
         }
     }
 
@@ -104,9 +108,18 @@ public class ConfigurationResource {
     @DELETE
     @Path("path/{localPath: .*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Map<String, Object>> deletePath(@PathParam("localPath") URI localUri){
+    public Map<String, Map<String, Object>> deletePath(@PathParam("localPath") URI localUri) {
         LOGGER.debug(String.format("Deleting path %1$s", localUri));
-        router.remotePath(localUri);
+        router.removePath(localUri);
+
+        return getConfiguration();
+    }
+
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Map<String, Object>> reset(){
+        LOGGER.debug("Resetting Swivel");
+        router.reset();
 
         return getConfiguration();
     }
@@ -122,7 +135,7 @@ public class ConfigurationResource {
                 if (handlerMap.containsKey(RequestRouter.SHUNT_NODE)) {
                     ShuntRequestHandler shuntRequestHandler =
                             (ShuntRequestHandler) handlerMap.remove(RequestRouter.SHUNT_NODE);
-                    handlerMap.put(SHUNT_KEY, shuntRequestHandler.description());
+                    handlerMap.put(SHUNT_KEY, shuntRequestHandler.toMap());
                 }
                 if (handlerMap.containsKey(RequestRouter.STUB_NODE)) {
                     Collection<Map<String, Object>> stubDescriptions =
@@ -130,8 +143,7 @@ public class ConfigurationResource {
                                     new Block<StubRequestHandler, Map<String, Object>>() {
                                         @Override
                                         public Map<String, Object> invoke(StubRequestHandler stubRequestHandler) {
-                                            return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId(),
-                                                    "description", stubRequestHandler.description());
+                                            return stubRequestHandler.toMap();
                                         }
                                     });
                     if (!stubDescriptions.isEmpty()) {

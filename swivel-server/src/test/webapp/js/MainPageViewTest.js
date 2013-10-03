@@ -8,10 +8,10 @@ RequireJSTestCase('MainPageView tests', {
     NODE_DATA: [
         {
             path: 'some/path',
-            shunt: 'some shunt description',
+            shunt: {remoteURL: 'http://remoteHost/path'},
             stubs: [
-                {id: 1, description: 'stub 1'},
-                {id: 2, description: 'stub 2'}
+                {id: 1},
+                {id: 2}
             ]
         }
     ],
@@ -19,67 +19,70 @@ RequireJSTestCase('MainPageView tests', {
         /*:DOC +=
          <ul>
          <li class="path">
-         <button class="addShunt" title="Add"></button>
-         <button class="addStub" title="Add"></button>
-         <button class="treeButton delete" title="Delete"></button>
+         <ins>&nbsp;</ins>
+         <a href="#">
+         <ins>&nbsp;</ins>
+         <button class="delete" title="Delete" role="button">
+         <span></span>
+         <span></span>
+         </button>
          some/path
+         </a>
          <ul>
          <li class="shunt">
-         <button class="treeButton delete" title="Delete"></button>
-         shunt: some shunt description
+         <ins>&nbsp;</ins>
+         <a href="#">
+         <ins>&nbsp;</ins>
+         <button class="delete" title="Delete" role="button">
+         <span></span>
+         <span></span>
+         </button>
+         shunt: http://localhost/path
+         </a>
          </li>
          <li class="stubs">
+         <ins>&nbsp;</ins>
+         <a href="#">
+         <ins>&nbsp;</ins>
          stubs
+         </a>
          <ul>
          <li class="stub">
-         <button class="treeButton delete" title="Delete"></button>
-         some stub description
+         <ins>&nbsp;</ins>
+         <a href="#">
+         <ins>&nbsp;</ins>
+         <button class="delete" title="Delete" role="button">
+         <span></span>
+         <span></span>
+         </button>
+         <button class="info" title="Edit" role="button">
+         <span></span>
+         <span></span>
+         </button>
+         Stub: 1
+         </a>
+         </li>
+         <li class="stub">
+         <ins>&nbsp;</ins>
+         <a href="#">
+         <ins>&nbsp;</ins>
+         <button class="delete" title="Delete" role="button">
+         <span></span>
+         <span></span>
+         </button>
+         <button class="info" title="Edit" role="button">
+         <span></span>
+         <span></span>
+         </button>
+         Stub: 2
+         </a>
          </li>
          </ul>
          </li>
          </ul>
          </li>
          </ul>
-
-
-         <form>
-         <input id="staticWhen" type="radio" name="whenType"/>
-         <input id="scriptWhen" type="radio" name="whenType"/>
-         <div class="when">
-         <div class="static">
-         <label for="method">Method:</label>
-         <select id="method" name="method">
-         <option value="">(any)</option>
-         <option>GET</option>
-         <option>PUT</option>
-         <option>POST</option>
-         <option>DELETE</option>
-         </select>
-         <label for="contentType">Content Type:</label>
-         <input id="contentType" type="text" name="requestContentType"/>
-         <label for="remoteAddr">Remote Address:</label>
-         <input id="remoteAddr" type="text" name="remoteAddr"/>
-         <label for="content">Content:</label>
-         <textarea id="content" name="content"></textarea>
-         </div>
-         <div class="script hidden">
-         <textarea name="whenScript"></textarea>
-         </div>
-         </div>
-         <div id="then" class="then">
-         <input id="staticThen" type="radio" name="thenType" value="static" checked/>
-         <input id="scriptThen" type="radio" name="thenType" value="script"/>
-         <div class="static">
-         <input id="statusCode" type="text" name="statusCode"/>
-         <input id="reason" type="text" name="reason"/>
-         <input id="contentType2" type="text" name="responseContentType"/>
-         <textarea id="content2" name="content2"></textarea>
-         </div>
-         <div class="script hidden">
-         <textarea name="thenScript"></textarea>
-         </div>
-         </div>
-         </form>         */
+         */
         this.r.jsHamcrest.Integration.JsTestDriver();
         this.r.jsMockito.Integration.JsTestDriver();
 
@@ -156,7 +159,7 @@ RequireJSTestCase('MainPageView tests', {
         this.view.loadConfigurationData(this.NODE_DATA);
 
         verify(this.mockConfigTree).jstree('create_node', mockPathNode, 'inside', allOf(
-            hasMember('data', containsString('shunt: ' + this.NODE_DATA[0].shunt)),
+            hasMember('data', containsString('shunt: ' + this.NODE_DATA[0].shunt.remoteURL)),
             hasMember('attr', hasMember('class', equalTo('shunt')))
         ));
     },
@@ -191,11 +194,11 @@ RequireJSTestCase('MainPageView tests', {
 
         this.view.loadConfigurationData(this.NODE_DATA);
         verify(this.mockConfigTree).jstree('create_node', mockStubsNode, 'last', allOf(
-            hasMember('data', containsString(this.NODE_DATA[0].stubs[0].description)),
+            hasMember('data', containsString(this.NODE_DATA[0].stubs[0].id)),
             hasMember('attr', hasMember('class', equalTo('stub')))
         ));
         verify(this.mockConfigTree).jstree('create_node', mockStubsNode, 'last', allOf(
-            hasMember('data', containsString(this.NODE_DATA[0].stubs[1].description)),
+            hasMember('data', containsString(this.NODE_DATA[0].stubs[1].id)),
             hasMember('attr', hasMember('class', equalTo('stub')))
         ));
     },
@@ -233,10 +236,10 @@ RequireJSTestCase('MainPageView tests', {
     },
 
     'test delete path button triggers as expected': function () {
-        var $deletePathButton = this.r.$('.path button.delete'), triggeredData;
+        var $deletePathButton = this.r.$('.path > a > button.delete'), triggeredData;
 
         when(this.mockConfigTree)
-            .find('.path button.delete')
+            .find('.path > a > button.delete')
             .thenReturn($deletePathButton);
         this.view.addClickEvents();
         this.r.$(this.view).one('delete-path.swivelView', function (event, data) {

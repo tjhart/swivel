@@ -58,10 +58,12 @@ RequireJSTestCase('MainPageController tests', {
 
     'test loadConfiguration done defers to success': function () {
         var doneHandler;
-        when(this.ajaxResult.done)(typeOf('function')).then(function (handler) {
-            doneHandler = handler;
-            return this;
-        });
+        when(this.mockSwivelServer)
+            .getConfig(typeOf('function'))
+            .then(function (handler) {
+                doneHandler = handler;
+                return this;
+            });
 
         this.client.loadConfigurationSuccess = mockFunction();
 
@@ -103,7 +105,7 @@ RequireJSTestCase('MainPageController tests', {
     'test delete shunt success loads configuration': function () {
         var doneHandler;
         this.client.loadConfigurationSuccess = mockFunction();
-        when(this.ajaxResult.done)(typeOf('function')).then(function (handler) {
+        when(this.mockSwivelServer).deleteShunt(anything(), typeOf('function')).then(function (path, handler) {
             doneHandler = handler;
             return this;
         });
@@ -124,7 +126,7 @@ RequireJSTestCase('MainPageController tests', {
     'test delete stub success loads configuration': function () {
         var doneHandler;
         this.client.loadConfigurationSuccess = mockFunction();
-        when(this.ajaxResult.done)(typeOf('function')).then(function (handler) {
+        when(this.mockSwivelServer).deleteStub(anything(), typeOf('function')).then(function (stubData, handler) {
             doneHandler = handler;
             return this;
         });
@@ -135,20 +137,19 @@ RequireJSTestCase('MainPageController tests', {
         verify(this.client.loadConfigurationSuccess)('data');
     },
 
-    'test delete path listener deletes paths and stubs': function () {
+    'test delete path listener deletes path': function () {
         var doneHandler, pathData = {path: 'some/path', stubs: [
             {path: 'some/path', id: 1}
         ]};
 
         this.client.loadConfigurationSuccess = mockFunction();
-        when(this.ajaxResult.done)(typeOf('function')).then(function (handler) {
+        when(this.mockSwivelServer).deletePath(anything(), typeOf('function')).then(function (path, handler) {
             doneHandler = handler;
         });
 
         this.r.$(this.mockView).trigger('delete-path.swivelView', pathData);
 
-        verify(this.mockSwivelServer).deleteStub(pathData.stubs[0]);
-        verify(this.mockSwivelServer).deleteShunt(pathData.path);
+        verify(this.mockSwivelServer).deletePath(pathData.path);
 
         doneHandler('data');
         verify(this.client.loadConfigurationSuccess)('data');

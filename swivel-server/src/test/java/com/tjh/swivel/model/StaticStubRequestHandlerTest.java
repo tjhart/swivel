@@ -2,9 +2,10 @@ package com.tjh.swivel.model;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
@@ -18,8 +19,9 @@ public class StaticStubRequestHandlerTest {
     @Before
     public void before() {
         mockHttpResponse = mock(HttpResponse.class);
-        Matcher<HttpUriRequest> mockMatcher = mock(Matcher.class);
-        staticResponseHandler = new StaticStubRequestHandler(mockMatcher, mockHttpResponse);
+        WhenMatcher mockMatcher = mock(WhenMatcher.class);
+        Map<String, Object> then = mock(Map.class);
+        staticResponseHandler = new StaticStubRequestHandler(mockMatcher, mockHttpResponse, then);
     }
 
     @Test

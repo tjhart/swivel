@@ -3,15 +3,16 @@ package com.tjh.swivel.model;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.hamcrest.Matcher;
 
 import java.net.URI;
+import java.util.Map;
 
 public class StaticStubRequestHandler extends AbstractStubRequestHandler {
     protected final HttpResponse httpResponse;
 
-    public StaticStubRequestHandler(Matcher<HttpUriRequest> matcher, HttpResponse httpResponse) {
-        super(matcher);
+    public StaticStubRequestHandler(WhenMatcher matcher, HttpResponse httpResponse,
+            Map<String, Object> then) {
+        super(matcher, then);
         this.httpResponse = httpResponse;
     }
 

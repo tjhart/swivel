@@ -4,7 +4,7 @@ import com.tjh.swivel.utils.ScriptWrapper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.hamcrest.Matcher;
+import vanderbilt.util.Maps;
 
 import javax.script.Bindings;
 import javax.script.ScriptException;
@@ -15,13 +15,13 @@ public class DynamicStubRequestHandler extends AbstractStubRequestHandler {
     protected ScriptWrapper scriptWrapper;
     protected ResponseFactory responseFactory = new ResponseFactory();
 
-    public DynamicStubRequestHandler(Matcher<HttpUriRequest> matcher, String sourceScript,
+    public DynamicStubRequestHandler(WhenMatcher matcher, String sourceScript,
             String engineName) throws ScriptException {
-        super(matcher);
+        super(matcher, Maps.<String, Object>asMap("script", sourceScript));
         this.scriptWrapper = new ScriptWrapper(engineName, sourceScript);
     }
 
-    public DynamicStubRequestHandler(Matcher<HttpUriRequest> matcher, String sourceScript) throws ScriptException {
+    public DynamicStubRequestHandler(WhenMatcher matcher, String sourceScript) throws ScriptException {
         this(matcher, sourceScript, "javascript");
     }
 

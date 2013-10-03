@@ -14,7 +14,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -27,8 +29,8 @@ public class RequestRouterTest {
     RequestRouter requestRouter;
 
     @Before
-    public void before() {
-        ShuntRequestHandler requestHandler = new ShuntRequestHandler(URI.create("http://localhost:5984"));
+    public void before() throws MalformedURLException {
+        ShuntRequestHandler requestHandler = new ShuntRequestHandler(new URL("http://localhost:5984"));
         requestRouter.setShunt(URI.create("couch"), requestHandler);
     }
 

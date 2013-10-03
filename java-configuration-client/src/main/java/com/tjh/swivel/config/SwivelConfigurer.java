@@ -54,6 +54,10 @@ public class SwivelConfigurer {
         getClient().execute(new HttpDelete(getConfigURL(path, PATH)));
     }
 
+    public void reset() throws IOException {
+        getClient().execute(new HttpDelete(swivelURL.toExternalForm() + "/" + BASE_CONFIG_URI));
+    }
+
     public StubConfigurer when(When when) { return new StubConfigurer(this, when); }
 
     public ShuntConfigurer shunt(String localURI) throws URISyntaxException {

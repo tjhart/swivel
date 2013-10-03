@@ -44,7 +44,7 @@ public class SwivelConfigurerTest {
     @After
     public void after() throws IOException {
 
-        swivelConfigurer.deletePath(PATH);
+        swivelConfigurer.reset();
     }
 
     @Test

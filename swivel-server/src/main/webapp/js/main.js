@@ -23,7 +23,7 @@ requirejs.config({
 
     function startApp($, MainPageController, MainPageView, SwivelServer) {
         new MainPageController(new SwivelServer(href.substr(0, href.lastIndexOf('/'))),
-            new MainPageView($('#currentConfig')));
+            new MainPageView($('#currentConfig'), $('#reset')));
     }
 
     if (loadedFromFile) {

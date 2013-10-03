@@ -1,15 +1,17 @@
 "use strict";
 
 define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
-    var DELETE_BUTTON = '<button class="treeButton delete" title="Delete"></button>';
+    var DELETE_BUTTON = '<button class="delete" title="Delete"></button>',
+        INFO_BUTTON = '<button class="info" title="Edit"></button>';
 
-    return function ($configTree) {
+    return function ($configTree, $resetButton) {
         var view = this, $view = $(this);
 
         this.loadConfigurationData = function (data) {
             $configTree.find('.path').each(function (index, dom) {
                 $configTree.jstree('delete_node', dom);
             });
+
             $.each(data, function (index, item) {
                 var pathNode = $configTree.jstree('create_node', view.rootNode, 'last', {
                     data: [DELETE_BUTTON, item.path].join(''),
@@ -19,7 +21,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     .data('path-data', item), i, stubNode, stub;
                 if (item.shunt) {
                     $configTree.jstree('create_node', pathNode, 'inside', {
-                        data: [DELETE_BUTTON, 'shunt: ', item.shunt].join(''),
+                        data: [DELETE_BUTTON, 'shunt: ', item.shunt.remoteURL].join(''),
                         attr: {class: 'shunt'}
                     })
                         .data('shunt-data', item);
@@ -33,7 +35,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     for (i = 0; i < item.stubs.length; i++) {
                         stub = item.stubs[i];
                         $configTree.jstree('create_node', stubNode, 'last', {
-                            data: [DELETE_BUTTON, stub.description].join(''),
+                            data: [DELETE_BUTTON, INFO_BUTTON, 'Stub: ', stub.id].join(''),
                             attr: {class: 'stub'}
                         })
                             .data('stub-data', stub);
@@ -41,16 +43,15 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                 }
             });
 
+            $configTree.find('button.delete')
+                .button({icons: {primary: 'ui-icon-circle-close'}, text: false});
+            $configTree.find('button.info')
+                .button({icons: {primary: 'ui-icon-info'}, text: false});
             this.addClickEvents();
             $configTree.jstree('open_node', this.rootNode, null, true);
         };
 
         this.addClickEvents = function () {
-            function getPath(e) {
-                return $(e.target)
-                    .closest('.path')
-                    .data('path-data');
-            }
 
             $configTree.find('.shunt button.delete')
                 .click(function (e) {
@@ -70,6 +71,13 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                         .closest('.path')
                         .data('path-data'));
                 });
+
+            $configTree.find('.stub button.info')
+                .click(function (e) {
+                    $view.trigger('stub-info.swivelView', $(e.target)
+                        .closest('.stub')
+                        .data('stub-data'));
+                });
         };
 
         //can be null in testing situations
@@ -79,10 +87,17 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                 $view.trigger('loaded.swivelView')
             }).jstree({
                     core: {html_titles: true},
-                    plugins: ['json_data', 'themeroller', 'ui'],
+                    plugins: ['json_data', 'themeroller'],
                     json_data: {data: [
                         {data: 'Configuration', state: 'open', attr: {id: 'configRoot'}}
                     ]} });
+        }
+
+        if ($resetButton) {
+            $resetButton.button()
+                .on('click', function () {
+                    $view.trigger('reset.swivelView')
+                });
         }
     };
 });

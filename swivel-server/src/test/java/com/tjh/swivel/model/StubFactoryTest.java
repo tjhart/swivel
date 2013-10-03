@@ -11,8 +11,11 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class StubFactoryTest {
 
@@ -34,6 +37,10 @@ public class StubFactoryTest {
 
         stubFactory.setMatcherFactory(mockMatcherFactory);
         stubFactory.setResponseFactory(mockResponseFactory);
+
+        WhenMatcher mockMatcher = mock(WhenMatcher.class);
+        when(mockMatcherFactory.buildMatcher(any(URI.class), anyMap()))
+                .thenReturn(mockMatcher);
     }
 
     @Test

@@ -26,17 +26,17 @@ public class MatcherFactory {
     public static final String CONTENT_TYPE_KEY = "contentType";
     public static final String CONTENT_KEY = "content";
     public static final String SCRIPT_KEY = "script";
-    public static final int STATIC_MATCHER_COUNT = 3;
+    public static final int STATIC_MATCHER_COUNT = 2;
     public static final int OPTIONAL_MATCHER_COUNT = 5;
 
     @SuppressWarnings("unchecked")
-    public Matcher<HttpUriRequest> buildMatcher(URI localURI, Map<String, String> stubDescription) {
+    public WhenMatcher buildMatcher(URI localURI, Map<String, String> when) {
 
         List<Matcher<HttpUriRequest>> matchers = new ArrayList<Matcher<HttpUriRequest>>(STATIC_MATCHER_COUNT);
-        matchers.add(hasMethod(equalTo(stubDescription.get(METHOD_KEY))));
+        matchers.add(hasMethod(equalTo(when.get(METHOD_KEY))));
 
-        matchers.add(buildOptionalMatcher(localURI, stubDescription));
-        return allOf(matchers.toArray(new Matcher[matchers.size()]));
+        matchers.add(buildOptionalMatcher(localURI, when));
+        return new WhenMatcher(allOf(matchers.toArray(new Matcher[matchers.size()])), when);
     }
 
     @SuppressWarnings("unchecked")

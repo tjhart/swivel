@@ -10,8 +10,10 @@ import vanderbilt.util.Maps;
 
 import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
@@ -55,10 +57,10 @@ public class ConfigurationResourceTest {
     }
 
     @Test
-    public void putShuntAddsShuntToRouter() throws URISyntaxException {
+    public void putShuntAddsShuntToRouter() throws URISyntaxException, MalformedURLException {
         configurationResource.putShunt(LOCAL_URI, SHUNT_JSON);
 
-        verify(mockRouter).setShunt(LOCAL_URI, new ShuntRequestHandler(new URI(REMOTE_URI)));
+        verify(mockRouter).setShunt(LOCAL_URI, new ShuntRequestHandler(new URL(REMOTE_URI)));
     }
 
     @Test
@@ -122,6 +124,6 @@ public class ConfigurationResourceTest {
 
         Map<String, Map<String, Object>> configuration = configurationResource.getConfiguration();
 
-        assertThat((String) configuration.get(LOCAL_PATH).get("shunt"), equalTo(mockShuntHandler.description()));
+        assertThat(configuration.get(LOCAL_PATH).get("shunt"), equalTo((Object)mockShuntHandler.toMap()));
     }
 }

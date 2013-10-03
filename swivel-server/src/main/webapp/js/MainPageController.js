@@ -3,13 +3,14 @@
 define(['jQuery'], function ($) {
     return function (swivelServer, view) {
 
+        function clientLoadConfigurationSuccess(data) {
+            client.loadConfigurationSuccess(data);
+        }
+
         var client = this;
 
         this.loadConfiguration = function () {
-            swivelServer.getConfig()
-                .done(function (data) {
-                    client.loadConfigurationSuccess(data);
-                });
+            swivelServer.getConfig(clientLoadConfigurationSuccess);
         };
 
         this.loadConfigurationSuccess = function (data) {
@@ -37,21 +38,19 @@ define(['jQuery'], function ($) {
             view.loadConfigurationData(viewData);
         };
 
-        function clientLoadConfigurationSuccess(data) {
-            client.loadConfigurationSuccess(data);
-        }
-
         $(view).one('loaded.swivelView',function () {
             client.loadConfiguration();
         }).on('delete-shunt.swivelView',function (event, shuntData) {
-                swivelServer.deleteShunt(shuntData.path)
-                    .done(clientLoadConfigurationSuccess);
+                swivelServer.deleteShunt(shuntData.path, clientLoadConfigurationSuccess);
             }).on('delete-stub.swivelView',function (event, stubData) {
-                swivelServer.deleteStub(stubData)
-                    .done(clientLoadConfigurationSuccess);
-            }).on('delete-path.swivelView', function (event, pathData) {
-                swivelServer.deletePath(pathData.path)
-                    .done(clientLoadConfigurationSuccess);
+                swivelServer.deleteStub(stubData, clientLoadConfigurationSuccess);
+            }).on('delete-path.swivelView',function (event, pathData) {
+                swivelServer.deletePath(pathData.path, clientLoadConfigurationSuccess);
+            }).on('reset.swivelView',function () {
+                swivelServer.reset(clientLoadConfigurationSuccess);
+            }).on('stub-info.swivelView', function (event, stubData) {
+                console.log('stub-info!');
+                document.location = ['editStub.html', $.param({path: stubData.path, id: stubData.id})].join('?')
             });
     };
 });

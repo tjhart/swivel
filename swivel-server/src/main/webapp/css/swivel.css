@@ -28,31 +28,27 @@ body > header {
     min-width: 500px;
 }
 
-.jstree {
-    margin: 5px 0 5px 5px;
+.treeContainer {
+    height: 450px;
+    overflow: scroll;
 }
 
-.path button {
-    border: none;
+button{
     float: right;
-    cursor: pointer;
-    margin-left: 5px;
-    height: 16px;
-
-    background-color: #e0d6a7;
-    color: #443f29;
 }
 
-.treeButton {
+.content > button{
+    margin-right: 25px;
+}
+
+.jstree {
+    margin: 5px 5px 5px 5px;
+}
+
+#currentConfig button {
     width: 16px;
-}
-
-.treeButton.delete {
-    background: url(images/delete.png) no-repeat;
-}
-
-.treeButton:hover {
-    background-position: 0 -32px;
+    margin-left:5px;
+    border: none;
 }
 
 body > footer {
@@ -69,7 +65,7 @@ body > footer {
     margin: 10px 5px 0 5px;
 }
 
-label[for="when"], label[for="then"]{
+label[for="when"], label[for="then"] {
     font-weight: bold;
 }
 

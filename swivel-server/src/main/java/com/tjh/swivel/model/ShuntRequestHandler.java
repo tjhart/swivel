@@ -6,18 +6,22 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.log4j.Logger;
+import vanderbilt.util.Maps;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Map;
 
 
 public class ShuntRequestHandler implements RequestHandler<HttpRequestBase> {
 
     public static final String CONTENT_BASE_HEADER = "Content-base";
     protected Logger logger = Logger.getLogger(ShuntRequestHandler.class);
-    protected final URI baseUri;
+    protected final URL remoteURL;
 
-    public ShuntRequestHandler(URI baseUri) { this.baseUri = baseUri; }
+    public ShuntRequestHandler(URL remoteURL) { this.remoteURL = remoteURL; }
 
     public HttpResponse handle(HttpRequestBase request, URI matchedURI, HttpClient client) {
         try {
@@ -25,7 +29,7 @@ public class ShuntRequestHandler implements RequestHandler<HttpRequestBase> {
             HttpUriRequest shuntRequest = createShuntRequest(request, matchedURI);
             logger.debug(String.format("Shunting request %1$s to %2$s", localURI, shuntRequest.getURI()));
             HttpResponse response = client.execute(shuntRequest);
-            response.addHeader(CONTENT_BASE_HEADER, this.baseUri.toString());
+            response.addHeader(CONTENT_BASE_HEADER, this.remoteURL.toString());
             return response;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -33,13 +37,21 @@ public class ShuntRequestHandler implements RequestHandler<HttpRequestBase> {
     }
 
     protected HttpUriRequest createShuntRequest(HttpRequestBase request, URI matchedURI) {
-        request.setURI(URIUtils.resolveUri(baseUri, request.getURI(), matchedURI));
-
-        return request;
+        try {
+            request.setURI(URIUtils.resolveUri(remoteURL.toURI(), request.getURI(), matchedURI));
+            return request;
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public String description() { return "Shunting to" + baseUri; }
+    public String description() { return "Shunting to" + remoteURL; }
+
+    @Override
+    public Map<String, Object> toMap() {
+        return Maps.<String, Object>asMap("remoteURL", remoteURL.toString());
+    }
 
     //<editor-fold desc="Object">
     @Override
@@ -49,16 +61,16 @@ public class ShuntRequestHandler implements RequestHandler<HttpRequestBase> {
 
         ShuntRequestHandler that = (ShuntRequestHandler) o;
 
-        return baseUri.equals(that.baseUri);
+        return remoteURL.equals(that.remoteURL);
     }
 
     @Override
-    public int hashCode() { return baseUri.hashCode(); }
+    public int hashCode() { return remoteURL.hashCode(); }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ShuntRequestHandler{");
-        sb.append("baseUri=").append(baseUri);
+        sb.append("remoteURL=").append(remoteURL);
         sb.append('}');
         return sb.toString();
     }

@@ -165,14 +165,11 @@ public class RequestRouter {
         clean(path, uriHandlers.get(path), SHUNT_NODE);
     }
 
-    public void remotePath(URI localUri) {
-        String uri = localUri.toString();
-        for (String path : uriHandlers.keySet()) {
-            if (path.startsWith(uri)) {
-                uriHandlers.remove(path);
-            }
-        }
+    public void removePath(URI localUri) {
+        uriHandlers.remove(localUri.toString());
     }
+
+    public void reset() { uriHandlers.clear(); }
 
     private void clean(String path, Map<String, Object> handlerMap, String nodeType) {
         Object shuntRequestHandler = handlerMap.remove(nodeType);

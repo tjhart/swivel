@@ -6,20 +6,19 @@ import com.tjh.swivel.config.model.Then;
 import com.tjh.swivel.config.model.When;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 public class Swivel {
     public static final String APPLICATION_JSON = "application/json";
     public static final String APPLICATION_XML = "application/xml";
     public static final String APPLICATION_URL_ENCODED_FORM = "application/x-www-form-urlencoded";
 
-    public static When get(URI uri) throws URISyntaxException { return new When(HttpMethod.GET, uri); }
+    public static When get(URI uri) { return new When(HttpMethod.GET, uri); }
 
     public static When put(URI uri) { return new When(HttpMethod.PUT, uri); }
 
     public static When post(URI uri) { return new When(HttpMethod.POST, uri); }
 
-    public static When delete(URI uri) throws URISyntaxException { return new When(HttpMethod.DELETE, uri); }
+    public static When delete(URI uri) { return new When(HttpMethod.DELETE, uri); }
 
     public static Then responseCode(HttpResponseCode responseCode) { return new Then(responseCode); }
 

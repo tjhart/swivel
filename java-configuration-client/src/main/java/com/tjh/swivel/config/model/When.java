@@ -5,7 +5,6 @@ import org.codehaus.jettison.json.JSONObject;
 import vanderbilt.util.Maps;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import static vanderbilt.util.Validators.notNull;
@@ -22,11 +21,6 @@ public class When {
     private String remoteAddress;
     private String script;
     private URI uri;
-
-    @Deprecated
-    public When(HttpMethod method) {
-        this.method = notNull("method", method);
-    }
 
     public When(HttpMethod method, URI uri) {
         this.method = notNull("method", method);
@@ -72,12 +66,6 @@ public class When {
 
     public When matches(String script) {
         setScript(script);
-        return this;
-    }
-
-    @Deprecated
-    public When at(String uriString) throws URISyntaxException {
-        setURI(uriString);
         return this;
     }
     //</editor-fold>
@@ -150,11 +138,5 @@ public class When {
     public void setScript(String script) { this.script = script; }
 
     public URI getUri() { return uri; }
-
-    @Deprecated
-    public void setURI(URI uri) { this.uri = notNull("uri", uri); }
-
-    @Deprecated
-    public void setURI(String uriString) throws URISyntaxException {setURI(new URI(uriString));}
     //</editor-fold>
 }

@@ -36,7 +36,7 @@ public class ConfigurationResource {
     public static final String STUB_ID_KEY = "id";
     public static final String SHUNT_KEY = "shunt";
 
-    protected Logger logger = Logger.getLogger(ConfigurationResource.class);
+    protected static Logger LOGGER = Logger.getLogger(ConfigurationResource.class);
     protected RequestRouter router;
     protected StubFactory stubFactory;
 
@@ -48,7 +48,7 @@ public class ConfigurationResource {
             throws URISyntaxException {
         try {
             String remoteURL = json.get(REMOTE_URL_KEY);
-            logger.debug(String.format("Configuring shunt: proxying %1$s to %2$s", localPath, remoteURL));
+            LOGGER.debug(String.format("Configuring shunt: proxying %1$s to %2$s", localPath, remoteURL));
 
             router.setShunt(localPath, new ShuntRequestHandler(new URI(remoteURL)));
             return getConfiguration();
@@ -63,7 +63,7 @@ public class ConfigurationResource {
     @Path("shunt/{localPath: .*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Map<String, Object>> deleteShunt(@PathParam("localPath") URI localPath) {
-        logger.debug(String.format("Removing shunt for %1$s", localPath));
+        LOGGER.debug(String.format("Removing shunt for %1$s", localPath));
 
         router.deleteShunt(localPath);
 
@@ -85,7 +85,7 @@ public class ConfigurationResource {
         URI localUri = new URI(sb.toString());
         StubRequestHandler stubRequestHandler = stubFactory.createStubFor(localUri, stubDescription);
 
-        logger.debug(String.format("Adding stub for %1$s", localUri));
+        LOGGER.debug(String.format("Adding stub for %1$s", localUri));
         router.addStub(localUri, stubRequestHandler);
         return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());
     }
@@ -95,8 +95,18 @@ public class ConfigurationResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Map<String, Object>> deleteStub(@PathParam("localPath") URI localUri,
             @QueryParam(STUB_ID_KEY) int stubId) {
-        logger.debug(String.format("Deleting stub with id %1$d at path %2$s", stubId, localUri));
+        LOGGER.debug(String.format("Deleting stub with id %1$d at path %2$s", stubId, localUri));
         router.removeStub(localUri, stubId);
+
+        return getConfiguration();
+    }
+
+    @DELETE
+    @Path("path/{localPath: .*}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Map<String, Object>> deletePath(@PathParam("localPath") URI localUri){
+        LOGGER.debug(String.format("Deleting path %1$s", localUri));
+        router.remotePath(localUri);
 
         return getConfiguration();
     }

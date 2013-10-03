@@ -66,7 +66,7 @@ public class RequestRouter {
 
     public HttpResponse route(HttpRequestBase request) {
         LOGGER.debug("Routing " + request);
-        RequestHandler requestHandler = null;
+        RequestHandler requestHandler;
         Deque<String> pathElements = new LinkedList<String>(Arrays.asList(toKeys(request.getURI())));
         String matchedPath;
         do {
@@ -163,6 +163,15 @@ public class RequestRouter {
     public void deleteShunt(URI localURI) {
         String path = localURI.getPath();
         clean(path, uriHandlers.get(path), SHUNT_NODE);
+    }
+
+    public void remotePath(URI localUri) {
+        String uri = localUri.toString();
+        for (String path : uriHandlers.keySet()) {
+            if (path.startsWith(uri)) {
+                uriHandlers.remove(path);
+            }
+        }
     }
 
     private void clean(String path, Map<String, Object> handlerMap, String nodeType) {

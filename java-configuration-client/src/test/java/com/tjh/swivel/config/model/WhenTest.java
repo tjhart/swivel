@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -18,12 +17,12 @@ public class WhenTest {
     public static final String REMOTE_ADDRESS = "127.0.0.1";
     public static final String SCRIPT = "(function(){})();";
     public static final HttpMethod METHOD = HttpMethod.PUT;
-    public static final String SOME_URI = "some/path";
+    public static final URI SOME_URI = URI.create("some/path");
     private When when;
 
     @Before
     public void setUp() throws Exception {
-        when = new When(METHOD);
+        when = new When(METHOD, SOME_URI);
     }
 
     @Test
@@ -53,17 +52,12 @@ public class WhenTest {
 
     @Test(expected = IllegalStateException.class)
     public void setContentThrowsIfMethodDoesNotAcceptData() {
-        new When(HttpMethod.GET).setContent(CONTENT);
-    }
-
-    @Test
-    public void atSetsURI() throws URISyntaxException {
-        assertThat(when.at(SOME_URI).getUri(), equalTo(URI.create(SOME_URI)));
+        new When(HttpMethod.GET, SOME_URI).setContent(CONTENT);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void contructionThrowsOnNullMethod() {
-        new When(null);
+        new When(null, SOME_URI);
     }
 
     @Test

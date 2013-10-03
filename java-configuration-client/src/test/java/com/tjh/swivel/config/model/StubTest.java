@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -34,8 +35,8 @@ public class StubTest {
     private Stub stub;
 
     @Before
-    public void setUp() throws Exception {
-        stub = new Stub(get("some/uri"), ok());
+    public void setUp() throws URISyntaxException {
+        stub = new Stub(get(URI.create("some/uri")), ok());
     }
 
     @Test

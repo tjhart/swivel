@@ -14,10 +14,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static com.tjh.swivel.config.Swivel.APPLICATION_URL_ENCODED_FORM;
 import static com.tjh.swivel.config.Swivel.get;
@@ -31,9 +30,8 @@ public class SwivelConfigurerTest {
     public static final String SWIVEL_BASE_URL = "http://localhost:8080/swivel_server_war_exploded";
     public static final String SWIVEL_PROXY_URL = SWIVEL_BASE_URL + "/rest/proxy";
     public static final String CONTENT = "content";
-    public static final String PATH = "some/path";
+    public static final URI PATH = URI.create("some/path");
 
-    private List<Integer> stubIDs = new ArrayList<Integer>();
     private SwivelConfigurer swivelConfigurer;
 
     @Before
@@ -45,18 +43,17 @@ public class SwivelConfigurerTest {
 
     @After
     public void after() throws IOException {
-        for (Integer stubID : stubIDs) {
-            swivelConfigurer.deleteStub(PATH, stubID);
-        }
+
+        swivelConfigurer.deletePath(PATH);
     }
 
     @Test
     public void configureStubWorks() throws IOException, URISyntaxException {
 
-        stubIDs.add(swivelConfigurer
+        swivelConfigurer
                 .when(get(PATH))
                 .thenReturn(ok()
-                        .withContent(CONTENT)));
+                        .withContent(CONTENT));
 
         String entity = EntityUtils.toString(
                 new DefaultHttpClient().execute(new HttpGet(SWIVEL_PROXY_URL + "/" + PATH))
@@ -68,16 +65,16 @@ public class SwivelConfigurerTest {
     //integration tests
     @Test
     public void matchingContentWorks() throws IOException, URISyntaxException {
-        stubIDs.add(swivelConfigurer
-                .when(post("some data")
-                        .at(PATH))
+        swivelConfigurer
+                .when(post(PATH)
+                        .withContent("some data"))
                 .thenReturn(ok()
-                        .withContent("you matched data")));
-        stubIDs.add(swivelConfigurer
-                .when(post("some other data")
-                        .at(PATH))
+                        .withContent("you matched data"));
+        swivelConfigurer
+                .when(post(PATH)
+                        .withContent("some other data"))
                 .thenReturn(ok()
-                        .withContent("you matched some other data")));
+                        .withContent("you matched some other data"));
 
         HttpPost httpPost = new HttpPost(SWIVEL_PROXY_URL + "/" + PATH);
         httpPost.setEntity(new StringEntity("some data"));
@@ -97,9 +94,8 @@ public class SwivelConfigurerTest {
 
     @Test
     public void scriptMatchingWorks() throws URISyntaxException, IOException {
-        stubIDs.add(swivelConfigurer
-                .when(post()
-                        .at(PATH)
+        swivelConfigurer
+                .when(post(PATH)
                         .as(APPLICATION_URL_ENCODED_FORM)
                         .matches("(function(){" +
                                 "   var entity = Packages.org.apache.http.util.EntityUtils" +
@@ -108,7 +104,7 @@ public class SwivelConfigurerTest {
                                 "   return entity.matches('foo=bar');\n" +
                                 "})();"))
                 .thenReturn(ok()
-                        .withContent("it matched!")));
+                        .withContent("it matched!"));
 
         HttpPost httpPost = new HttpPost(SWIVEL_PROXY_URL + "/" + PATH);
         httpPost.setEntity(new UrlEncodedFormEntity(Arrays.asList(new BasicNameValuePair("foo", "bar"))));

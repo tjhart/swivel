@@ -18,14 +18,13 @@ define(['jQuery', 'json2'], function ($, json2) {
             });
         };
 
-        this.deleteStub = function (stubData, syncronous) {
+        this.deleteStub = function (stubData) {
             var path = [baseUrl, this.CONFIG_PATH, 'stub', stubData.path].join('/'), url;
             url = [path, $.param({id: stubData.id})].join('?');
             return $.ajax({
                 url: url,
                 type: 'DELETE',
-                accept: 'application/json',
-                async: !(syncronous || false)
+                accept: 'application/json'
             });
         };
 
@@ -37,7 +36,16 @@ define(['jQuery', 'json2'], function ($, json2) {
                 accept: 'application/json',
                 data: json2.stringify({remoteURL: shuntDescription.remoteURL})
             });
-        }
+        };
+
+        this.deletePath = function (path) {
+            return $.ajax({
+                url: [baseUrl, this.CONFIG_PATH, 'path', path].join('/'),
+                type: 'DELETE',
+                contentType: 'application/json',
+                accept: 'application/json'
+            });
+        };
     };
 
     $.extend(SwivelServer.prototype, {

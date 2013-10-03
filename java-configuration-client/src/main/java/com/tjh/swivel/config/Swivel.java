@@ -13,27 +13,13 @@ public class Swivel {
     public static final String APPLICATION_XML = "application/xml";
     public static final String APPLICATION_URL_ENCODED_FORM = "application/x-www-form-urlencoded";
 
-    public static When get(String uri) throws URISyntaxException { return new When(HttpMethod.GET).at(uri); }
+    public static When get(URI uri) throws URISyntaxException { return new When(HttpMethod.GET, uri); }
 
     public static When put(URI uri) { return new When(HttpMethod.PUT, uri); }
 
-    @Deprecated
-    public static When put() {return new When(HttpMethod.PUT);}
-
-    @Deprecated
-    public static When put(String data) { return new When(HttpMethod.PUT).withContent(data); }
-
-    @Deprecated
-    public static When post() {return new When(HttpMethod.POST);}
-
     public static When post(URI uri) { return new When(HttpMethod.POST, uri); }
 
-    @Deprecated
-    public static When post(String data) { return new When(HttpMethod.POST).withContent(data); }
-
-    public static When delete(String uri) throws URISyntaxException {
-        return new When(HttpMethod.DELETE, new URI(uri));
-    }
+    public static When delete(URI uri) throws URISyntaxException { return new When(HttpMethod.DELETE, uri); }
 
     public static Then responseCode(HttpResponseCode responseCode) { return new Then(responseCode); }
 

@@ -15,6 +15,7 @@ import org.codehaus.jettison.json.JSONObject;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -23,6 +24,7 @@ public class SwivelConfigurer {
     public static final String STUB_PATH = "stub";
     public static final String SHUNT_PATH = "shunt";
     public static final String ID_KEY = "id";
+    public static final String PATH = "path";
 
     protected final URL swivelURL;
 
@@ -43,9 +45,13 @@ public class SwivelConfigurer {
         } catch (JSONException e) { throw new RuntimeException(e); }
     }
 
-    public void deleteStub(String path, int stubID) throws IOException {
+    public void deleteStub(URI path, int stubID) throws IOException {
         getClient()
                 .execute(new HttpDelete(getConfigURL(path, STUB_PATH) + "?id=" + stubID));
+    }
+
+    public void deletePath(URI path) throws IOException {
+        getClient().execute(new HttpDelete(getConfigURL(path, PATH)));
     }
 
     public StubConfigurer when(When when) { return new StubConfigurer(this, when); }
@@ -54,7 +60,7 @@ public class SwivelConfigurer {
         return new ShuntConfigurer(this, localURI);
     }
 
-    private String getConfigURL(String uri, String configType) {
+    private String getConfigURL(URI uri, String configType) {
         return String.format("%1$s/%2$s/%3$s/%4$s", swivelURL.toExternalForm(), BASE_CONFIG_URI, configType, uri);
     }
 

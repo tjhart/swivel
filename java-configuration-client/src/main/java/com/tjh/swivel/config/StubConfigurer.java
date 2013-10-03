@@ -5,7 +5,6 @@ import com.tjh.swivel.config.model.Then;
 import com.tjh.swivel.config.model.When;
 
 import java.io.IOException;
-import java.net.URI;
 
 import static vanderbilt.util.Validators.notNull;
 
@@ -67,17 +66,11 @@ public class StubConfigurer {
     //</editor-fold>
 
     //<editor-fold desc="bean">
-    public void setWhen(When when) {
-        URI uri = notNull("when", when).getUri();
-        if (uri == null || uri.getPath().length() == 0) {
-            throw new IllegalArgumentException("Swivel stubs must be related to a URI:" + when);
-        }
-        this.when = when;
-    }
+    public SwivelConfigurer getSwivelConfigurer() { return swivelConfigurer; }
 
     public When getWhen() { return when; }
 
-    public SwivelConfigurer getSwivelConfigurer() { return swivelConfigurer; }
+    public void setWhen(When when) { this.when = notNull("when", when); }
 
     public Then getThen() { return then; }
 

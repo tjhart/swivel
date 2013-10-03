@@ -8,9 +8,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
-import static com.tjh.swivel.config.Swivel.post;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -44,13 +42,8 @@ public class StubConfigurerTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void setWhenVerifiesURI(){
-        stubConfigurer.setWhen(post("data"));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void setWhenVerifiesURIIsNotEmpty() throws URISyntaxException {
-        stubConfigurer.setWhen(post("data").at(""));
+    public void setWhenVerifiesWhen(){
+        stubConfigurer.setWhen(null);
     }
 
     @Test

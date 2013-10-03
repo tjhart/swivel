@@ -37,26 +37,21 @@ define(['jQuery'], function ($) {
             view.loadConfigurationData(viewData);
         };
 
+        function clientLoadConfigurationSuccess(data) {
+            client.loadConfigurationSuccess(data);
+        }
+
         $(view).one('loaded.swivelView',function () {
             client.loadConfiguration();
         }).on('delete-shunt.swivelView',function (event, shuntData) {
                 swivelServer.deleteShunt(shuntData.path)
-                    .done(function (data) {
-                        client.loadConfigurationSuccess(data);
-                    });
+                    .done(clientLoadConfigurationSuccess);
             }).on('delete-stub.swivelView',function (event, stubData) {
                 swivelServer.deleteStub(stubData)
-                    .done(function (data) {
-                        client.loadConfigurationSuccess(data);
-                    });
+                    .done(clientLoadConfigurationSuccess);
             }).on('delete-path.swivelView', function (event, pathData) {
-                $.each(pathData.stubs, function (i, stub) {
-                    swivelServer.deleteStub(stub, true);
-                });
-                swivelServer.deleteShunt(pathData.path)
-                    .done(function (data) {
-                        client.loadConfigurationSuccess(data);
-                    });
+                swivelServer.deletePath(pathData.path)
+                    .done(clientLoadConfigurationSuccess);
             });
     };
 });

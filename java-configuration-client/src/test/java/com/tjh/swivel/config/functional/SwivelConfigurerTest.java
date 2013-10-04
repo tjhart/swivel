@@ -43,7 +43,6 @@ public class SwivelConfigurerTest {
 
     @After
     public void after() throws IOException {
-
         swivelConfigurer.reset();
     }
 
@@ -52,8 +51,9 @@ public class SwivelConfigurerTest {
 
         swivelConfigurer
                 .when(get(PATH))
-                .thenReturn(ok()
-                        .withContent(CONTENT));
+                .then(ok().withContent(CONTENT))
+                .describe("get path returns content")
+                .configure();
 
         String entity = EntityUtils.toString(
                 new DefaultHttpClient().execute(new HttpGet(SWIVEL_PROXY_URL + "/" + PATH))
@@ -68,13 +68,17 @@ public class SwivelConfigurerTest {
         swivelConfigurer
                 .when(post(PATH)
                         .withContent("some data"))
-                .thenReturn(ok()
-                        .withContent("you matched data"));
+                .then(ok()
+                        .withContent("you matched data"))
+                .describe("match some data on post")
+                .configure();
         swivelConfigurer
                 .when(post(PATH)
                         .withContent("some other data"))
-                .thenReturn(ok()
-                        .withContent("you matched some other data"));
+                .then(ok()
+                        .withContent("you matched some other data"))
+                .describe("match some other data on post")
+                .configure();
 
         HttpPost httpPost = new HttpPost(SWIVEL_PROXY_URL + "/" + PATH);
         httpPost.setEntity(new StringEntity("some data"));
@@ -97,14 +101,15 @@ public class SwivelConfigurerTest {
         swivelConfigurer
                 .when(post(PATH)
                         .as(APPLICATION_URL_ENCODED_FORM)
-                        .matches("(function(){" +
-                                "   var entity = Packages.org.apache.http.util.EntityUtils" +
-                                "       .toString(request.getEntity());\n" +
-                                "   java.lang.System.out.println('entity = ' + entity);\n" +
-                                "   return entity.matches('foo=bar');\n" +
-                                "})();"))
-                .thenReturn(ok()
-                        .withContent("it matched!"));
+                        .matches("(function(request){" +
+                                "   return Packages.org.apache.http.util.EntityUtils\n" +
+                                "       .toString(request.getEntity())\n" +
+                                "       .matches(\"foo=bar\");\n" +
+                                "})(request);"))
+                .then(ok()
+                        .withContent("it matched!"))
+                .describe("Script matcher")
+                .configure();
 
         HttpPost httpPost = new HttpPost(SWIVEL_PROXY_URL + "/" + PATH);
         httpPost.setEntity(new UrlEncodedFormEntity(Arrays.asList(new BasicNameValuePair("foo", "bar"))));

@@ -10,6 +10,7 @@ import static vanderbilt.util.Validators.notNull;
 
 public class StubConfigurer {
     private final SwivelConfigurer swivelConfigurer;
+    private String description;
     private When when;
     private Then then;
 
@@ -22,20 +23,27 @@ public class StubConfigurer {
         setWhen(when);
     }
 
+    public StubConfigurer describe(String description) {
+        setDescription(description);
+        return this;
+    }
 
     public StubConfigurer when(When when) {
         setWhen(when);
         return this;
     }
 
-    public int thenReturn(Then then) throws IOException {
+    public StubConfigurer then(Then then) throws IOException {
         setThen(then);
-        return configure();
+        return this;
     }
 
-    public int configure() throws IOException {return swivelConfigurer.configure(new Stub(when, this.then));}
+    public int configure() throws IOException {
+        return swivelConfigurer.configure(new Stub(description, when, this.then));
+    }
 
     //<editor-fold desc="Object">
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -44,14 +52,16 @@ public class StubConfigurer {
         StubConfigurer that = (StubConfigurer) o;
 
         return swivelConfigurer.equals(that.swivelConfigurer)
-                && !(when != null ? !when.equals(that.when) : that.when != null);
-
+                && !(description != null ? !description.equals(that.description) : that.description != null)
+                && !(then != null ? !then.equals(that.then) : that.then != null) && when.equals(that.when);
     }
 
     @Override
     public int hashCode() {
         int result = swivelConfigurer.hashCode();
-        result = 31 * result + (when != null ? when.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + when.hashCode();
+        result = 31 * result + (then != null ? then.hashCode() : 0);
         return result;
     }
 
@@ -59,7 +69,9 @@ public class StubConfigurer {
     public String toString() {
         final StringBuilder sb = new StringBuilder("StubConfigurer{");
         sb.append("swivelConfigurer=").append(swivelConfigurer);
+        sb.append(", description='").append(description).append('\'');
         sb.append(", when=").append(when);
+        sb.append(", then=").append(then);
         sb.append('}');
         return sb.toString();
     }
@@ -75,5 +87,9 @@ public class StubConfigurer {
     public Then getThen() { return then; }
 
     public void setThen(Then then) { this.then = notNull("then", then); }
+
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = notNull("description", description); }
     //</editor-fold>
 }

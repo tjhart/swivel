@@ -22,7 +22,9 @@ public class StubFactoryTest {
     public static final URI LOCAL_URI = URI.create("some/url");
     public static final Map<String, String> WHEN_MAP = Collections.emptyMap();
     private static final Map<String, Object> THEN_MAP = Collections.emptyMap();
+    public static final String DESCRIPTION = "description";
     public static final Map<String, Object> STATIC_DESCRIPTION = Maps.<String, Object>asConstantMap(
+            StubFactory.DESCRIPTION_KEY, DESCRIPTION,
             StubFactory.WHEN_KEY, WHEN_MAP,
             StubFactory.THEN_KEY, THEN_MAP);
     private StubFactory stubFactory;
@@ -66,6 +68,7 @@ public class StubFactoryTest {
     @Test
     public void createStubForCreatesDynamicStubResponseHandlerForDynamicDescriptions() throws ScriptException {
         StubRequestHandler stubRequestHandler = stubFactory.createStubFor(LOCAL_URI, Maps.<String, Object>asMap(
+                StubFactory.DESCRIPTION_KEY, DESCRIPTION,
                 StubFactory.WHEN_KEY, WHEN_MAP,
                 StubFactory.THEN_KEY, Maps.asMap(StubFactory.SCRIPT_KEY, "(function(){})();")
         ));

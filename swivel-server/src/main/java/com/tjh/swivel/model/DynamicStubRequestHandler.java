@@ -15,14 +15,15 @@ public class DynamicStubRequestHandler extends AbstractStubRequestHandler {
     protected ScriptWrapper scriptWrapper;
     protected ResponseFactory responseFactory = new ResponseFactory();
 
-    public DynamicStubRequestHandler(WhenMatcher matcher, String sourceScript,
+    public DynamicStubRequestHandler(String description, WhenMatcher matcher, String sourceScript,
             String engineName) throws ScriptException {
-        super(matcher, Maps.<String, Object>asMap("script", sourceScript));
+        super(description, matcher, Maps.<String, Object>asMap("script", sourceScript));
         this.scriptWrapper = new ScriptWrapper(engineName, sourceScript);
     }
 
-    public DynamicStubRequestHandler(WhenMatcher matcher, String sourceScript) throws ScriptException {
-        this(matcher, sourceScript, "javascript");
+    public DynamicStubRequestHandler(String description, WhenMatcher matcher, String sourceScript)
+            throws ScriptException {
+        this(description, matcher, sourceScript, "javascript");
     }
 
     @Override

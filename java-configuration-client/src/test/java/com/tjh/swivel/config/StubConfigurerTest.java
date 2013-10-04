@@ -1,6 +1,5 @@
 package com.tjh.swivel.config;
 
-import com.tjh.swivel.config.model.Stub;
 import com.tjh.swivel.config.model.Then;
 import com.tjh.swivel.config.model.When;
 import org.junit.Before;
@@ -12,12 +11,12 @@ import java.net.URI;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class StubConfigurerTest {
 
     private static final URI SOME_URI = URI.create("some/path");
+    public static final String DESCRIPTION = "fred";
     private StubConfigurer stubConfigurer;
     private SwivelConfigurer mockSwivelConfigurer;
     private When mockWhen;
@@ -48,15 +47,15 @@ public class StubConfigurerTest {
 
     @Test
     public void thenCapturesThen() throws IOException {
-        stubConfigurer.thenReturn(mockThen);
+        stubConfigurer.then(mockThen);
 
         assertThat(stubConfigurer.getThen(), equalTo(mockThen));
     }
 
     @Test
-    public void thenDefersToConfigurer() throws IOException {
-        stubConfigurer.thenReturn(mockThen);
+    public void describeCaptureDescription(){
+        stubConfigurer.describe(DESCRIPTION);
 
-        verify(mockSwivelConfigurer).configure(new Stub(mockWhen, mockThen));
+        assertThat(stubConfigurer.getDescription(), equalTo(DESCRIPTION));
     }
 }

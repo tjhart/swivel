@@ -32,11 +32,13 @@ public class StubTest {
         }
     }
 
+    public static final String DESCRIPTION = "description";
+
     private Stub stub;
 
     @Before
     public void setUp() throws URISyntaxException {
-        stub = new Stub(get(URI.create("some/uri")), ok());
+        stub = new Stub(DESCRIPTION, get(URI.create("some/uri")), ok());
     }
 
     @Test
@@ -47,6 +49,11 @@ public class StubTest {
     @Test
     public void toJSONIncludesThen() throws JSONException {
         assertThat(stub.toJSON().getJSONObject(Stub.THEN_KEY), notNullValue());
+    }
+
+    @Test
+    public void toJSONIncludesdescription() throws JSONException {
+        assertThat(stub.toJSON().getString(Stub.DESCRIPTION_KEY), equalTo(DESCRIPTION));
     }
 
     @Test
@@ -63,8 +70,8 @@ public class StubTest {
     }
 
     @Test
-    public void toRequestIsApplicationJSON(){
-        assertThat(((HttpPost)stub.toRequest(SOME_URL))
+    public void toRequestIsApplicationJSON() {
+        assertThat(((HttpPost) stub.toRequest(SOME_URL))
                 .getEntity()
                 .getContentType()
                 .getValue(),

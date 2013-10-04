@@ -23,13 +23,14 @@ public class DynamicStubRequestHandlerTest {
             "(function(){\n" +
                     "    return responseFactory.createResponse(200, 'OK');" +
                     "})();";
+    public static final String DESCRIPTION = "description";
     private DynamicStubRequestHandler dynamicResponseHandler;
     private HttpUriRequest mockRequest;
 
     @Before
     public void setUp() throws Exception {
         WhenMatcher mockMatcher = mock(WhenMatcher.class);
-        dynamicResponseHandler = new DynamicStubRequestHandler(mockMatcher, SOURCE_SCRIPT);
+        dynamicResponseHandler = new DynamicStubRequestHandler(DESCRIPTION, mockMatcher, SOURCE_SCRIPT);
         mockRequest = mock(HttpUriRequest.class);
     }
 

@@ -21,7 +21,7 @@ public class StaticStubRequestHandlerTest {
         mockHttpResponse = mock(HttpResponse.class);
         WhenMatcher mockMatcher = mock(WhenMatcher.class);
         Map<String, Object> then = mock(Map.class);
-        staticResponseHandler = new StaticStubRequestHandler(mockMatcher, mockHttpResponse, then);
+        staticResponseHandler = new StaticStubRequestHandler("description", mockMatcher, mockHttpResponse, then);
     }
 
     @Test
@@ -31,6 +31,7 @@ public class StaticStubRequestHandlerTest {
 
     @Test
     public void handleReturnsResponse() {
-        assertThat(staticResponseHandler.handle(mock(HttpUriRequest.class), null, null), sameInstance(mockHttpResponse));
+        assertThat(staticResponseHandler.handle(mock(HttpUriRequest.class), null, null),
+                sameInstance(mockHttpResponse));
     }
 }

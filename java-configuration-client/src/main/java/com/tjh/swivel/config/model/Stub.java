@@ -15,16 +15,22 @@ import static vanderbilt.util.Validators.notNull;
 public class Stub implements Behavior {
     public static final String WHEN_KEY = "when";
     public static final String THEN_KEY = "then";
+    public static final String DESCRIPTION_KEY = "description";
+    private final String description;
     private final When when;
     private final Then then;
 
-    public Stub(When when, Then then) {
+    public Stub(String description, When when, Then then) {
+        this.description = notNull("description", description);
         this.when = notNull("when", when);
         this.then = notNull("then", then);
     }
 
     public JSONObject toJSON() {
-        return new JSONObject(Maps.asMap(WHEN_KEY, when.toJSON(), THEN_KEY, then.toJSON()));
+        return new JSONObject(Maps.asMap(
+                DESCRIPTION_KEY, description,
+                WHEN_KEY, when.toJSON(),
+                THEN_KEY, then.toJSON()));
     }
 
     public HttpUriRequest toRequest(URL baseURL) {
@@ -35,6 +41,7 @@ public class Stub implements Behavior {
     }
 
     //<editor-fold desc="Object">
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,14 +49,16 @@ public class Stub implements Behavior {
 
         Stub stub = (Stub) o;
 
-        return when.equals(stub.when)
-                && then.equals(stub.then);
+        return description.equals(stub.description)
+                && then.equals(stub.then)
+                && when.equals(stub.when);
 
     }
 
     @Override
     public int hashCode() {
-        int result = when.hashCode();
+        int result = description.hashCode();
+        result = 31 * result + when.hashCode();
         result = 31 * result + then.hashCode();
         return result;
     }
@@ -57,7 +66,8 @@ public class Stub implements Behavior {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Stub{");
-        sb.append("when=").append(when);
+        sb.append("description=").append(description);
+        sb.append(", when=").append(when);
         sb.append(", then=").append(then);
         sb.append('}');
         return sb.toString();
@@ -65,6 +75,8 @@ public class Stub implements Behavior {
     //</editor-fold>
 
     //<editor-fold desc="bean">
+    public String getDescription() { return description; }
+
     public When getWhen() { return when; }
 
     public Then getThen() { return then; }

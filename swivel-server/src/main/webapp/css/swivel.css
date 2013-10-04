@@ -19,13 +19,14 @@ body > header {
     margin: 10px 100px 10px 100px;
     border-style: solid;
     border: #443f29 solid thin;
-    height: 600px;
+    height: 610px;
     border-radius: 10px;
     min-width: 500px;
 }
 
 .treeContainer {
     height: 550px;
+    margin: 5px 5px 5px 5px;
     overflow: scroll;
 }
 
@@ -54,6 +55,10 @@ button {
 body > footer {
     text-align: center;
     padding: 25px 25px 25px 25px;
+}
+
+.no-close .ui-dialog-titlebar-close {
+    display: none;
 }
 
 /* make this stuff page two */
@@ -89,8 +94,4 @@ textarea {
 
 .script textarea {
     margin-left: 5px;
-}
-
-.no-close .ui-dialog-titlebar-close {
-    display: none;
 }

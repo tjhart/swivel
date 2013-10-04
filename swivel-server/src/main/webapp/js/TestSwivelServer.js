@@ -80,7 +80,7 @@ define(['jQuery'], function ($) {
             };
 
             this.putShunt = function (shuntData, callback) {
-                data[shuntData.path].shunt = 'shunting to: ' + shuntData.remoteURL;
+                var shunt = data[shuntData.path] = {shunt:shuntData};
                 return ajaxResultBuilder(data)
                     .done(callback || defaultCallback);
             };

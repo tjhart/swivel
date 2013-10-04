@@ -48,8 +48,10 @@ define(['jQuery'], function ($) {
                 swivelServer.deletePath(pathData.path, clientLoadConfigurationSuccess);
             }).on('reset.swivelView',function () {
                 swivelServer.reset(clientLoadConfigurationSuccess);
-            }).on('stub-info.swivelView', function (event, stubData) {
-                document.location = ['editStub.html', $.param({path: stubData.path, id: stubData.id})].join('?')
+            }).on('stub-info.swivelView',function (event, stubData) {
+                document.location = ['editStub.html', $.param({path: stubData.path, id: stubData.id})].join('?');
+            }).on('add-shunt.swivelView', function (event, shuntData) {
+                swivelServer.putShunt(shuntData, clientLoadConfigurationSuccess);
             });
     };
 });

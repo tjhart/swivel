@@ -17,11 +17,22 @@
         <div id="currentConfig"></div>
     </div>
     <button id="reset">Reset</button>
+    <button id="addShunt">Add Shunt</button>
 </div>
 
 <div class="ui-helper-hidden">
-    <div id="resetDialog" title="Are you sure?">
+    <div id="resetDialog" title="Are you sure?" data-event="reset">
         Are you sure you want to reset Swivel? All stubs and shunts will be removed.
+    </div>
+    <div id="addShuntDialog" title="Add Shunt" data-event="add-shunt">
+        <form name="addShunt">
+            <div class="shuntElements">
+                <label for="path">Swivel Path</label>
+                <input id="path" type="text" name="path"/>
+                <label for="remoteURL">Remote URL:</label>
+                <input id="remoteURL" type="text" name="remoteURL"/>
+            </div>
+        </form>
     </div>
 </div>
 

@@ -2,11 +2,39 @@
 
 define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
     var DELETE_BUTTON = '<button class="delete" title="Delete"></button>',
-        INFO_BUTTON = '<button class="info" title="Edit"></button>';
+        INFO_BUTTON = '<button class="info" title="Edit"></button>',
+        DEFAULT_DIALOG_OPTS = {
+            autoOpen: false,
+            closeOnEscape: false,
+            modal: true,
+            resizable: false,
+            dialogClass: 'no-close',
+            width: 350
+        },
+        CANCEL_BUTTON = {text: 'Cancel', click: function () {$(this).dialog('close');}};
 
-    return function ($configTree, $resetDialog) {
-        var view = this, $view = $(this);
-
+    return function ($configTree, $resetDialog, $addShuntDialog) {
+        var view = this, $view = $(this),
+            DIALOG_BUTTONS = {
+                reset: {
+                    text: 'OK',
+                    click: function () {
+                        $view.trigger('reset.swivelView');
+                        $(this).dialog('close');
+                    }
+                },
+                'add-shunt': {
+                    text: 'OK',
+                    click: function () {
+                        var dialog = $(this);
+                        $view.trigger('add-shunt.swivelView', {
+                            remoteURL: dialog.find('#remoteURL').val(),
+                            path: dialog.find('#path').val()
+                        });
+                        dialog.dialog('close');
+                    }
+                }
+            };
         this.loadConfigurationData = function (data) {
             $configTree.find('.path').each(function (index, dom) {
                 $configTree.jstree('delete_node', dom);
@@ -92,28 +120,23 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     ]} });
         }
 
-        if ($resetDialog) {
-            $resetDialog.dialog({
-                autoOpen: false,
-                closeOnEscape: false,
-                modal: true,
-                resizable: false,
-                dialogClass: 'no-close',
-                buttons: [
-                    {text: 'OK', click: function () {
-                        $view.trigger('reset.swivelView');
-                        $(this).dialog('close');
-                    }},
-                    {text: 'Cancel', click: function () {$(this).dialog('close');}}
-
-                ]
-            });
-        }
+        $.each([$resetDialog, $addShuntDialog], function (idx, dialog) {
+            if (dialog) {
+                dialog.dialog($.extend({
+                    buttons: [
+                        DIALOG_BUTTONS[dialog.attr('data-event')],
+                        CANCEL_BUTTON]
+                }, DEFAULT_DIALOG_OPTS));
+            }
+        });
 
         $('#reset').button()
             .click(function () {
-                console.log('about to open dialog');
                 $resetDialog.dialog('open');
             });
+        $('#addShunt').button()
+            .click(function () {
+                $addShuntDialog.dialog('open');
+            })
     };
 });

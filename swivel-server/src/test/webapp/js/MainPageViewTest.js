@@ -10,8 +10,8 @@ RequireJSTestCase('MainPageView tests', {
             path: 'some/path',
             shunt: {remoteURL: 'http://remoteHost/path'},
             stubs: [
-                {id: 1},
-                {id: 2}
+                {id: 1, description: 'stub 1 description'},
+                {id: 2, description: 'stub 2 description'}
             ]
         }
     ],
@@ -198,7 +198,7 @@ RequireJSTestCase('MainPageView tests', {
             hasMember('attr', hasMember('class', equalTo('stub')))
         ));
         verify(this.mockConfigTree).jstree('create_node', mockStubsNode, 'last', allOf(
-            hasMember('data', containsString(this.NODE_DATA[0].stubs[1].id)),
+            hasMember('data', containsString(this.NODE_DATA[0].stubs[1].description)),
             hasMember('attr', hasMember('class', equalTo('stub')))
         ));
     },

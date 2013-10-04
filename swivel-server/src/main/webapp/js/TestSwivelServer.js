@@ -6,15 +6,15 @@ define(['jQuery'], function ($) {
             'some/path': {
                 shunt: {remoteURL: 'http://remoteHost/path'},
                 stubs: [
-                    {id: 1},
-                    {id: 2}
+                    {id: 1, description: 'simple stub'},
+                    {id: 2, description: 'complicated stub'}
                 ]
             },
             'some/other/path': {
                 shunt: {remoteURL: 'http://localhost/path'},
                 stubs: [
-                    {id: 1},
-                    {id: 2}
+                    {id: 1, description: 'simple stub'},
+                    {id: 2, description: 'complicated stub'}
                 ]
             }
         };

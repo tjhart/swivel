@@ -35,7 +35,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     for (i = 0; i < item.stubs.length; i++) {
                         stub = item.stubs[i];
                         $configTree.jstree('create_node', stubNode, 'last', {
-                            data: [DELETE_BUTTON, INFO_BUTTON, 'Stub: ', stub.id].join(''),
+                            data: [DELETE_BUTTON, INFO_BUTTON, 'Stub: ', stub.description].join(''),
                             attr: {class: 'stub'}
                         })
                             .data('stub-data', stub);

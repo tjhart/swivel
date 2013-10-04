@@ -82,6 +82,8 @@ RequireJSTestCase('MainPageView tests', {
          </ul>
          </li>
          </ul>
+
+         <button id="reset"></button>
          */
         this.r.jsHamcrest.Integration.JsTestDriver();
         this.r.jsMockito.Integration.JsTestDriver();
@@ -96,6 +98,7 @@ RequireJSTestCase('MainPageView tests', {
 
         this.mockConfigTree = mock(this.r.$);
         this.mockJQueryObject = mock(this.r.$);
+        this.mockResetDialog = mock(this.r.$);
 
         when(this.mockJQueryObject)
             .find(anything())
@@ -113,7 +116,7 @@ RequireJSTestCase('MainPageView tests', {
             .jstree()
             .thenReturn(this.mockConfigTree);
 
-        this.view = new this.r.MainPageView(this.mockConfigTree);
+        this.view = new this.r.MainPageView(this.mockConfigTree, this.mockResetDialog);
         this.view.$remoteURL = this.mockJQueryObject;
         this.view.targetPath = {path: 'some/path'};
     },
@@ -249,5 +252,20 @@ RequireJSTestCase('MainPageView tests', {
         $deletePathButton.click();
 
         assertThat(triggeredData, equalTo(this.pathData));
+    },
+
+    'test init configures dialog': function () {
+        verify(this.mockResetDialog).dialog(allOf(
+            hasMember('autoOpen', is(false)),
+            hasMember('closeOnEscape', is(false)),
+            hasMember('modal', is(true)),
+            hasMember('resizable', is(false))
+        ));
+    },
+
+    'test reset opens dialog': function () {
+        this.r.$('#reset').click();
+
+        verify(this.mockResetDialog).dialog('open');
     }
 });

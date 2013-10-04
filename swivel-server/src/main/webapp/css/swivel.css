@@ -1,9 +1,5 @@
 @import "source-sans-pro-fontfacekit/stylesheet.css";
 
-.hidden {
-    display: none;
-}
-
 body {
     font-family: "SourceSansProRegular", sans-serif;
     font-size: 18px;
@@ -60,6 +56,7 @@ body > footer {
     padding: 25px 25px 25px 25px;
 }
 
+/* make this stuff page two */
 .dialog .type {
     margin-top: 10px;
     margin-bottom: 20px;
@@ -92,4 +89,8 @@ textarea {
 
 .script textarea {
     margin-left: 5px;
+}
+
+.no-close .ui-dialog-titlebar-close {
+    display: none;
 }

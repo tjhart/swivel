@@ -4,7 +4,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
     var DELETE_BUTTON = '<button class="delete" title="Delete"></button>',
         INFO_BUTTON = '<button class="info" title="Edit"></button>';
 
-    return function ($configTree, $resetButton) {
+    return function ($configTree, $resetDialog) {
         var view = this, $view = $(this);
 
         this.loadConfigurationData = function (data) {
@@ -71,7 +71,6 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                         .closest('.path')
                         .data('path-data'));
                 });
-
             $configTree.find('.stub button.info')
                 .click(function (e) {
                     $view.trigger('stub-info.swivelView', $(e.target)
@@ -93,11 +92,28 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     ]} });
         }
 
-        if ($resetButton) {
-            $resetButton.button()
-                .on('click', function () {
-                    $view.trigger('reset.swivelView')
-                });
+        if ($resetDialog) {
+            $resetDialog.dialog({
+                autoOpen: false,
+                closeOnEscape: false,
+                modal: true,
+                resizable: false,
+                dialogClass: 'no-close',
+                buttons: [
+                    {text: 'OK', click: function () {
+                        $view.trigger('reset.swivelView');
+                        $(this).dialog('close');
+                    }},
+                    {text: 'Cancel', click: function () {$(this).dialog('close');}}
+
+                ]
+            });
         }
+
+        $('#reset').button()
+            .click(function () {
+                console.log('about to open dialog');
+                $resetDialog.dialog('open');
+            });
     };
 });

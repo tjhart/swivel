@@ -1,5 +1,6 @@
 package com.tjh.swivel.config;
 
+import com.tjh.swivel.config.model.Shunt;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,5 +1,6 @@
-package com.tjh.swivel.config;
+package com.tjh.swivel.config.model;
 
+import com.tjh.swivel.config.Behavior;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;

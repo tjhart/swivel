@@ -1,5 +1,7 @@
 package com.tjh.swivel.config;
 
+import com.tjh.swivel.config.model.Shunt;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;

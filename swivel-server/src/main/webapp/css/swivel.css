@@ -33,11 +33,11 @@ body > header {
     overflow: scroll;
 }
 
-button{
+button {
     float: right;
 }
 
-.content > button{
+.content > button {
     margin-right: 25px;
 }
 
@@ -45,9 +45,13 @@ button{
     margin: 5px 5px 5px 5px;
 }
 
+#currentConfig {
+    border: none;
+}
+
 #currentConfig button {
     width: 16px;
-    margin-left:5px;
+    margin-left: 5px;
     border: none;
 }
 

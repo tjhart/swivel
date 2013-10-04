@@ -64,6 +64,9 @@ public class When {
         return this;
     }
 
+    //YELLOWTAG:TJH - Contemplating either 'helpfully' replacing '\\' with '\\\\', or
+    //at least issuing a warning. Modifying data on a setter is full of problems,
+    //but so is the nasty double-interpreted strings that will be coming through here.
     public When matches(String script) {
         setScript(script);
         return this;

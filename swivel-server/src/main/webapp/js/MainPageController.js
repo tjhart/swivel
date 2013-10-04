@@ -49,7 +49,6 @@ define(['jQuery'], function ($) {
             }).on('reset.swivelView',function () {
                 swivelServer.reset(clientLoadConfigurationSuccess);
             }).on('stub-info.swivelView', function (event, stubData) {
-                console.log('stub-info!');
                 document.location = ['editStub.html', $.param({path: stubData.path, id: stubData.id})].join('?')
             });
     };

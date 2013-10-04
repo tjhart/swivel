@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class ShuntRequestHandler implements RequestHandler<HttpRequestBase> {
 
-    public static final String CONTENT_BASE_HEADER = "Content-base";
+    public static final String CONTENT_BASE_HEADER = "Content-Base";
     protected Logger logger = Logger.getLogger(ShuntRequestHandler.class);
     protected final URL remoteURL;
 

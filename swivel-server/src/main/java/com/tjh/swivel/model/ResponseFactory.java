@@ -2,11 +2,11 @@ package com.tjh.swivel.model;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 public class ResponseFactory {
@@ -17,17 +17,12 @@ public class ResponseFactory {
     public static final String CONTENT_TYPE_KEY = "contentType";
 
     public HttpResponse createResponse(int code, String reason, String stringEntity, String contentType) {
-        try {
-            BasicHttpResponse result = new BasicHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, code, reason));
-            if (stringEntity != null) {
-                StringEntity entity = new StringEntity(stringEntity, "UTF-8");
-                entity.setContentType(contentType);
-                result.setEntity(entity);
-            }
-            return result;
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+        BasicHttpResponse result = new BasicHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, code, reason));
+        if (stringEntity != null) {
+            StringEntity entity = new StringEntity(stringEntity, ContentType.create(contentType));
+            result.setEntity(entity);
         }
+        return result;
     }
 
     public HttpResponse createResponse(Map<String, Object> map) {

@@ -13,6 +13,8 @@ public class StubFactory {
 
     @SuppressWarnings("unchecked")
     public StubRequestHandler createStubFor(URI localURI, Map<String, Object> stubDescription) throws ScriptException {
+        //TODO:TJH - add a description entry in the top level map - use that
+        //description when displaying on the GUI
         StubRequestHandler result;
         WhenMatcher matcher =
                 matcherFactory.buildMatcher(localURI, (Map<String, String>) stubDescription.get(WHEN_KEY));

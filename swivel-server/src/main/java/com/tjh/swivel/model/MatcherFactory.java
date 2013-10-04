@@ -29,6 +29,9 @@ public class MatcherFactory {
     public static final int STATIC_MATCHER_COUNT = 2;
     public static final int OPTIONAL_MATCHER_COUNT = 5;
 
+    //TODO:TJH - I have a feeling
+    //some of the more complicated XML post matching stubs are going to be brittle
+    //consider options for managing that - significant whitespace flag? (or more simply, xml/json)
     @SuppressWarnings("unchecked")
     public WhenMatcher buildMatcher(URI localURI, Map<String, String> when) {
 

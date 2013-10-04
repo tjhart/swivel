@@ -23,13 +23,13 @@ body > header {
     margin: 10px 100px 10px 100px;
     border-style: solid;
     border: #443f29 solid thin;
-    height: 500px;
+    height: 600px;
     border-radius: 10px;
     min-width: 500px;
 }
 
 .treeContainer {
-    height: 450px;
+    height: 550px;
     overflow: scroll;
 }
 

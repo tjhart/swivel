@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
-@Path("config/shunt")
+@Path("config/shunt/{localPath: .*}")
 public class ConfigureShuntResource {
     public static final String REMOTE_URL_KEY = "remoteURL";
 
@@ -28,7 +28,6 @@ public class ConfigureShuntResource {
     protected ConfigurationResource configurationResource;
 
     @PUT
-    @Path("shunt/{localPath: .*}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Map<String, Object>> putShunt(@PathParam("localPath") URI localPath, Map<String, String> json)
@@ -49,7 +48,6 @@ public class ConfigureShuntResource {
     }
 
     @DELETE
-    @Path("shunt/{localPath: .*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Map<String, Object>> deleteShunt(@PathParam("localPath") URI localPath) {
         LOGGER.debug(String.format("Removing shunt for %1$s", localPath));

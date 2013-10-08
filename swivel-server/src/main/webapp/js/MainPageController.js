@@ -50,8 +50,13 @@ define(['jQuery'], function ($) {
                 swivelServer.reset(clientLoadConfigurationSuccess);
             }).on('stub-info.swivelView',function (event, stubData) {
                 document.location = ['editStub.html', $.param({path: stubData.path, id: stubData.id})].join('?');
-            }).on('add-shunt.swivelView', function (event, shuntData) {
+            }).on('add-shunt.swivelView',function (event, shuntData) {
                 swivelServer.putShunt(shuntData, clientLoadConfigurationSuccess);
+            }).on('edit-shunt.swivelView', function (event, shuntData) {
+                swivelServer.deleteShunt(shuntData.path)
+                    .always(function () {
+                        swivelServer.putShunt(shuntData, clientLoadConfigurationSuccess);
+                    });
             });
     };
 });

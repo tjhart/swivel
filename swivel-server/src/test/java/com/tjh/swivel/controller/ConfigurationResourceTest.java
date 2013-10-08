@@ -10,10 +10,8 @@ import vanderbilt.util.Maps;
 
 import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
@@ -27,9 +25,6 @@ import static org.mockito.Mockito.when;
 
 public class ConfigurationResourceTest {
 
-    public static final String REMOTE_URI = "http:/some/target/uri";
-    public static final Map<String, String> SHUNT_JSON =
-            Maps.asConstantMap(ConfigurationResource.REMOTE_URL_KEY, REMOTE_URI);
     public static final String LOCAL_PATH = "extra/path";
     public static final URI LOCAL_URI = URI.create(LOCAL_PATH);
     public static final int STUB_HANDLER_ID = 123;
@@ -54,20 +49,6 @@ public class ConfigurationResourceTest {
 
         when(mockStubFactory.createStubFor(any(URI.class), anyMap())).thenReturn(mockStubRequestHandler);
         when(mockStubRequestHandler.getId()).thenReturn(STUB_HANDLER_ID);
-    }
-
-    @Test
-    public void putShuntAddsShuntToRouter() throws URISyntaxException, MalformedURLException {
-        configurationResource.putShunt(LOCAL_URI, SHUNT_JSON);
-
-        verify(mockRouter).setShunt(LOCAL_URI, new ShuntRequestHandler(new URL(REMOTE_URI)));
-    }
-
-    @Test
-    public void deleteShuntRemovesShuntFromRouter() throws URISyntaxException {
-        configurationResource.deleteShunt(LOCAL_URI);
-
-        verify(mockRouter).deleteShunt(LOCAL_URI);
     }
 
     @Test

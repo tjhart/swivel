@@ -1,6 +1,6 @@
 package com.tjh.swivel.controller.functional;
 
-import com.tjh.swivel.controller.ConfigurationResource;
+import com.tjh.swivel.controller.ConfigureShuntResource;
 import com.tjh.swivel.controller.RequestRouter;
 import org.apache.http.client.methods.HttpGet;
 import org.junit.Before;
@@ -16,22 +16,22 @@ import java.net.URISyntaxException;
 
 @ContextConfiguration(locations = {"classpath:serverContext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
-public class ConfigurationResourceTest {
+public class ConfigureShuntResourceTest {
 
     public static final URI LOCAL_URI = URI.create("couch");
     @Autowired
-    protected ConfigurationResource configurationResource;
+    protected ConfigureShuntResource configurationResource;
     @Autowired
     protected RequestRouter requestRouter;
 
     @Before
     public void before() throws URISyntaxException {
         configurationResource.putShunt(LOCAL_URI,
-                Maps.asMap(ConfigurationResource.REMOTE_URL_KEY, "http://localhost:5984"));
+                Maps.asMap(ConfigureShuntResource.REMOTE_URL_KEY, "http://localhost:5984"));
     }
 
     @Test
-    public void shuntWorks(){
+    public void shuntWorks() {
         requestRouter.route(new HttpGet(URI.create("couch")));
         //would throw if failed
     }

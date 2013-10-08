@@ -180,12 +180,13 @@ public class RequestRouter {
         LOGGER.debug(String.format("Removed <%1$s> from <%2$s>", shuntRequestHandler, path));
     }
 
-    public StubRequestHandler getStub(String localPath, final int stubId) {
-        return Lists.find((Collection<StubRequestHandler>) uriHandlers.get(localPath).get(STUB_NODE),
+    @SuppressWarnings("unchecked")
+    public Collection<StubRequestHandler> getStubs(String localPath, final List<Integer> stubIds) {
+        return Lists.select((Collection<StubRequestHandler>) uriHandlers.get(localPath).get(STUB_NODE),
                 new Block<StubRequestHandler, Boolean>() {
                     @Override
                     public Boolean invoke(StubRequestHandler stubRequestHandler) {
-                        return stubRequestHandler.getId() == stubId;
+                        return stubIds.isEmpty() || stubIds.contains(stubRequestHandler.getId());
                     }
                 });
     }

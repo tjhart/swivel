@@ -3,6 +3,8 @@ package com.tjh.swivel.controller;
 import com.tjh.swivel.model.StubFactory;
 import com.tjh.swivel.model.StubRequestHandler;
 import org.apache.log4j.Logger;
+import vanderbilt.util.Block;
+import vanderbilt.util.Lists;
 import vanderbilt.util.Maps;
 
 import javax.script.ScriptException;
@@ -19,6 +21,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 @Path("config/stub/{localPath: .*}")
@@ -32,10 +36,16 @@ public class ConfigureStubResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> getStub(@PathParam("localPath") String localPath, @QueryParam("id") int stubId) {
-        return router
-                .getStub(localPath, stubId)
-                .toMap();
+    public Collection<Map<String, Object>> getStub(@PathParam("localPath") String localPath,
+            @QueryParam("id") List<Integer> stubIds) {
+        System.out.println("ConfigureStubResource.getStub");
+        System.out.println("stubIds = " + stubIds);
+        return Lists.collect(router.getStubs(localPath, stubIds), new Block<StubRequestHandler, Map<String, Object>>() {
+            @Override
+            public Map<String, Object> invoke(StubRequestHandler stubRequestHandler) {
+                return stubRequestHandler.toMap();
+            }
+        });
     }
 
     @POST

@@ -9,6 +9,7 @@ import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -28,6 +29,14 @@ public class ConfigureStubResource {
     protected RequestRouter router;
     protected StubFactory stubFactory;
     protected ConfigurationResource configurationResource;
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Object> getStub(@PathParam("localPath") String localPath, @QueryParam("id") int stubId) {
+        return router
+                .getStub(localPath, stubId)
+                .toMap();
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

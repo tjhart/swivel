@@ -14,7 +14,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
         CANCEL_BUTTON = {text: 'Cancel', click: function () {$(this).dialog('close');}};
 
     return function ($configTree, $resetDialog, $addShuntDialog) {
-        var view = this, $view = $(this),
+        var view = this, $view = $(this), mode = 'add',
             DIALOG_BUTTONS = {
                 reset: {
                     text: 'OK',
@@ -23,13 +23,15 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                         $(this).dialog('close');
                     }
                 },
-                'add-shunt': {
+                'add-or-edit-shunt': {
                     text: 'OK',
                     click: function () {
-                        var dialog = $(this);
-                        $view.trigger('add-shunt.swivelView', {
-                            remoteURL: dialog.find('#remoteURL').val(),
-                            path: dialog.find('#path').val()
+                        var dialog = $(this), remoteURL, path;
+                        remoteURL = dialog.find('#remoteURL');
+                        path = dialog.find('#path');
+                        $view.trigger([mode, '-shunt.swivelView'].join(''), {
+                            remoteURL: remoteURL.val(),
+                            path: path.val()
                         });
                         dialog.dialog('close');
                     }
@@ -49,7 +51,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     .data('path-data', item), i, stubNode, stub;
                 if (item.shunt) {
                     $configTree.jstree('create_node', pathNode, 'inside', {
-                        data: [DELETE_BUTTON, 'shunt: ', item.shunt.remoteURL].join(''),
+                        data: [DELETE_BUTTON, INFO_BUTTON, 'shunt: ', item.shunt.remoteURL].join(''),
                         attr: {class: 'shunt'}
                     })
                         .data('shunt-data', item);
@@ -105,6 +107,22 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                         .closest('.stub')
                         .data('stub-data'));
                 });
+            $configTree.find('.shunt button.info')
+                .click(function (e) {
+                    var data = $(e.target)
+                        .closest('.shunt')
+                        .data('shunt-data');
+                    mode = 'edit';
+                    $addShuntDialog.find('#path')
+                        .addClass('ui-state-disabled')
+                        .prop('readonly', true)
+                        .val(data.path);
+                    $addShuntDialog.find('#remoteURL')
+                        .val(data.shunt.remoteURL);
+
+                    $addShuntDialog.dialog('option', 'title', 'Edit Shunt');
+                    $addShuntDialog.dialog('open');
+                });
         };
 
         //can be null in testing situations
@@ -124,7 +142,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
             if (dialog) {
                 dialog.dialog($.extend({
                     buttons: [
-                        DIALOG_BUTTONS[dialog.attr('data-event')],
+                        DIALOG_BUTTONS[dialog.attr('data-action')],
                         CANCEL_BUTTON]
                 }, DEFAULT_DIALOG_OPTS));
             }
@@ -136,6 +154,14 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
             });
         $('#addShunt').button()
             .click(function () {
+                mode = 'add';
+                $addShuntDialog.find('#path')
+                    .removeClass('ui-state-disabled')
+                    .prop('readonly', false)
+                    .val('');
+                $addShuntDialog.find('#remoteURL')
+                    .val('');
+                $addShuntDialog.dialog('option', 'title', 'Add Shunt');
                 $addShuntDialog.dialog('open');
             })
     };

@@ -13,15 +13,20 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
           p:matcherFactory-ref="matcherFactory" p:responseFactory-ref="responseFactory"/>
 
     <bean id="configurationResource" class="com.tjh.swivel.controller.ConfigurationResource"
-          p:router-ref="requestRouter" p:stubFactory-ref="stubFactory"/>
+          p:router-ref="requestRouter"/>
 
     <bean id="configureShuntResource" class="com.tjh.swivel.controller.ConfigureShuntResource"
           p:router-ref="requestRouter" p:configurationResource-ref="configurationResource"/>
 
+    <bean id="configureStubResource" class="com.tjh.swivel.controller.ConfigureStubResource"
+          p:router-ref="requestRouter" p:stubFactory-ref="stubFactory"
+          p:configurationResource-ref="configurationResource"/>
+
     <bean id="requestFactory" class="com.tjh.swivel.controller.HttpUriRequestFactory"/>
+
     <bean id="jerseyResponseFactory" class="com.tjh.swivel.controller.JerseyResponseFactory"/>
+
     <bean id="proxyResource" class="com.tjh.swivel.controller.ProxyResource"
-          p:router-ref="requestRouter"
-          p:requestFactory-ref="requestFactory"
+          p:router-ref="requestRouter" p:requestFactory-ref="requestFactory"
           p:responseFactory-ref="jerseyResponseFactory"/>
 </beans>

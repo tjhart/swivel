@@ -9,7 +9,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
             modal: true,
             resizable: false,
             dialogClass: 'no-close',
-            width: 350
+            width: 450
         },
         CANCEL_BUTTON = {text: 'Cancel', click: function () {$(this).dialog('close');}};
 
@@ -37,6 +37,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     }
                 }
             };
+
         this.loadConfigurationData = function (data) {
             $configTree.find('.path').each(function (index, dom) {
                 $configTree.jstree('delete_node', dom);

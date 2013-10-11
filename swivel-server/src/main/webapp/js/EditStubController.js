@@ -2,10 +2,10 @@
 
 define(['jQuery', 'utils'], function ($, utils) {
     return function (swivelServer, editStubView) {
+        var query = utils.getQuery();
 
-
-        swivelServer.getStubs(utils.getQuery(), function (data) {
-            editStubView.setStub(data[0]);
+        swivelServer.getStubs(query, function (data) {
+            editStubView.setStub(data[0], query.path);
         });
     }
 });

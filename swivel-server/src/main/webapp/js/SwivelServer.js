@@ -59,7 +59,7 @@ define(['jQuery', 'json2'], function ($, json2) {
 
         this.getStubs = function (query, callback) {
             var url = [baseUrl, this.CONFIG_PATH, 'stub', query.path].join('/');
-            url = [url, $.param({ids: [].concat(query.ids || [])})].join('?');
+            url = [url, $.param({ids: [].concat(query.id || []).concat(query.ids || [])})].join('?');
             return $.ajax({
                 url: url,
                 type: 'GET',

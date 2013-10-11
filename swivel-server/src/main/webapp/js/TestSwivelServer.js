@@ -22,14 +22,13 @@ define(['jQuery'], function ($) {
                             contentType: 'application/json',
                             content: '{"key":"val"}'
                         } }
-                ]
-            },
+                ] },
             'some/other/path': {
                 shunt: {remoteURL: 'http://localhost/path'},
                 stubs: [
                     { id: 1,
                         description: 'simple stub',
-                        when: {script: '(function(){return true;})();'},
+                        when: {method: 'PUT', script: '(function(){return true;})();'},
                         then: {statusCode: 200, reason: 'OK'} },
                     { id: 2,
                         description: 'complicated stub',
@@ -38,12 +37,14 @@ define(['jQuery'], function ($) {
                             remoteAddress: '127.0.0.1',
                             contentType: 'application/json',
                             content: 'some data' },
-                        then: { script: '(function(){return responseFactory.createResponse({statusCode:200, ' +
-                            'reason:"OK"});})();'
+                        then: { method: 'GET',
+                            script: '(function(){\n' +
+                                '    return responseFactory.createResponse({\n' +
+                                '        statusCode:200,\n' +
+                                '        reason:"OK"});\n' +
+                                '})();'
                         } }
-                ]
-            }
-        };
+                ] } };
 
         function defaultCallback() {}
 
@@ -129,13 +130,15 @@ define(['jQuery'], function ($) {
             };
 
             this.getStubs = function (query, callback) {
-                var stubs = data[query.path].stubs, ids = [].concat(query.ids || []), result = [];
-                if (query.id) {
-                    ids.push(query.id);
-                }
+                var stubs = data[query.path].stubs, ids = [].concat(query.id || []).concat(query.ids || []),
+                    result = [], i, id;
 
+                for(i = 0; i < ids.length; i++){
+                    ids[i] = parseInt(ids[i]);
+                }
                 $.each(stubs, function (index, value) {
-                    if (ids.length == 0 || ids.indexOf(value.id.toString()) > -1) {
+                    if (ids.length == 0
+                        || ids.indexOf(value.id) > -1) {
                         result.push(value);
                     }
                 });

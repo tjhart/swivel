@@ -31,16 +31,13 @@ public class When {
         try {
             JSONObject jsonObject = new JSONObject(Maps.asMap(METHOD_KEY, method.getMethodName()));
 
-            if (script != null) {
-                jsonObject.put(SCRIPT_KEY, script);
-            } else {
-                Map<String, Object> optionalValues = Maps.<String, Object>asMap(
-                        CONTENT_KEY, content,
-                        CONTENT_TYPE_KEY, contentType,
-                        REMOTE_ADDRESS_KEY, remoteAddress);
-                for (Map.Entry<String, Object> entry : optionalValues.entrySet()) {
-                    jsonObject.putOpt(entry.getKey(), entry.getValue());
-                }
+            Map<String, Object> optionalValues = Maps.<String, Object>asMap(
+                    CONTENT_KEY, content,
+                    SCRIPT_KEY, script,
+                    CONTENT_TYPE_KEY, contentType,
+                    REMOTE_ADDRESS_KEY, remoteAddress);
+            for (Map.Entry<String, Object> entry : optionalValues.entrySet()) {
+                jsonObject.putOpt(entry.getKey(), entry.getValue());
             }
             return jsonObject;
         } catch (JSONException e) {

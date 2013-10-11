@@ -13,17 +13,25 @@
     <div>Swivel Testing Proxy</div>
 </header>
 <div class="content">
+    <div class="stubHeader">
+        <table>
+            <tbody>
+            <tr>
+                <td><label for="description">Description:</label></td>
+                <td><span id="description"></span></td>
+            </tr>
+            <tr>
+                <td><label for="path">Path:</label></td>
+                <td><span id="path"></span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
     <form>
-        <div>
+        <div class="stubDefinition">
             <div id="when">
-                <div><label for="when">When:</label></div>
+                <div class="name">When</div>
                 <div class="when">
-                    <div class="type">
-                        <label for="staticWhen">Static</label>
-                        <input id="staticWhen" type="radio" name="whenType" value="static" checked/>
-                        <label for="scriptWhen">Script</label>
-                        <input id="scriptWhen" type="radio" name="whenType" value="script"/>
-                    </div>
                     <table class="static">
                         <tbody>
                         <tr>
@@ -54,20 +62,22 @@
                                 <textarea id="content" name="content" placeholder="(empty)"></textarea>
                             </td>
                         </tr>
+                        <tr>
+                            <td class="verticalAlignTop"><label for="whenScript">Script:</label></td>
+                            <td>
+                                <textarea id="whenScript" name="whenScript" placeholder="(empty)" cols="120"></textarea>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                     <table class="script ui-helper-hidden">
                         <tbody>
-                        <tr>
-                            <td><label for="whenScript">Script:</label></td>
-                            <td><textarea id="whenScript" name="whenScript" placeholder="(empty)"></textarea></td>
-                        </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
             <div id=then>
-                <div><label for="then">Then:</label></div>
+                <div class="name">Then</div>
                 <div class="then">
                     <div class="type">
                         <label for="staticThen">Static</label>
@@ -91,7 +101,8 @@
                         </tr>
                         <tr>
                             <td><label for="contentType2">Content Type:</label></td>
-                            <td><input id="contentType2" type="text" name="responseContentType" placeholder="(empty)"/></td>
+                            <td><input id="contentType2" type="text" name="responseContentType" placeholder="(empty)"/>
+                            </td>
                         </tr>
                         <tr>
                             <td class="verticalAlignTop"><label for="content2">Content:</label></td>
@@ -104,8 +115,9 @@
                     <table class="script ui-helper-hidden">
                         <tbody>
                         <tr>
-                            <td><label for="thenScript">Script:</label></td>
-                            <td><textarea id="thenScript" name="thenScript" placeholder="(empty)"></textarea></td>
+                            <td>
+                                <textarea id="thenScript" name="thenScript" placeholder="(empty)" cols="120"></textarea>
+                            </td>
                         </tr>
                         </tbody>
                     </table>

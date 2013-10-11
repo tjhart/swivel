@@ -2,7 +2,7 @@
 
 define(['jQuery', 'jQuery-ui'], function ($) {
     var CONTENT_TYPES = ['application/json', 'application/xml', 'application/pdf', 'text/html', 'application/zip',
-            'text/plain', 'text/css'],
+            'text/plain', 'text/css', 'application/x-www-form-urlencoded'],
         STATUS_CODES = ["100", "101",
             "200", "201", "202", "203", "204", "205", "206",
             "300", "301", "302", "303", "304", "305", "307",
@@ -30,12 +30,9 @@ define(['jQuery', 'jQuery-ui'], function ($) {
             });
         }
 
-        this.setStub = function (stub) {
-            console.log('setStub');
-            console.log(stub);
-            if (stub.when.script) {
-                $('#scriptWhen').click();
-            }
+        this.setStub = function (stub, path) {
+            $('#path').html(path);
+            $('#description').html(stub.description);
             if (stub.then.script) {
                 $('#scriptThen').click();
             }
@@ -43,7 +40,7 @@ define(['jQuery', 'jQuery-ui'], function ($) {
             loadStubPart(THEN_HASH, stub.then);
         };
 
-        this.style = function () {
+        this.configure = function () {
             $('#cancel')
                 .button()
                 .click(function () {
@@ -53,18 +50,17 @@ define(['jQuery', 'jQuery-ui'], function ($) {
             $('.type')
                 .buttonset()
                 .find('[type="radio"]').click(function (e) {
-                    var $target = $(e.target), whenOrThen, divId, visibleClass;
-                    whenOrThen = $target.attr('name').substr(0, 4);
-                    divId = ['#', whenOrThen, ' '].join('');
+                    var $target = $(e.target), divId, visibleClass;
+                    divId = '#then ';
                     visibleClass = $target.val();
-                    $([divId, '.', visibleClass].join('')).removeClass('ui-helper-hidden');
-                    $([divId, '.', ANTI_TYPE[visibleClass]].join('')).addClass('ui-helper-hidden');
+                    $(['#then .', visibleClass].join('')).removeClass('ui-helper-hidden');
+                    $(['#then .', ANTI_TYPE[visibleClass]].join('')).addClass('ui-helper-hidden');
                 });
             $('#method').menu();
             $('#contentType,#contentType2').autocomplete({source: CONTENT_TYPES});
             $('#statusCode').autocomplete({source: STATUS_CODES});
         };
 
-        this.style();
+        this.configure();
     }
 });

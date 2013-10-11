@@ -11,7 +11,7 @@ body {
     margin: 10px 100px 10px 100px;
     border-style: solid;
     border: #443f29 solid thin;
-    height: 610px;
+    height: 660px;
     border-radius: 10px;
     min-width: 500px;
 }
@@ -45,7 +45,7 @@ button {
 /* page one */
 
 .treeContainer {
-    height: 550px;
+    height: 600px;
     margin: 5px 5px 5px 5px;
     overflow: scroll;
 }
@@ -66,13 +66,30 @@ button {
 
 /* page two */
 
+.stubHeader {
+    margin: 15px auto 15px auto;
+    width: 500px;
+    font-size: 24px;
+}
+
+.stubHeader td:first-child {
+    text-align: right;
+    vertical-align: text-top;
+}
+
+.stubDefinition {
+    height: 500px;
+    width: inherit;
+}
+
 form {
     margin: 5px 5px 5px 5px;
 }
 
 #when, #then {
     display: inline-block;
-    width: 500px;
+    width: 600px;
+    overflow: hidden;
 }
 
 .type {
@@ -84,7 +101,7 @@ form {
     margin: 10px 5px 0 5px;
 }
 
-label[for="when"], label[for="then"] {
+.name {
     font-weight: bold;
 }
 
@@ -98,19 +115,19 @@ tbody td:first-child {
 }
 
 input[type="text"], textarea {
-    width: 300px;
+    width: 400px;
 }
 
 textarea {
     font-size: 18px;
     height: 150px;
+    white-space: pre;
+    word-wrap: normal;
+    overflow-x: scroll;
+    max-width: 550px;
 }
 
 .verticalAlignTop {
-    vertical-align: text-top;
-}
-
-.script td:first-child {
     vertical-align: text-top;
 }
 
@@ -122,6 +139,6 @@ form button {
     margin-right: 25px;
 }
 
-input{
+input {
     font-size: 18px;
 }

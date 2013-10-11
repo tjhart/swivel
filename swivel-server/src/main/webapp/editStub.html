@@ -14,83 +14,107 @@
 </header>
 <div class="content">
     <form>
-        <div><label for="when">When:</label></div>
-        <div id="when" class="when">
-            <div class="type">
-                <label>Static:<input id="staticWhen" type="radio" name="whenType" value="static" checked/></label>
-                <label>Script:<input id="scriptWhen" type="radio" name="whenType" value="script"/></label>
+        <div>
+            <div id="when">
+                <div><label for="when">When:</label></div>
+                <div class="when">
+                    <div class="type">
+                        <label for="staticWhen">Static</label>
+                        <input id="staticWhen" type="radio" name="whenType" value="static" checked/>
+                        <label for="scriptWhen">Script</label>
+                        <input id="scriptWhen" type="radio" name="whenType" value="script"/>
+                    </div>
+                    <table class="static">
+                        <tbody>
+                        <tr>
+                            <td><label for="method">Method:</label></td>
+                            <td>
+                                <select id="method" name="method">
+                                    <option value="">(any)</option>
+                                    <option>GET</option>
+                                    <option>PUT</option>
+                                    <option>POST</option>
+                                    <option>DELETE</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="contentType">Content Type:</label></td>
+                            <td>
+                                <input id="contentType" type="text" name="requestContentType"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="remoteAddress">Remote Address:</label></td>
+                            <td><input id="remoteAddress" type="text" name="remoteAddress"/></td>
+                        </tr>
+                        <tr>
+                            <td class="verticalAlignTop"><label for="content">Content:</label></td>
+                            <td>
+                                <textarea id="content" name="content"></textarea>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table class="script ui-helper-hidden">
+                        <tbody>
+                        <tr>
+                            <td><label for="whenScript">Script:</label></td>
+                            <td><textarea id="whenScript" name="whenScript"></textarea></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <table class="static">
-                <tbody>
-                <tr>
-                    <td><label for="method">Method:</label></td>
-                    <td>
-                        <select id="method" name="method">
-                            <option value="">(any)</option>
-                            <option>GET</option>
-                            <option>PUT</option>
-                            <option>POST</option>
-                            <option>DELETE</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="contentType">Content Type:</label></td>
-                    <td>
-                        <input id="contentType" type="text" name="requestContentType"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="remoteAddr">Remote Address:</label></td>
-                    <td><input id="remoteAddr" type="text" name="remoteAddr"/></td>
-                </tr>
-                <tr>
-                    <td><label for="content">Content:</label></td>
-                    <td>
-                        <textarea id="content" name="content"></textarea>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <div class="script ui-helper-hidden">
-                <label>Script:<textarea name="whenScript"></textarea></label>
+            <div id=then>
+                <div><label for="then">Then:</label></div>
+                <div class="then">
+                    <div class="type">
+                        <label for="staticThen">Static</label>
+                        <input id="staticThen" type="radio" name="thenType" value="static" checked/>
+                        <label for="scriptThen">Script</label>
+                        <input id="scriptThen" type="radio" name="thenType" value="script"/>
+                    </div>
+                    <table class="static">
+                        <tbody>
+                        <tr>
+                            <td><label for="statusCode">Status Code:</label></td>
+                            <td>
+                                <input id="statusCode" type="text" name="statusCode"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="reason">Reason:</label></td>
+                            <td>
+                                <input id="reason" type="text" name="reason"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="contentType2">Content Type:</label></td>
+                            <td><input id="contentType2" type="text" name="responseContentType"/></td>
+                        </tr>
+                        <tr>
+                            <td class="verticalAlignTop"><label for="content2">Content:</label></td>
+                            <td>
+                                <textarea id="content2" name="content2"></textarea>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table class="script ui-helper-hidden">
+                        <tbody>
+                        <tr>
+                            <td><label for="thenScript">Script:</label></td>
+                            <td><textarea id="thenScript" name="thenScript"></textarea></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-        <div><label for="then">Then:</label></div>
-        <div id="then" class="then">
-            <div class="type">
-                <label>Static:<input id="staticThen" type="radio" name="thenType" value="static" checked/></label>
-                <label>Script:<input id="scriptThen" type="radio" name="thenType" value="script"/></label>
-            </div>
-            <table class="static">
-                <tbody>
-                <tr>
-                    <td><label for="statusCode">Status Code:</label></td>
-                    <td>
-                        <input id="statusCode" type="text" name="statusCode"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="reason">Reason:</label></td>
-                    <td>
-                        <input id="reason" type="text" name="reason"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="contentType2">Content Type:</label></td>
-                    <td><input id="contentType2" type="text" name="responseContentType"/></td>
-                </tr>
-                <tr>
-                    <td><label for="content2">Content:</label></td>
-                    <td>
-                        <textarea id="content2" name="content2"></textarea>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <div class="script ui-helper-hidden">
-                <label>Script:<textarea name="thenScript"></textarea></label>
-            </div>
+        <div class="action">
+            <button id="submit">OK</button>
+            <button id="cancel">Cancel</button>
         </div>
     </form>
 </div>

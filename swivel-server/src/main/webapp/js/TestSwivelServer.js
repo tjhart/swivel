@@ -6,40 +6,66 @@ define(['jQuery'], function ($) {
             'some/path': {
                 shunt: {remoteURL: 'http://remoteHost/path'},
                 stubs: [
-                    {id: 1, description: 'simple stub'},
-                    {id: 2, description: 'complicated stub'}
+                    { id: 1,
+                        description: 'simple stub',
+                        when: {method: 'GET'},
+                        then: {statusCode: 200, reason: 'OK'} },
+                    { id: 2,
+                        description: 'complicated stub',
+                        when: {
+                            method: 'PUT',
+                            remoteAddress: '127.0.0.1',
+                            contentType: 'application/json',
+                            content: 'some data' },
+                        then: { statusCode: 200,
+                            reason: 'OK',
+                            contentType: 'application/json',
+                            content: '{"key":"val"}'
+                        } }
                 ]
             },
             'some/other/path': {
                 shunt: {remoteURL: 'http://localhost/path'},
                 stubs: [
-                    {id: 1, description: 'simple stub'},
-                    {id: 2, description: 'complicated stub'}
+                    { id: 1,
+                        description: 'simple stub',
+                        when: {script: '(function(){return true;})();'},
+                        then: {statusCode: 200, reason: 'OK'} },
+                    { id: 2,
+                        description: 'complicated stub',
+                        when: {
+                            method: 'PUT',
+                            remoteAddress: '127.0.0.1',
+                            contentType: 'application/json',
+                            content: 'some data' },
+                        then: { script: '(function(){return responseFactory.createResponse({statusCode:200, ' +
+                            'reason:"OK"});})();'
+                        } }
                 ]
             }
         };
 
         function defaultCallback() {}
 
-        return function () {
-            function ajaxResultBuilder(data) {
-                return {
-                    done: function (handler) {
-                        setTimeout(function () {handler(data)}, 0);
-                        return this;
-                    },
+        function ajaxResultBuilder(data) {
+            return {
+                done: function (handler) {
+                    setTimeout(function () {handler(data)}, 0);
+                    return this;
+                },
 
-                    fail: function (handler) {
-                        return this;
-                    },
+                fail: function (handler) {
+                    return this;
+                },
 
-                    always: function (handler) {
-                        setTimeout(function () {handler(data)}, 0);
-                        return this;
-                    }
+                always: function (handler) {
+                    setTimeout(function () {handler(data)}, 0);
+                    return this;
                 }
             }
+        }
 
+        return function () {
             this.getConfig = function (callback) {
                 return ajaxResultBuilder(data)
                     .done(callback || defaultCallback);
@@ -80,7 +106,7 @@ define(['jQuery'], function ($) {
             };
 
             this.putShunt = function (shuntData, callback) {
-                var shunt = data[shuntData.path] = {shunt:shuntData};
+                var shunt = data[shuntData.path] = {shunt: shuntData};
                 return ajaxResultBuilder(data)
                     .done(callback || defaultCallback);
             };
@@ -100,7 +126,23 @@ define(['jQuery'], function ($) {
 
                 return ajaxResultBuilder(data)
                     .done(callback || defaultCallback);
-            }
+            };
+
+            this.getStubs = function (query, callback) {
+                var stubs = data[query.path].stubs, ids = [].concat(query.ids || []), result = [];
+                if (query.id) {
+                    ids.push(query.id);
+                }
+
+                $.each(stubs, function (index, value) {
+                    if (ids.length == 0 || ids.indexOf(value.id.toString()) > -1) {
+                        result.push(value);
+                    }
+                });
+
+                return ajaxResultBuilder(result)
+                    .done(callback || defaultCallback);
+            };
         }
     }
 );

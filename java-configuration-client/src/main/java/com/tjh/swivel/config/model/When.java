@@ -14,7 +14,7 @@ public class When {
     public static final String SCRIPT_KEY = "script";
     public static final String CONTENT_KEY = "content";
     public static final String CONTENT_TYPE_KEY = "contentType";
-    public static final String REMOTE_ADDRESS_KEY = "remoteAddr";
+    public static final String REMOTE_ADDRESS_KEY = "remoteAddress";
     private final HttpMethod method;
     private String content;
     private String contentType;

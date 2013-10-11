@@ -37,9 +37,7 @@ public class ConfigureStubResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Collection<Map<String, Object>> getStub(@PathParam("localPath") String localPath,
-            @QueryParam("id") List<Integer> stubIds) {
-        System.out.println("ConfigureStubResource.getStub");
-        System.out.println("stubIds = " + stubIds);
+            @QueryParam("ids[]") List<Integer> stubIds) {
         return Lists.collect(router.getStubs(localPath, stubIds), new Block<StubRequestHandler, Map<String, Object>>() {
             @Override
             public Map<String, Object> invoke(StubRequestHandler stubRequestHandler) {

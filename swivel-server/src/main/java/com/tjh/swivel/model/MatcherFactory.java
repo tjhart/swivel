@@ -22,7 +22,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 
 public class MatcherFactory {
     public static final String METHOD_KEY = "method";
-    public static final String REMOTE_ADDR_KEY = "remoteAddr";
+    public static final String REMOTE_ADDR_KEY = "remoteAddress";
     public static final String CONTENT_TYPE_KEY = "contentType";
     public static final String CONTENT_KEY = "content";
     public static final String SCRIPT_KEY = "script";

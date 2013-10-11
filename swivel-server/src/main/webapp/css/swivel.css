@@ -1,18 +1,10 @@
 @import "source-sans-pro-fontfacekit/stylesheet.css";
 
+/* common */
 body {
     font-family: "SourceSansProRegular", sans-serif;
     font-size: 18px;
     margin: 0;
-}
-
-body > header {
-    background-color: #e0d6a7;
-    color: #443f29;
-    font-weight: bold;
-    font-size: 24px;
-    padding: 25px 25px 25px 25px;
-    text-align: center;
 }
 
 .content {
@@ -24,18 +16,38 @@ body > header {
     min-width: 500px;
 }
 
-.treeContainer {
-    height: 550px;
-    margin: 5px 5px 5px 5px;
-    overflow: scroll;
+.action {
+    margin-right: 25px;
+}
+
+body > header {
+    background-color: #e0d6a7;
+    color: #443f29;
+    font-weight: bold;
+    font-size: 24px;
+    padding: 25px 25px 25px 25px;
+    text-align: center;
+}
+
+body > footer {
+    text-align: center;
+    padding: 25px 25px 25px 25px;
+}
+
+.no-close .ui-dialog-titlebar-close {
+    display: none;
 }
 
 button {
     float: right;
 }
 
-.content > button {
-    margin-right: 25px;
+/* page one */
+
+.treeContainer {
+    height: 550px;
+    margin: 5px 5px 5px 5px;
+    overflow: scroll;
 }
 
 .jstree {
@@ -52,17 +64,18 @@ button {
     border: none;
 }
 
-body > footer {
-    text-align: center;
-    padding: 25px 25px 25px 25px;
+/* page two */
+
+form {
+    margin: 5px 5px 5px 5px;
 }
 
-.no-close .ui-dialog-titlebar-close {
-    display: none;
+#when, #then {
+    display: inline-block;
+    width: 500px;
 }
 
-/* make this stuff page two */
-.dialog .type {
+.type {
     margin-top: 10px;
     margin-bottom: 20px;
 }
@@ -81,6 +94,7 @@ label[for="when"], label[for="then"] {
 
 tbody td:first-child {
     text-align: right;
+    width: 135px;
 }
 
 input[type="text"], textarea {
@@ -88,10 +102,21 @@ input[type="text"], textarea {
 }
 
 textarea {
-    vertical-align: text-top;
     height: 150px;
 }
 
-.script textarea {
-    margin-left: 5px;
+.verticalAlignTop {
+    vertical-align: text-top;
+}
+
+.script td:first-child {
+    vertical-align: text-top;
+}
+
+.type {
+    margin: 0 0 25px 50px;
+}
+
+form button {
+    margin-right: 25px;
 }

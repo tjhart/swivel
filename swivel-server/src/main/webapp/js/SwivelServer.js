@@ -55,6 +55,16 @@ define(['jQuery', 'json2'], function ($, json2) {
                 type: 'DELETE',
                 accept: 'application/json'
             }).done(callback || defaultCallback);
+        };
+
+        this.getStubs = function (query, callback) {
+            var url = [baseUrl, this.CONFIG_PATH, 'stub', query.path].join('/');
+            url = [url, $.param({ids: [].concat(query.ids || [])})].join('?');
+            return $.ajax({
+                url: url,
+                type: 'GET',
+                accept: 'application/json'
+            }).done(callback || defaultCallback);
         }
     };
 

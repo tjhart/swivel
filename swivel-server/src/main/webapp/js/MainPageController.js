@@ -29,7 +29,7 @@ define(['jQuery'], function ($) {
                 if (val.stubs) {
                     datum.stubs = [];
                     $.each(val.stubs, function (index, item) {
-                        datum.stubs.push({path: key, id: item.id, description: item.description});
+                        datum.stubs.push($.extend({path: key}, item));
                     });
                 }
                 viewData.push(datum);

@@ -12,7 +12,6 @@ import vanderbilt.util.Maps;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.Assert.assertThat;
@@ -59,14 +58,14 @@ public class MatcherFactoryTest {
 
         builderSpy.buildMatcher(LOCAL_URI, STUB_DESCRIPTION);
 
-        verify(builderSpy).buildOptionalMatcher(LOCAL_URI, STUB_DESCRIPTION);
+        verify(builderSpy).buildOptionalMatcher(STUB_DESCRIPTION);
     }
 
     @Test(expected = AssertionError.class)
     public void matchFailsIfContentTypeProvidedAndDoesNotMatch() throws IOException {
         assertThat(actualRequest,
                 matcherFactory
-                        .buildOptionalMatcher(LOCAL_URI,
+                        .buildOptionalMatcher(
                                 Maps.asMap(MatcherFactory.CONTENT_TYPE_KEY, APPLICATION_JSON)));
     }
 
@@ -74,20 +73,20 @@ public class MatcherFactoryTest {
     public void matchesIfContentTypeProvidedAndMatches() throws IOException {
         assertThat(mockEnclosingRequest,
                 matcherFactory
-                        .buildOptionalMatcher(LOCAL_URI,
+                        .buildOptionalMatcher(
                                 Maps.asMap(MatcherFactory.CONTENT_TYPE_KEY, APPLICATION_JSON)));
     }
 
     @Test(expected = AssertionError.class)
     public void matchFailsIfContentProvidedAndDoesNotMatch() throws IOException {
         assertThat(actualRequest,
-                matcherFactory.buildOptionalMatcher(LOCAL_URI, Maps.asMap(MatcherFactory.CONTENT_KEY, "Yummy!")));
+                matcherFactory.buildOptionalMatcher(Maps.asMap(MatcherFactory.CONTENT_KEY, "Yummy!")));
     }
 
     @Test
     public void matchesIfContentProvidedAndMatches() throws IOException {
         assertThat(mockEnclosingRequest,
-                matcherFactory.buildOptionalMatcher(LOCAL_URI,
+                matcherFactory.buildOptionalMatcher(
                         Maps.asMap(MatcherFactory.CONTENT_KEY, CONTENT)));
     }
 
@@ -95,8 +94,8 @@ public class MatcherFactoryTest {
     public void matchFailsIfQueryProvidedAndDoesNotMatch() throws IOException {
         assertThat(actualRequest,
                 matcherFactory
-                        .buildOptionalMatcher(URI.create(LOCAL_URI + "?" + "key=val"),
-                                Collections.<String, String>emptyMap()));
+                        .buildOptionalMatcher(
+                                Maps.asMap(MatcherFactory.QUERY_KEY, "key=val")));
     }
 
     @Test
@@ -105,8 +104,8 @@ public class MatcherFactoryTest {
 
         assertThat(actualRequest,
                 matcherFactory
-                        .buildOptionalMatcher(URI.create(LOCAL_URI + "?" + "key=val"),
-                                Collections.<String, String>emptyMap()));
+                        .buildOptionalMatcher(
+                                Maps.asMap(MatcherFactory.QUERY_KEY, "key=val")));
     }
 
     @Test
@@ -116,7 +115,7 @@ public class MatcherFactoryTest {
 
         assertThat(actualRequest,
                 matcherFactory
-                        .buildOptionalMatcher(LOCAL_URI, Maps.asMap(MatcherFactory.REMOTE_ADDR_KEY, "127.0.0.1")));
+                        .buildOptionalMatcher(Maps.asMap(MatcherFactory.REMOTE_ADDR_KEY, "127.0.0.1")));
     }
 
     @Test(expected = AssertionError.class)
@@ -125,7 +124,7 @@ public class MatcherFactoryTest {
 
         assertThat(actualRequest,
                 matcherFactory
-                        .buildOptionalMatcher(LOCAL_URI, Maps.asMap(MatcherFactory.SCRIPT_KEY,
+                        .buildOptionalMatcher(Maps.asMap(MatcherFactory.SCRIPT_KEY,
                                 "(function(){return request.getMethod() == 'POST';})();")));
     }
 
@@ -135,7 +134,7 @@ public class MatcherFactoryTest {
 
         assertThat(actualRequest,
                 matcherFactory
-                        .buildOptionalMatcher(LOCAL_URI, Maps.asMap(MatcherFactory.SCRIPT_KEY,
+                        .buildOptionalMatcher(Maps.asMap(MatcherFactory.SCRIPT_KEY,
                                 "(function(){return request.getMethod() == 'GET';})();")));
     }
 }

@@ -26,6 +26,7 @@ public class MatcherFactory {
     public static final String CONTENT_TYPE_KEY = "contentType";
     public static final String CONTENT_KEY = "content";
     public static final String SCRIPT_KEY = "script";
+    public static final String QUERY_KEY = "query";
     public static final int STATIC_MATCHER_COUNT = 2;
     public static final int OPTIONAL_MATCHER_COUNT = 5;
 
@@ -38,16 +39,16 @@ public class MatcherFactory {
         List<Matcher<HttpUriRequest>> matchers = new ArrayList<Matcher<HttpUriRequest>>(STATIC_MATCHER_COUNT);
         matchers.add(hasMethod(equalTo(when.get(METHOD_KEY))));
 
-        matchers.add(buildOptionalMatcher(localURI, when));
+        matchers.add(buildOptionalMatcher(when));
         return new WhenMatcher(allOf(matchers.toArray(new Matcher[matchers.size()])), when);
     }
 
     @SuppressWarnings("unchecked")
-    protected Matcher<HttpUriRequest> buildOptionalMatcher(URI localURI, Map<String, String> stubDescription) {
+    protected Matcher<HttpUriRequest> buildOptionalMatcher(Map<String, String> stubDescription) {
         try {
             List<Matcher<HttpUriRequest>> result =
                     new ArrayList<Matcher<HttpUriRequest>>(OPTIONAL_MATCHER_COUNT);
-            String queryString = localURI.getQuery();
+            String queryString = stubDescription.get(QUERY_KEY);
             if (queryString != null) {
                 result.add(hasQueryString(equalTo(queryString)));
             }

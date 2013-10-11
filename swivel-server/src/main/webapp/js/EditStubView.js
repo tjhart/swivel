@@ -11,6 +11,7 @@ define(['jQuery', 'jQuery-ui'], function ($) {
             "500", "501", "502", "503", "504", "505"],
         ANTI_TYPE = {static: 'script', script: 'static'},
         WHEN_HASH = {method: 'method',
+            query: 'query',
             contentType: 'contentType',
             remoteAddress: 'remoteAddress',
             content: 'content',

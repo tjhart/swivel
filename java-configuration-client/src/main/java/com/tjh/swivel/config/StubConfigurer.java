@@ -39,7 +39,7 @@ public class StubConfigurer {
     }
 
     public int configure() throws IOException {
-        return swivelConfigurer.configure(new Stub(description, when, this.then));
+        return swivelConfigurer.configure(new Stub(description, when, then));
     }
 
     //<editor-fold desc="Object">

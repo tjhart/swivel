@@ -51,13 +51,12 @@ public class ConfigureStubResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Object> postStub(@PathParam("localPath") String localPath, Map<String, Object> stubDescription,
             @Context HttpServletRequest request) throws URISyntaxException, ScriptException {
-        StringBuilder sb = new StringBuilder(localPath);
         String queryString = trimToNull(request.getQueryString());
+        //REDTAG:TJH - temporary until builders get updated
         if (queryString != null) {
-            sb.append("?")
-                    .append(queryString);
+            ((Map<String, Object>) stubDescription.get("when")).put("query", queryString);
         }
-        URI localUri = new URI(sb.toString());
+        URI localUri = new URI(localPath);
         StubRequestHandler stubRequestHandler = stubFactory.createStubFor(localUri, stubDescription);
 
         LOGGER.debug(String.format("Adding stub for %1$s", localUri));

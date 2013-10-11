@@ -15,16 +15,20 @@ public class When {
     public static final String CONTENT_KEY = "content";
     public static final String CONTENT_TYPE_KEY = "contentType";
     public static final String REMOTE_ADDRESS_KEY = "remoteAddress";
+    public static final String QUERY_KEY = "query";
+
     private final HttpMethod method;
+    private final URI uri;
+    private String query;
     private String content;
     private String contentType;
     private String remoteAddress;
     private String script;
-    private URI uri;
 
     public When(HttpMethod method, URI uri) {
         this.method = notNull("method", method);
         this.uri = notNull("uri", uri);
+        this.query = uri.getQuery();
     }
 
     public JSONObject toJSON() {
@@ -32,6 +36,7 @@ public class When {
             JSONObject jsonObject = new JSONObject(Maps.asMap(METHOD_KEY, method.getMethodName()));
 
             Map<String, Object> optionalValues = Maps.<String, Object>asMap(
+                    QUERY_KEY, query,
                     CONTENT_KEY, content,
                     SCRIPT_KEY, script,
                     CONTENT_TYPE_KEY, contentType,
@@ -48,6 +53,11 @@ public class When {
     //<editor-fold desc="builder">
     public When withContent(String content) {
         setContent(content);
+        return this;
+    }
+
+    public When withQuery(String query) {
+        setQuery(query);
         return this;
     }
 
@@ -84,7 +94,8 @@ public class When {
                 && !(content != null ? !content.equals(when.content) : when.content != null)
                 && !(contentType != null ? !contentType.equals(when.contentType) : when.contentType != null)
                 && !(remoteAddress != null ? !remoteAddress.equals(when.remoteAddress) : when.remoteAddress != null)
-                && !(script != null ? !script.equals(when.script) : when.script != null);
+                && !(script != null ? !script.equals(when.script) : when.script != null)
+                && !(query != null ? !query.equals(when.query) : when.query != null);
     }
 
     @Override
@@ -95,6 +106,7 @@ public class When {
         result = 31 * result + (contentType != null ? contentType.hashCode() : 0);
         result = 31 * result + (remoteAddress != null ? remoteAddress.hashCode() : 0);
         result = 31 * result + (script != null ? script.hashCode() : 0);
+        result = 31 * result + (query != null ? query.hashCode() : 0);
         return result;
     }
 
@@ -138,5 +150,9 @@ public class When {
     public void setScript(String script) { this.script = script; }
 
     public URI getUri() { return uri; }
+
+    public String getQuery() { return query; }
+
+    public void setQuery(String query) { this.query = query; }
     //</editor-fold>
 }

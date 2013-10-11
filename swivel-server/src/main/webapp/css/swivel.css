@@ -102,6 +102,7 @@ input[type="text"], textarea {
 }
 
 textarea {
+    font-size: 18px;
     height: 150px;
 }
 
@@ -119,4 +120,8 @@ textarea {
 
 form button {
     margin-right: 25px;
+}
+
+input{
+    font-size: 18px;
 }

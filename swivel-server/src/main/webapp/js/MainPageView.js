@@ -80,6 +80,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                 .button({icons: {primary: 'ui-icon-info'}, text: false});
             this.addClickEvents();
             $configTree.jstree('open_node', this.rootNode, null, true);
+            $('.content').removeClass('ui-helper-hidden');
         };
 
         this.addClickEvents = function () {

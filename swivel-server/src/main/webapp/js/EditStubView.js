@@ -15,25 +15,38 @@ define(['jQuery', 'jQuery-ui'], function ($) {
             contentType: 'contentType',
             remoteAddress: 'remoteAddress',
             content: 'content',
-            script: 'whenScript'},
+            script: 'whenScript',
+            whenScript: 'script'},
         THEN_HASH = {statusCode: 'statusCode',
             reason: 'reason',
             contentType: 'contentType2',
+            contentType2: 'contentType',
             content: 'content2',
+            content2: 'content',
             script: 'thenScript'};
 
     return function () {
-        var $view = $(this);
+        var view = this, $view = $(this);
 
         function loadStubPart(keyHash, source) {
-            $.each(keyHash, function (sourceKey, targetId) {
-                $(['#', targetId].join('')).val(source[sourceKey]);
+            $.each(source, function (sourceKey, sourceVal) {
+                $(['#', keyHash[sourceKey]].join('')).val(sourceVal);
             });
         }
 
+        function getStubPart(keyHash, target) {
+            return function (index, item) {
+                var $item = $(item);
+                if ($item.val().length) {
+                    target[keyHash[item.id]] = $(item).val();
+                }
+            }
+        }
+
         this.setStub = function (stub, path) {
+            this.id = stub.id;
             $('#path').html(path);
-            $('#description').html(stub.description);
+            $('#description').val(stub.description);
             if (stub.then.script) {
                 $('#scriptThen').click();
             }
@@ -47,7 +60,11 @@ define(['jQuery', 'jQuery-ui'], function ($) {
                 .click(function () {
                     window.location = 'index.html';
                 });
-            $('#submit').button();
+            $('#submit')
+                .button()
+                .click(function () {
+                    view.editStub();
+                });
             $('.type')
                 .buttonset()
                 .find('[type="radio"]').click(function (e) {
@@ -60,6 +77,28 @@ define(['jQuery', 'jQuery-ui'], function ($) {
             $('#method').menu();
             $('#contentType,#contentType2').autocomplete({source: CONTENT_TYPES});
             $('#statusCode').autocomplete({source: STATUS_CODES});
+            $('.content').removeClass('ui-helper-hidden');
+        };
+
+        this.editStub = function () {
+            var stubData = {
+                id: this.id,
+                description: $('#description').val(),
+                path: $('#path').val(),
+                when: { },
+                then: { } };
+
+            $('#when')
+                .find('input, select, textarea')
+                .each(getStubPart(WHEN_HASH, stubData.when));
+
+            $('#then')
+                .find(['.', $('[name="thenType"]').val()].join(''))
+                .find('input, textarea')
+                .each(getStubPart(THEN_HASH, stubData.then));
+
+            stubData.then.statusCode = parseInt(stubData.then.statusCode);
+            $view.trigger('edit-stub.swivelView', stubData);
         };
 
         this.configure();

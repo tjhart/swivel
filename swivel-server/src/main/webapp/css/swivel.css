@@ -13,7 +13,7 @@ body {
     border: #443f29 solid thin;
     height: 660px;
     border-radius: 10px;
-    min-width: 500px;
+    width: 1200px;
 }
 
 .action {
@@ -26,7 +26,6 @@ body > header {
     font-weight: bold;
     font-size: 24px;
     padding: 25px 25px 25px 25px;
-    text-align: center;
 }
 
 body > footer {
@@ -42,7 +41,7 @@ button {
     float: right;
 }
 
-/* page one */
+/* index */
 
 .treeContainer {
     height: 600px;
@@ -64,22 +63,29 @@ button {
     border: none;
 }
 
-/* page two */
-
+/* editStub */
 .stubHeader {
-    margin: 15px auto 15px auto;
-    width: 500px;
     font-size: 24px;
+    margin: auto;
 }
 
 .stubHeader td:first-child {
     text-align: right;
-    vertical-align: text-top;
 }
 
 .stubDefinition {
-    height: 500px;
+    height: 532px;
     width: inherit;
+}
+
+.stubDefinition label {
+    display: inline-block;
+    text-align: right;
+    width: 135px;
+}
+
+.stubDefinition select {
+    display: inline;
 }
 
 form {
@@ -87,14 +93,23 @@ form {
 }
 
 #when, #then {
+    position: absolute;
     display: inline-block;
     width: 600px;
     overflow: hidden;
 }
 
+#then {
+    left: 700px;
+}
+
 .type {
     margin-top: 10px;
     margin-bottom: 20px;
+}
+
+.type label {
+    width: 80px;
 }
 
 .script {
@@ -109,11 +124,6 @@ form {
     margin-left: 10px;
 }
 
-tbody td:first-child {
-    text-align: right;
-    width: 135px;
-}
-
 input[type="text"], textarea {
     width: 400px;
 }
@@ -125,6 +135,7 @@ textarea {
     word-wrap: normal;
     overflow-x: scroll;
     max-width: 550px;
+    margin: 2px 5px 3px 0;
 }
 
 .verticalAlignTop {

@@ -13,6 +13,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -61,6 +62,24 @@ public class ConfigureStubResource {
 
         LOGGER.debug(String.format("Adding stub for %1$s", localUri));
         router.addStub(localUri, stubRequestHandler);
+        return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Object> editStub(@PathParam("localPath") String localPath, Map<String, Object> stubDescription)
+            throws URISyntaxException, ScriptException {
+
+        int lastElementIndex = localPath.lastIndexOf('/');
+        int stubId = Integer.valueOf(localPath.substring(lastElementIndex + 1));
+        localPath = localPath.substring(0, lastElementIndex);
+
+        LOGGER.debug(String.format("Replacing stub %1$s:%2$d with %3$s", localPath, stubId, stubDescription));
+        URI localURI = new URI(localPath);
+        StubRequestHandler stubRequestHandler = stubFactory.createStubFor(localURI, stubDescription);
+
+        router.replaceStub(localURI, stubId, stubRequestHandler);
         return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());
     }
 

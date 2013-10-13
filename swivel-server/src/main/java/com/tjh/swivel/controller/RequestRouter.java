@@ -33,11 +33,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RequestRouter {
-
-    private static Logger LOGGER = Logger.getLogger(RequestRouter.class);
-
     public static final String SHUNT_NODE = "^shunt";
     public static final String STUB_NODE = "^stub";
+
+    private static Logger LOGGER = Logger.getLogger(RequestRouter.class);
 
     protected final Map<String, Map<String, Object>> uriHandlers = new PopulatingMap<String, Map<String, Object>>(
             new ConcurrentHashMap<String, Map<String, Object>>(),
@@ -165,12 +164,6 @@ public class RequestRouter {
         clean(path, uriHandlers.get(path), SHUNT_NODE);
     }
 
-    public void removePath(URI localUri) {
-        uriHandlers.remove(localUri.toString());
-    }
-
-    public void reset() { uriHandlers.clear(); }
-
     private void clean(String path, Map<String, Object> handlerMap, String nodeType) {
         Object shuntRequestHandler = handlerMap.remove(nodeType);
         if (handlerMap.isEmpty()) {
@@ -180,20 +173,41 @@ public class RequestRouter {
         LOGGER.debug(String.format("Removed <%1$s> from <%2$s>", shuntRequestHandler, path));
     }
 
-    @SuppressWarnings("unchecked")
     public Collection<StubRequestHandler> getStubs(String localPath, final List<Integer> stubIds) {
-        return Lists.select((Collection<StubRequestHandler>) uriHandlers.get(localPath).get(STUB_NODE),
-                new Block<StubRequestHandler, Boolean>() {
-                    @Override
-                    public Boolean invoke(StubRequestHandler stubRequestHandler) {
-                        return stubIds.isEmpty() || stubIds.contains(stubRequestHandler.getId());
-                    }
-                });
+        return Lists.select(getStubRequestHandlers(localPath), new Block<StubRequestHandler, Boolean>() {
+            @Override
+            public Boolean invoke(StubRequestHandler stubRequestHandler) {
+                return stubIds.isEmpty() || stubIds.contains(stubRequestHandler.getId());
+            }
+        });
     }
+
+    public void replaceStub(URI localURI, int stubId, StubRequestHandler stubRequestHandler) {
+        List<StubRequestHandler> stubRequestHandlers = getStubRequestHandlers(localURI.getPath());
+        int stubIndex = -1;
+        for (int i = 0; i < stubRequestHandlers.size(); i++) {
+            StubRequestHandler requestHandler = stubRequestHandlers.get(i);
+            if (requestHandler.getId() == stubId) {
+                stubIndex = i;
+                break;
+            }
+        }
+
+        stubRequestHandlers.set(stubIndex, stubRequestHandler);
+    }
+
+    public void removePath(URI localUri) { uriHandlers.remove(localUri.toString()); }
+
+    public void reset() { uriHandlers.clear(); }
 
     protected HttpClient createClient() { return new DefaultHttpClient(clientConnectionManager, httpParams); }
 
     private String[] toKeys(URI localURI) {return localURI.getPath().split("/");}
+
+    @SuppressWarnings("unchecked")
+    private List<StubRequestHandler> getStubRequestHandlers(String path) {
+        return (List<StubRequestHandler>) uriHandlers.get(path).get(STUB_NODE);
+    }
 
     //<editor-fold desc="bean">
     public Map<String, Map<String, Object>> getUriHandlers() {

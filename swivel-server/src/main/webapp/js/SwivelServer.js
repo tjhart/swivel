@@ -3,10 +3,12 @@
 define(['jQuery', 'json2'], function ($, json2) {
     function defaultCallback() {}
 
-    var SwivelServer = function (baseUrl) {
+    var CONFIG_PATH = 'rest/config';
+
+    return function (baseUrl) {
         this.getConfig = function (callback) {
             return $.ajax({
-                url: [baseUrl, this.CONFIG_PATH].join('/'),
+                url: [baseUrl, CONFIG_PATH].join('/'),
                 type: 'GET',
                 accept: 'application/json'
             }).done(callback || defaultCallback);
@@ -14,14 +16,14 @@ define(['jQuery', 'json2'], function ($, json2) {
 
         this.deleteShunt = function (path, callback) {
             return $.ajax({
-                url: [baseUrl, this.CONFIG_PATH, 'shunt', path].join('/'),
+                url: [baseUrl, CONFIG_PATH, 'shunt', path].join('/'),
                 type: 'DELETE',
                 accept: 'application/json'
             }).done(callback || defaultCallback);
         };
 
         this.deleteStub = function (stubData, callback) {
-            var path = [baseUrl, this.CONFIG_PATH, 'stub', stubData.path].join('/'), url;
+            var path = [baseUrl, CONFIG_PATH, 'stub', stubData.path].join('/'), url;
             url = [path, $.param({id: stubData.id})].join('?');
             return $.ajax({
                 url: url,
@@ -32,7 +34,7 @@ define(['jQuery', 'json2'], function ($, json2) {
 
         this.putShunt = function (shuntDescription, callback) {
             return $.ajax({
-                url: [baseUrl, this.CONFIG_PATH, 'shunt', shuntDescription.path].join('/'),
+                url: [baseUrl, CONFIG_PATH, 'shunt', shuntDescription.path].join('/'),
                 type: 'PUT',
                 contentType: 'application/json',
                 accept: 'application/json',
@@ -42,35 +44,37 @@ define(['jQuery', 'json2'], function ($, json2) {
 
         this.deletePath = function (path, callback) {
             return $.ajax({
-                url: [baseUrl, this.CONFIG_PATH, 'path', path].join('/'),
+                url: [baseUrl, CONFIG_PATH, 'path', path].join('/'),
                 type: 'DELETE',
-                contentType: 'application/json',
                 accept: 'application/json'
             }).done(callback || defaultCallback);
         };
 
         this.reset = function (callback) {
             return $.ajax({
-                url: [baseUrl, this.CONFIG_PATH].join('/'),
+                url: [baseUrl, CONFIG_PATH].join('/'),
                 type: 'DELETE',
                 accept: 'application/json'
             }).done(callback || defaultCallback);
         };
 
         this.getStubs = function (query, callback) {
-            var url = [baseUrl, this.CONFIG_PATH, 'stub', query.path].join('/');
+            var url = [baseUrl, CONFIG_PATH, 'stub', query.path].join('/');
             url = [url, $.param({ids: [].concat(query.id || []).concat(query.ids || [])})].join('?');
             return $.ajax({
                 url: url,
                 type: 'GET',
                 accept: 'application/json'
             }).done(callback || defaultCallback);
-        }
+        };
+
+        this.editStub = function (stubData, callback) {
+            return $.ajax({
+                url: [baseUrl, CONFIG_PATH, 'stub', stubData.path, stubData.id].join('/'),
+                type: 'PUT',
+                contentType: 'application/json',
+                data: json2.stringify(stubData)
+            }).done(callback || defaultCallback);
+        };
     };
-
-    $.extend(SwivelServer.prototype, {
-        CONFIG_PATH: 'rest/config'
-    });
-
-    return SwivelServer;
 });

@@ -133,7 +133,7 @@ define(['jQuery'], function ($) {
                 var stubs = data[query.path].stubs, ids = [].concat(query.id || []).concat(query.ids || []),
                     result = [], i, id;
 
-                for(i = 0; i < ids.length; i++){
+                for (i = 0; i < ids.length; i++) {
                     ids[i] = parseInt(ids[i]);
                 }
                 $.each(stubs, function (index, value) {
@@ -144,6 +144,18 @@ define(['jQuery'], function ($) {
                 });
 
                 return ajaxResultBuilder(result)
+                    .done(callback || defaultCallback);
+            };
+
+            this.editStub = function (stubData, callback) {
+                var stubs = data[stubData.path].stubs, i;
+                for (i = 0; i < stubs.length; i++) {
+                    if (parseInt(stubs[i].id) === parseInt(stubData.id)) {
+                        stubs[i] = stubData;
+                    }
+                }
+
+                return ajaxResultBuilder(data)
                     .done(callback || defaultCallback);
             };
         }

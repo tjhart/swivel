@@ -8,7 +8,6 @@ import vanderbilt.util.Lists;
 import vanderbilt.util.Maps;
 
 import javax.script.ScriptException;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -18,7 +17,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -50,13 +48,8 @@ public class ConfigureStubResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Object> postStub(@PathParam("localPath") String localPath, Map<String, Object> stubDescription,
-            @Context HttpServletRequest request) throws URISyntaxException, ScriptException {
-        String queryString = trimToNull(request.getQueryString());
-        //REDTAG:TJH - temporary until builders get updated
-        if (queryString != null) {
-            ((Map<String, Object>) stubDescription.get("when")).put("query", queryString);
-        }
+    public Map<String, Object> postStub(@PathParam("localPath") String localPath, Map<String, Object> stubDescription)
+            throws URISyntaxException, ScriptException {
         URI localUri = new URI(localPath);
         StubRequestHandler stubRequestHandler = stubFactory.createStubFor(localUri, stubDescription);
 

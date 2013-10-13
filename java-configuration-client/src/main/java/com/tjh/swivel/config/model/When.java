@@ -9,6 +9,9 @@ import java.util.Map;
 
 import static vanderbilt.util.Validators.notNull;
 
+/**
+ * A class representing the 'When' component of a stub
+ */
 public class When {
     public static final String METHOD_KEY = "method";
     public static final String SCRIPT_KEY = "script";
@@ -25,12 +28,23 @@ public class When {
     private String remoteAddress;
     private String script;
 
+    /**
+     * Construct a stub with the method and swivel path where it will live
+     *
+     * @param method - the Http method the stub responds to
+     * @param uri    - the Swivel URI path where the stub will reside
+     */
     public When(HttpMethod method, URI uri) {
         this.method = notNull("method", method);
-        this.uri = notNull("uri", uri);
+        this.uri = notNull("uri", URI.create(uri.getPath()));
         this.query = uri.getQuery();
     }
 
+    /**
+     * JSON representation of the When component
+     *
+     * @return JSONObject
+     */
     public JSONObject toJSON() {
         try {
             JSONObject jsonObject = new JSONObject(Maps.asMap(METHOD_KEY, method.getMethodName()));
@@ -51,21 +65,46 @@ public class When {
     }
 
     //<editor-fold desc="builder">
+
+    /**
+     * Builder pattern - set the content field and return <code>this</code>
+     *
+     * @param content - The content to match
+     * @return <code>this</code>
+     */
     public When withContent(String content) {
         setContent(content);
         return this;
     }
 
+    /**
+     * Builder pattern - set the query string field and return <code>this</code>
+     *
+     * @param query - the query to match
+     * @return <code>this</code>
+     */
     public When withQuery(String query) {
         setQuery(query);
         return this;
     }
 
+    /**
+     * Builder pattern - set the contentType field and return <code>this</code>
+     *
+     * @param contentType - the contentType to match
+     * @return <code>this</code>
+     */
     public When as(String contentType) {
         setContentType(contentType);
         return this;
     }
 
+    /**
+     * Builder pattern - set the remoteAddress field and return <code>this</code>
+     *
+     * @param remoteAddress - the remoteAddress to match
+     * @return <code>this</code>
+     */
     public When from(String remoteAddress) {
         setRemoteAddress(remoteAddress);
         return this;
@@ -74,6 +113,13 @@ public class When {
     //YELLOWTAG:TJH - Contemplating either 'helpfully' replacing '\\' with '\\\\', or
     //at least issuing a warning. Modifying data on a setter is full of problems,
     //but so is the nasty double-interpreted strings that will be coming through here.
+
+    /**
+     * Builder pattern - set the script to execute to determine matching and return <code>this</code>
+     *
+     * @param script - the script to execute for matching
+     * @return <code>this</code>
+     */
     public When matches(String script) {
         setScript(script);
         return this;

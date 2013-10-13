@@ -1,5 +1,8 @@
 package com.tjh.swivel.config.model;
 
+/**
+ * Represents the HTTP methods supported by Swivel Shunts and stubs
+ */
 public enum HttpMethod {
     GET("GET", false), PUT("PUT"), POST("POST"), DELETE("DELETE", false);
     private final String methodName;

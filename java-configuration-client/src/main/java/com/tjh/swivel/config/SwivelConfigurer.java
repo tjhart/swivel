@@ -19,6 +19,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+/**
+ * Main class for automatically configuring a swivel server
+ */
 public class SwivelConfigurer {
     public static final String BASE_CONFIG_URI = "rest/config";
     public static final String STUB_PATH = "stub";
@@ -31,10 +34,23 @@ public class SwivelConfigurer {
     protected ClientConnectionManager clientConnectionManager = new BasicClientConnectionManager();
     protected HttpParams httpParams = new BasicHttpParams();
 
+    /**
+     * Create a SwivelConfigurer with the URL of the target Swivel Server
+     *
+     * @param swivelURL - Swivel Server URL
+     * @throws MalformedURLException
+     */
     public SwivelConfigurer(String swivelURL) throws MalformedURLException {
         this.swivelURL = new URL(swivelURL);
     }
 
+    /**
+     * Configure a specific behavior on the server
+     *
+     * @param behavior a Behavior (Shunt or Stub)
+     * @return The Behavior's ID
+     * @throws IOException
+     */
     public int configure(Behavior behavior) throws IOException {
         try {
             HttpEntity responseEntity = getClient()
@@ -45,21 +61,52 @@ public class SwivelConfigurer {
         } catch (JSONException e) { throw new RuntimeException(e); }
     }
 
+    /**
+     * Delete a stub previously configured on the target Swivel Server
+     *
+     * @param path   - the swivel path of the stub to delete
+     * @param stubID - the id of the Stub to delete
+     * @throws IOException
+     */
     public void deleteStub(URI path, int stubID) throws IOException {
         getClient()
                 .execute(new HttpDelete(getConfigURL(path, STUB_PATH) + "?id=" + stubID));
     }
 
+    /**
+     * Delete all stubs and shunts at the given Swivel path
+     *
+     * @param path - the path to delete
+     * @throws IOException
+     */
     public void deletePath(URI path) throws IOException {
         getClient().execute(new HttpDelete(getConfigURL(path, PATH)));
     }
 
+    /**
+     * Delete all stubs and shunts registered in target Swivel server
+     *
+     * @throws IOException
+     */
     public void reset() throws IOException {
         getClient().execute(new HttpDelete(swivelURL.toExternalForm() + "/" + BASE_CONFIG_URI));
     }
 
+    /**
+     * Create a StubConfigurer with this SwivelConfigurer, and the given When
+     *
+     * @param when - The target Stub's When component
+     * @return A StubConfigurer to use to continue building a stub
+     */
     public StubConfigurer when(When when) { return new StubConfigurer(this, when); }
 
+    /**
+     * Create a ShuntConfigurer with this SwivelConfigurer, and the given localURI
+     *
+     * @param localURI - the SwivelURI where the Shunt will live
+     * @return A ShuntConfigurer to use to continue building a shunt
+     * @throws URISyntaxException
+     */
     public ShuntConfigurer shunt(String localURI) throws URISyntaxException {
         return new ShuntConfigurer(this, localURI);
     }

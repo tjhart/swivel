@@ -9,30 +9,60 @@ import java.net.URL;
 
 import static vanderbilt.util.Validators.notNull;
 
-public class ShuntConfigurer {
+/**
+ * Builder to help construct a shunt. Generally returned by SwivelConfigurer#shunt
+ */
+public class ShuntConfigurer implements ConfigurationElement {
     protected final SwivelConfigurer swivelConfigurer;
     private URI localURI;
     private URL remoteURL;
 
+    /**
+     * Construct a shuntConfigurer with a SwivelConfigurer
+     *
+     * @param swivelConfigurer SwivelConfigurer
+     */
     public ShuntConfigurer(SwivelConfigurer swivelConfigurer) {
         this.swivelConfigurer = notNull("swivelConfigurer", swivelConfigurer);
     }
 
+    /**
+     * Construct a shuntConfigurer with a SwivelConfigurer and the localURI for the shunt
+     *
+     * @param swivelConfigurer SwivelConfigurer
+     * @param localURI         the shunt's localURI
+     */
     public ShuntConfigurer(SwivelConfigurer swivelConfigurer, String localURI) throws URISyntaxException {
         this(swivelConfigurer);
         this.localURI = notNull("localURI", new URI(localURI));
     }
 
+    //<editor-fold desc="builder">
+
+    /**
+     * Builder pattern - capture the localURI to create the shunt from and return <code>this</code>
+     *
+     * @param localURI - Swivel URI where the shunt will live
+     * @return <code>this</code>
+     */
     public ShuntConfigurer from(URI localURI) {
         setLocalURI(localURI);
         return this;
     }
 
-    public int to(URL remoteURL) throws IOException {
+    /**
+     * Builder pattern - capture the remoteURL where the shunt will forward it's requests and return <code>this</code>
+     *
+     * @param remoteURL - remoteURL for the request
+     * @return <code>this</code>
+     * @throws IOException
+     */
+    public ShuntConfigurer to(URL remoteURL) throws IOException {
         setRemoteURL(remoteURL);
-        return configure();
+        return this;
     }
 
+    //</editor-fold>
     public int configure() throws IOException {return swivelConfigurer.configure(new Shunt(localURI, remoteURL));}
 
     //<editor-fold desc="Object">

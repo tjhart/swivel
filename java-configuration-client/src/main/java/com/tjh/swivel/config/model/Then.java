@@ -8,6 +8,9 @@ import java.util.Map;
 
 import static vanderbilt.util.Validators.notNull;
 
+/**
+ * Represents the Then component of a stub
+ */
 public class Then {
 
     public static final String SCRIPT_KEY = "script";
@@ -20,16 +23,32 @@ public class Then {
     private String content;
     private String contentType;
 
+    /**
+     * Construct a Then component with the response code
+     *
+     * @param responseCode - the response code the stub will return
+     */
     public Then(HttpResponseCode responseCode) {
         this.responseCode = notNull("responseCode", responseCode);
         this.script = null;
     }
 
+    /**
+     * Construct a Then component with a script that will a Apache HTTP Components HttpResponse.
+     * The script will
+     *
+     * @param script - The script to execute to generate the stub response
+     */
     public Then(String script) {
         this.script = notNull("script", script);
         this.responseCode = null;
     }
 
+    /**
+     * The JSON representation of the Then stub component
+     *
+     * @return JSONObject
+     */
     public JSONObject toJSON() {
         try {
             JSONObject jsonObject = new JSONObject();
@@ -53,11 +72,26 @@ public class Then {
     }
 
     //<editor-fold desc="builder">
+
+    /**
+     * Builder pattern - Add content to the response and return <code>this</code> to continue
+     * building
+     *
+     * @param content - the content to return
+     * @return this
+     */
     public Then withContent(String content) {
         setContent(content);
         return this;
     }
 
+    /**
+     * Builder pattern - Add content type to the response and return <code>this</code> to continue
+     * building
+     *
+     * @param contentType - the content type (mime-type) of <code>content</code>
+     * @return this
+     */
     public Then as(String contentType) {
         setContentType(contentType);
         return this;

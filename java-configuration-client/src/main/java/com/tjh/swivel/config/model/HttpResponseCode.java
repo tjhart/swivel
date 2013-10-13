@@ -1,5 +1,8 @@
 package com.tjh.swivel.config.model;
 
+/**
+ * Enums representing the standard Http Response codes
+ */
 public enum HttpResponseCode {
     CONTINUE(100, "Continue"),
     SWITCHING_PROTOCOLS(101, "Switching Protocols"),
@@ -22,7 +25,7 @@ public enum HttpResponseCode {
 
     BAD_REQUEST(400, "Bad Request"),
     UNAUTHORIZED(401, "Unauthorized"),
-    PAYMENT_REQUIRED(402, "Payent Required"),
+    PAYMENT_REQUIRED(402, "Payment Required"),
     FORBIDDEN(403, "Forbidden"),
     NOT_FOUND(404, "Not Found"),
     METHOD_NOT_ALLOWED(405, "Method Not Allowed"),

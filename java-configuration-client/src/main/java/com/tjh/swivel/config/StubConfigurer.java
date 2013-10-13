@@ -8,36 +8,73 @@ import java.io.IOException;
 
 import static vanderbilt.util.Validators.notNull;
 
-public class StubConfigurer {
+/**
+ * Builder to help configure a Stub. Generally returned by SwivelConfigurer#when
+ */
+public class StubConfigurer implements ConfigurationElement {
     private final SwivelConfigurer swivelConfigurer;
     private String description;
     private When when;
     private Then then;
 
+    /**
+     * Construct a Stubconfigurer with a SwivelConfigurer
+     *
+     * @param swivelConfigurer SwivelConfigurer
+     */
     public StubConfigurer(SwivelConfigurer swivelConfigurer) {
         this.swivelConfigurer = notNull("swivelConfigurer", swivelConfigurer);
     }
 
+    /**
+     * Construct a StubConfigurer with a SwivelConfigurer and a When component
+     *
+     * @param swivelConfigurer StubConfigurer
+     * @param when             When
+     */
     public StubConfigurer(SwivelConfigurer swivelConfigurer, When when) {
         this(swivelConfigurer);
         setWhen(when);
     }
 
+    //<editor-fold desc="builder">
+
+    /**
+     * Builder pattern - capture the description of the stub and return <code>this</code>
+     *
+     * @param description - description of the stub being constructed
+     * @return <code>this</code>
+     */
     public StubConfigurer describe(String description) {
         setDescription(description);
         return this;
     }
 
+    /**
+     * Builder pattern - capture the when component of the stub and return <code>this</code>
+     *
+     * @param when - the When component of the stub being constructed
+     * @return <code>this</code>
+     */
     public StubConfigurer when(When when) {
         setWhen(when);
         return this;
     }
 
+    /**
+     * Builder pattern - capture the then component of the stub and return <code>this</code>
+     *
+     * @param then - the Then component of the stub being constructed
+     * @return <code>this</code>
+     * @throws IOException
+     */
     public StubConfigurer then(Then then) throws IOException {
         setThen(then);
         return this;
     }
+    //</editor-fold>
 
+    @Override
     public int configure() throws IOException {
         return swivelConfigurer.configure(new Stub(description, when, then));
     }

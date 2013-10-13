@@ -12,6 +12,9 @@ import java.net.URL;
 
 import static vanderbilt.util.Validators.notNull;
 
+/**
+ * Represents a Swivel Stub
+ */
 public class Stub implements Behavior {
     public static final String WHEN_KEY = "when";
     public static final String THEN_KEY = "then";
@@ -20,12 +23,24 @@ public class Stub implements Behavior {
     private final When when;
     private final Then then;
 
+    /**
+     * Construct a stub with it's description, When, and Then components
+     *
+     * @param description - The description of the stub
+     * @param when        - The stub's When component
+     * @param then        - the stub's Then component
+     */
     public Stub(String description, When when, Then then) {
         this.description = notNull("description", description);
         this.when = notNull("when", when);
         this.then = notNull("then", then);
     }
 
+    /**
+     * Transforms the stub to the JSON representation the Swivel REST tree expects
+     *
+     * @return JSON expected by <code>rest/config/stub</code>
+     */
     public JSONObject toJSON() {
         return new JSONObject(Maps.asMap(
                 DESCRIPTION_KEY, description,
@@ -33,6 +48,12 @@ public class Stub implements Behavior {
                 THEN_KEY, then.toJSON()));
     }
 
+    /**
+     * Creates an Apache Http Components <code>HttpUriRequest</code> that will submit this stub to the Swivel server
+     *
+     * @param baseURL - Swivel baseURL
+     * @return the HttpUriRequest to submit
+     */
     public HttpUriRequest toRequest(URL baseURL) {
         HttpPost request =
                 new HttpPost(String.format("%1$s/rest/config/stub/%2$s", baseURL.toExternalForm(), when.getUri()));
@@ -41,7 +62,6 @@ public class Stub implements Behavior {
     }
 
     //<editor-fold desc="Object">
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

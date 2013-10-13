@@ -13,18 +13,39 @@ import java.net.URL;
 
 import static vanderbilt.util.Validators.notNull;
 
+/**
+ * Represents a Swivel Shunt
+ */
 public class Shunt implements Behavior {
     public static final String REMOTE_URL_KEY = "remoteURL";
     private final URL remoteURL;
     private final URI localURI;
 
+    /**
+     * Construct a Shunt represented by a the Swivel proxy <code>localURI</code> where the shunt will
+     * live, and the <code>remoteURL</code> to which the shunt will forward requests
+     *
+     * @param localURI  - where the shunt will live in the Swivel lookup tree
+     * @param remoteURL - the URL to which the shunt will forward requests
+     */
     public Shunt(URI localURI, URL remoteURL) {
         this.localURI = notNull("localURI", localURI);
         this.remoteURL = notNull(REMOTE_URL_KEY, remoteURL);
     }
 
+    /**
+     * Transforms the shunt to the JSON representation the Swivel REST tree expects
+     *
+     * @return JSON expected by <code>rest/config/shunt</code>
+     */
     public JSONObject toJSON() { return new JSONObject(Maps.asMap(REMOTE_URL_KEY, remoteURL)); }
 
+    /**
+     * Creates an Apache Http Components <code>HttpUriRequest</code> that will submit this shunt to the Swivel server
+     *
+     * @param baseURL - Swivel baseURL
+     * @return the HttpUriRequest to submit
+     */
     @Override
     public HttpUriRequest toRequest(URL baseURL) {
         HttpPut request = new HttpPut(String.format("%1$s/rest/config/shunt/%2$s", baseURL.toExternalForm(), localURI));

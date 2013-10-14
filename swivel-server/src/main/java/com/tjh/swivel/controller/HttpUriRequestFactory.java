@@ -14,6 +14,7 @@ import vanderbilt.util.Sets;
 import vanderbilt.util.Strings;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import java.util.Set;
 public class HttpUriRequestFactory {
 
     public static final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For";
-    public static final Set<String> IGNORED_HEADERS = Sets.asConstantSet("Content-Length");
+    public static final Set<String> IGNORED_HEADERS = Sets.asConstantSet(HttpHeaders.HOST, HttpHeaders.CONTENT_LENGTH);
     private static Logger LOGGER = Logger.getLogger(HttpUriRequestFactory.class);
 
     public HttpRequestBase createGetRequest(URI uri, HttpServletRequest request) {

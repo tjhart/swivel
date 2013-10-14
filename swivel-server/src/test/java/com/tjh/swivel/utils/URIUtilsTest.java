@@ -9,14 +9,24 @@ import static org.junit.Assert.assertThat;
 
 public class URIUtilsTest {
 
+    public static final URI BASE_URI = URI.create("https://episerviceint.mc.vanderbilt.edu/epi5_3/request");
+    public static final URI MATCHED_URI = URI.create("epi5_3/request");
+
     @Test
     public void resolveURIWorksAsExpected() {
-        URI baseURI = URI.create("https://episerviceint.mc.vanderbilt.edu/epi5_3/request");
         URI requestedPath = URI.create("epi5_3/request/foo");
-        URI matchedURI = URI.create("epi5_3/request");
 
-        assertThat(URIUtils.resolveUri(baseURI, requestedPath, matchedURI),
+        assertThat(URIUtils.resolveUri(BASE_URI, requestedPath, MATCHED_URI),
                 equalTo(URI.create("https://episerviceint.mc.vanderbilt.edu/epi5_3/request/foo")));
+    }
+
+    @Test
+    public void resolveURIIncludesQuery(){
+        URI requestedUri = URI.create("epi5_3/request?queryString");
+
+
+        assertThat(URIUtils.resolveUri(BASE_URI, requestedUri, MATCHED_URI).getQuery(),
+                equalTo("queryString"));
     }
 
 }

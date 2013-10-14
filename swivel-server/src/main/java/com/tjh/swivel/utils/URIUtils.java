@@ -30,6 +30,10 @@ public class URIUtils {
         String relativePath = requestedUri
                 .getPath()
                 .substring(matchedUri.getPath().length());
-        return URI.create(baseUri.toString() + relativePath);
+        String result = baseUri.toString() + relativePath;
+        if (requestedUri.getQuery() != null) {
+            result += "?" + requestedUri.getQuery();
+        }
+        return URI.create(result);
     }
 }

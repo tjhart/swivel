@@ -48,15 +48,17 @@ define(['jQuery'], function ($) {
                 swivelServer.deletePath(pathData.path, clientLoadConfigurationSuccess);
             }).on('reset.swivelView',function () {
                 swivelServer.reset(clientLoadConfigurationSuccess);
-            }).on('stub-info.swivelView',function (event, stubData) {
+            }).on('edit-stub.swivelView',function (event, stubData) {
                 document.location = ['editStub.html', $.param({path: stubData.path, id: stubData.id})].join('?');
             }).on('add-shunt.swivelView',function (event, shuntData) {
                 swivelServer.putShunt(shuntData, clientLoadConfigurationSuccess);
-            }).on('edit-shunt.swivelView', function (event, shuntData) {
+            }).on('edit-shunt.swivelView',function (event, shuntData) {
                 swivelServer.deleteShunt(shuntData.path)
                     .always(function () {
                         swivelServer.putShunt(shuntData, clientLoadConfigurationSuccess);
                     });
+            }).on('add-stub.swivelView', function (event, path) {
+                document.location = 'editStub.html';
             });
     };
 });

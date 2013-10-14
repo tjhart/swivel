@@ -36,16 +36,19 @@ define(['jQuery', 'jQuery-ui'], function ($) {
 
         function getStubPart(keyHash, target) {
             return function (index, item) {
-                var $item = $(item);
-                if ($item.val().length) {
-                    target[keyHash[item.id]] = $(item).val();
+                var val = $(item).val();
+                if (val.length) {
+                    target[keyHash[item.id]] = val;
                 }
             }
         }
 
-        this.setStub = function (stub, path) {
+        this.setStub = function (path, stub) {
             this.id = stub.id;
-            $('#path').html(path);
+            $('#path')
+                .val(path)
+                .prop('readonly', true)
+                .addClass('ui-state-disabled');
             $('#description').val(stub.description);
             if (stub.then.script) {
                 $('#scriptThen').click();
@@ -68,8 +71,7 @@ define(['jQuery', 'jQuery-ui'], function ($) {
             $('.type')
                 .buttonset()
                 .find('[type="radio"]').click(function (e) {
-                    var $target = $(e.target), divId, visibleClass;
-                    divId = '#then ';
+                    var $target = $(e.target), visibleClass;
                     visibleClass = $target.val();
                     $(['#then .', visibleClass].join('')).removeClass('ui-helper-hidden');
                     $(['#then .', ANTI_TYPE[visibleClass]].join('')).addClass('ui-helper-hidden');
@@ -82,12 +84,15 @@ define(['jQuery', 'jQuery-ui'], function ($) {
 
         this.editStub = function () {
             var stubData = {
-                id: this.id,
                 description: $('#description').val(),
                 path: $('#path').val(),
                 when: { },
-                then: { } };
+                then: { } }, event = 'add-stub.swivelView';
 
+            if (this.id) {
+                stubData.id = this.id;
+                event = 'edit-stub.swivelView';
+            }
             $('#when')
                 .find('input, select, textarea')
                 .each(getStubPart(WHEN_HASH, stubData.when));
@@ -98,9 +103,9 @@ define(['jQuery', 'jQuery-ui'], function ($) {
                 .each(getStubPart(THEN_HASH, stubData.then));
 
             stubData.then.statusCode = parseInt(stubData.then.statusCode);
-            $view.trigger('edit-stub.swivelView', stubData);
+            $view.trigger(event, stubData);
         };
 
         this.configure();
-    }
+    };
 });

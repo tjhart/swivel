@@ -2,7 +2,7 @@
 
 define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
     var DELETE_BUTTON = '<button class="delete" title="Delete"></button>',
-        INFO_BUTTON = '<button class="info" title="Edit"></button>',
+        EDIT_BUTTON = '<button class="edit" title="Edit"></button>',
         DEFAULT_DIALOG_OPTS = {
             autoOpen: false,
             closeOnEscape: false,
@@ -19,21 +19,19 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                 reset: {
                     text: 'OK',
                     click: function () {
-                        $view.trigger('reset.swivelView');
                         $(this).dialog('close');
+                        $view.trigger('reset.swivelView');
                     }
                 },
                 'add-or-edit-shunt': {
                     text: 'OK',
                     click: function () {
-                        var dialog = $(this), remoteURL, path;
-                        remoteURL = dialog.find('#remoteURL');
-                        path = dialog.find('#path');
-                        $view.trigger([mode, '-shunt.swivelView'].join(''), {
-                            remoteURL: remoteURL.val(),
-                            path: path.val()
-                        });
+                        var dialog = $(this);
                         dialog.dialog('close');
+                        $view.trigger([mode, '-shunt.swivelView'].join(''), {
+                            remoteURL: dialog.find('#remoteURL').val(),
+                            path: dialog.find('#shuntPath').val()
+                        });
                     }
                 }
             };
@@ -52,7 +50,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     .data('path-data', item), i, stubNode, stub;
                 if (item.shunt) {
                     $configTree.jstree('create_node', pathNode, 'inside', {
-                        data: [DELETE_BUTTON, INFO_BUTTON, 'shunt: ', item.shunt.remoteURL].join(''),
+                        data: [DELETE_BUTTON, EDIT_BUTTON, 'shunt: ', item.shunt.remoteURL].join(''),
                         attr: {class: 'shunt'}
                     })
                         .data('shunt-data', item);
@@ -66,7 +64,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     for (i = 0; i < item.stubs.length; i++) {
                         stub = item.stubs[i];
                         $configTree.jstree('create_node', stubNode, 'last', {
-                            data: [DELETE_BUTTON, INFO_BUTTON, 'Stub: ', stub.description].join(''),
+                            data: [DELETE_BUTTON, EDIT_BUTTON, 'Stub: ', stub.description].join(''),
                             attr: {class: 'stub'}
                         })
                             .data('stub-data', stub);
@@ -76,7 +74,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
 
             $configTree.find('button.delete')
                 .button({icons: {primary: 'ui-icon-circle-close'}, text: false});
-            $configTree.find('button.info')
+            $configTree.find('button.edit')
                 .button({icons: {primary: 'ui-icon-info'}, text: false});
             this.addClickEvents();
             $configTree.jstree('open_node', this.rootNode, null, true);
@@ -103,19 +101,19 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                         .closest('.path')
                         .data('path-data'));
                 });
-            $configTree.find('.stub button.info')
+            $configTree.find('.stub button.edit')
                 .click(function (e) {
-                    $view.trigger('stub-info.swivelView', $(e.target)
+                    $view.trigger('edit-stub.swivelView', $(e.target)
                         .closest('.stub')
                         .data('stub-data'));
                 });
-            $configTree.find('.shunt button.info')
+            $configTree.find('.shunt button.edit')
                 .click(function (e) {
                     var data = $(e.target)
                         .closest('.shunt')
                         .data('shunt-data');
                     mode = 'edit';
-                    $addShuntDialog.find('#path')
+                    $addShuntDialog.find('#shuntPath')
                         .addClass('ui-state-disabled')
                         .prop('readonly', true)
                         .val(data.path);
@@ -157,7 +155,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
         $('#addShunt').button()
             .click(function () {
                 mode = 'add';
-                $addShuntDialog.find('#path')
+                $addShuntDialog.find('#shuntPath')
                     .removeClass('ui-state-disabled')
                     .prop('readonly', false)
                     .val('');
@@ -165,6 +163,10 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     .val('');
                 $addShuntDialog.dialog('option', 'title', 'Add Shunt');
                 $addShuntDialog.dialog('open');
+            });
+        $('#addStub').button()
+            .click(function () {
+                $view.trigger('add-stub.swivelView');
             })
     };
 });

@@ -14,7 +14,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 public class ShuntConfigurerTest {
@@ -71,15 +70,6 @@ public class ShuntConfigurerTest {
         shuntConfigurer.to(REMOTE_URL);
 
         assertThat(shuntConfigurer.getRemoteURL(), sameInstance(REMOTE_URL));
-    }
-
-    @Test
-    public void toDefersToConfigure() throws IOException {
-        shuntConfigurer.setLocalURI(LOCAL_URI);
-        ShuntConfigurer shuntConfigurerSpy = spy(shuntConfigurer);
-        shuntConfigurerSpy.to(REMOTE_URL);
-
-        verify(shuntConfigurerSpy).configure();
     }
 
     @Test

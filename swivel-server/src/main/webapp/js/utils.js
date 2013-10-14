@@ -1,3 +1,5 @@
+"use strict";
+
 define(['jQuery'], function ($) {
     return {
         getQuery: function () {

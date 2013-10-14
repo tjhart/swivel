@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.script.ScriptException;
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -26,7 +25,6 @@ public class ConfigureStubResourceTest {
     public static final int STUB_HANDLER_ID = 123;
     private ConfigureStubResource configureStubResource;
     private RequestRouter mockRouter;
-    private HttpServletRequest mockRequest;
     private Map<String, Object> json = new HashMap<String, Object>();
     private StubFactory mockStubFactory;
     private StubRequestHandler mockStubRequestHandler;
@@ -36,7 +34,6 @@ public class ConfigureStubResourceTest {
     public void setUp() throws Exception {
         configureStubResource = new ConfigureStubResource();
         mockRouter = mock(RequestRouter.class);
-        mockRequest = mock(HttpServletRequest.class);
         mockStubFactory = mock(StubFactory.class);
         mockStubRequestHandler = mock(StubRequestHandler.class);
 
@@ -51,14 +48,14 @@ public class ConfigureStubResourceTest {
 
     @Test
     public void putStubDefersToFactory() throws ScriptException, URISyntaxException {
-        configureStubResource.postStub(LOCAL_PATH, json, mockRequest);
+        configureStubResource.postStub(LOCAL_PATH, json);
 
         verify(mockStubFactory).createStubFor(LOCAL_URI, json);
     }
 
     @Test
     public void putStubDefersToRouter() throws URISyntaxException, ScriptException {
-        configureStubResource.postStub(LOCAL_PATH, json, mockRequest);
+        configureStubResource.postStub(LOCAL_PATH, json);
 
         verify(mockRouter).addStub(LOCAL_URI, mockStubRequestHandler);
     }
@@ -66,13 +63,13 @@ public class ConfigureStubResourceTest {
     @Test
     public void putStubReturnsRouterIDForStub() throws URISyntaxException, ScriptException {
 
-        assertThat((Integer) configureStubResource.postStub(LOCAL_PATH, json, mockRequest).get("id"),
+        assertThat((Integer) configureStubResource.postStub(LOCAL_PATH, json).get("id"),
                 equalTo(STUB_HANDLER_ID));
     }
 
     @Test
     public void deleteStubRemovesStubAtURI() throws ScriptException, URISyntaxException {
-        configureStubResource.postStub(LOCAL_PATH, json, mockRequest);
+        configureStubResource.postStub(LOCAL_PATH, json);
 
         configureStubResource.deleteStub(LOCAL_URI, STUB_HANDLER_ID);
 

@@ -26,11 +26,11 @@ define(['jQuery'], function ($) {
             'some/other/path': {
                 shunt: {remoteURL: 'http://localhost/path'},
                 stubs: [
-                    { id: 1,
+                    { id: 3,
                         description: 'simple stub',
                         when: {method: 'PUT', script: '(function(){return true;})();'},
                         then: {statusCode: 200, reason: 'OK'} },
-                    { id: 2,
+                    { id: 4,
                         description: 'complicated stub',
                         when: {
                             method: 'PUT',
@@ -44,7 +44,11 @@ define(['jQuery'], function ($) {
                                 '        reason:"OK"});\n' +
                                 '})();'
                         } }
-                ] } };
+                ] } }, stubCounter = 0;
+
+        $.each(data, function (path, config) {
+            stubCounter += config.stubs.length;
+        });
 
         function defaultCallback() {}
 
@@ -158,6 +162,16 @@ define(['jQuery'], function ($) {
                 return ajaxResultBuilder(data)
                     .done(callback || defaultCallback);
             };
-        }
+
+            this.addStub = function (stubData, callback) {
+                stubCounter = stubCounter + 1;
+                stubData.id = stubCounter;
+                var stubs = data[stubData.path] = data[stubData.path] || {stubs: []};
+                data[stubData.path].stubs.push(stubData);
+
+                return ajaxResultBuilder(data)
+                    .done(callback || defaultCallback);
+            };
+        };
     }
 );

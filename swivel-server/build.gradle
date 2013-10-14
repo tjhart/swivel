@@ -28,8 +28,9 @@ dependencies {
 
     //more dependencies listed in POM as being 'per configuration'
     runtime group: 'com.sun.jersey', name: 'jersey-servlet', version: project.jerseyVersion
-
     compile group: 'com.sun.jersey', name: 'jersey-json', version: project.jerseyVersion
+
+    runtime group: 'org.mozilla', name: 'rhino', version: '1.7R4'
 
     providedCompile group: 'javax.servlet', name: 'servlet-api', version: '2.5'
 

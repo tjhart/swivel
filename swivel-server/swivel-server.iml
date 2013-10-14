@@ -72,6 +72,7 @@
     <orderEntry type="library" exported="" name="jettison-1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="objenesis-1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="mockito-core-1.9.5" level="project" />
+    <orderEntry type="library" exported="" scope="RUNTIME" name="rhino-1.7R4" level="project" />
   </component>
 </module>
 

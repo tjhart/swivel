@@ -57,8 +57,10 @@ define(['jQuery'], function ($) {
                     .always(function () {
                         swivelServer.putShunt(shuntData, clientLoadConfigurationSuccess);
                     });
-            }).on('add-stub.swivelView', function (event, path) {
+            }).on('add-stub.swivelView',function (event, path) {
                 document.location = 'editStub.html';
+            }).on('get-config.swivelView', function (event, path) {
+                document.location = 'rest/config';
             });
     };
 });

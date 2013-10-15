@@ -167,6 +167,10 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
         $('#addStub').button()
             .click(function () {
                 $view.trigger('add-stub.swivelView');
-            })
+            });
+        $('#getConfig').button()
+            .click(function () {
+                $view.trigger('get-config.swivelView');
+            });
     };
 });

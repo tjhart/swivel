@@ -2,6 +2,7 @@ package com.tjh.swivel.controller;
 
 import com.tjh.swivel.model.ShuntRequestHandler;
 import com.tjh.swivel.model.StubRequestHandler;
+import com.tjh.swivel.utils.MapToJSONConverter;
 import org.apache.log4j.Logger;
 import vanderbilt.util.Block;
 import vanderbilt.util.Block2;
@@ -14,6 +15,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -24,10 +26,19 @@ public class ConfigurationResource {
     public static final String SHUNT_KEY = "shunt";
 
     protected static Logger LOGGER = Logger.getLogger(ConfigurationResource.class);
+    private final MapToJSONConverter mapToJSONConverter = new MapToJSONConverter();
     protected RequestRouter router;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    public Response getConfigurationResponse() {
+        return Response.ok()
+                .type(MediaType.APPLICATION_JSON)
+                .header("Content-Disposition", "attachment; filename=\"swivelConfig.json\"")
+                .entity(mapToJSONConverter.toJSON(getConfiguration()))
+                .build();
+    }
+
     public Map<String, Map<String, Object>> getConfiguration() {
         Map<String, Map<String, Object>> result = router.getUriHandlers();
         Maps.eachPair(result, new Block2<String, Map<String, Object>, Object>() {
@@ -55,6 +66,7 @@ public class ConfigurationResource {
                 return null;
             }
         });
+
         return result;
     }
 

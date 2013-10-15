@@ -1,6 +1,7 @@
 package com.tjh.swivel.controller;
 
 
+import com.tjh.swivel.model.Configuration;
 import com.tjh.swivel.model.ShuntRequestHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,31 +19,31 @@ public class ConfigurationResourceTest {
 
     public static final String LOCAL_PATH = "extra/path";
     private ConfigurationResource configurationResource;
-    private RequestRouter mockRouter;
+    private Configuration mockConfiguration;
 
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
         configurationResource = new ConfigurationResource();
-        mockRouter = mock(RequestRouter.class);
+        mockConfiguration = mock(Configuration.class);
 
-        configurationResource.setRouter(mockRouter);
+        configurationResource.setConfiguration(mockConfiguration);
     }
 
     @Test
-    public void getConfigDefersToRouter() {
-        configurationResource.getConfiguration();
+    public void getConfigDefersToConfiguration() {
+        configurationResource.getConfigurationMap();
 
-        verify(mockRouter).getUriHandlers();
+        verify(mockConfiguration).getUriHandlers();
     }
 
     @Test
     public void getConfigTranslatesShuntsToStrings() {
         ShuntRequestHandler mockShuntHandler = mock(ShuntRequestHandler.class);
-        when(mockRouter.getUriHandlers()).thenReturn(
-                Maps.asMap(LOCAL_PATH, Maps.<String, Object>asMap(RequestRouter.SHUNT_NODE, mockShuntHandler)));
+        when(mockConfiguration.getUriHandlers()).thenReturn(
+                Maps.asMap(LOCAL_PATH, Maps.<String, Object>asMap(Configuration.SHUNT_NODE, mockShuntHandler)));
 
-        Map<String, Map<String, Object>> configuration = configurationResource.getConfiguration();
+        Map<String, Map<String, Object>> configuration = configurationResource.getConfigurationMap();
 
         assertThat(configuration.get(LOCAL_PATH).get("shunt"), equalTo((Object) mockShuntHandler.toMap()));
     }

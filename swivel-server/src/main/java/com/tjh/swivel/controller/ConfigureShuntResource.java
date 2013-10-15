@@ -1,5 +1,6 @@
 package com.tjh.swivel.controller;
 
+import com.tjh.swivel.model.Configuration;
 import com.tjh.swivel.model.ShuntRequestHandler;
 import org.apache.log4j.Logger;
 
@@ -24,8 +25,8 @@ public class ConfigureShuntResource {
 
     protected static Logger LOGGER = Logger.getLogger(ConfigureShuntResource.class);
 
-    protected RequestRouter router;
     protected ConfigurationResource configurationResource;
+    private Configuration configuration;
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -36,8 +37,8 @@ public class ConfigureShuntResource {
             String remoteURL = json.get(REMOTE_URL_KEY);
             LOGGER.debug(String.format("Configuring shunt: proxying %1$s to %2$s", localPath, remoteURL));
 
-            router.setShunt(localPath, new ShuntRequestHandler(new URL(remoteURL)));
-            return configurationResource.getConfiguration();
+            configuration.setShunt(localPath, new ShuntRequestHandler(new URL(remoteURL)));
+            return configurationResource.getConfigurationMap();
         } catch (IllegalArgumentException iae) {
             throw new WebApplicationException(iae, Response.Status.CONFLICT);
         } catch (ClassCastException cce) {
@@ -52,14 +53,14 @@ public class ConfigureShuntResource {
     public Map<String, Map<String, Object>> deleteShunt(@PathParam("localPath") URI localPath) {
         LOGGER.debug(String.format("Removing shunt for %1$s", localPath));
 
-        router.deleteShunt(localPath);
+        configuration.deleteShunt(localPath);
 
-        return configurationResource.getConfiguration();
+        return configurationResource.getConfigurationMap();
     }
 
     public void setConfigurationResource(ConfigurationResource configurationResource) {
         this.configurationResource = configurationResource;
     }
 
-    public void setRouter(RequestRouter router) { this.router = router; }
+    public void setConfiguration(Configuration configuration) {this.configuration = configuration;}
 }

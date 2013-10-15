@@ -1,5 +1,6 @@
 package com.tjh.swivel.controller;
 
+import com.tjh.swivel.model.Configuration;
 import com.tjh.swivel.model.StubFactory;
 import com.tjh.swivel.model.StubRequestHandler;
 import org.apache.log4j.Logger;
@@ -29,20 +30,21 @@ public class ConfigureStubResource {
     public static final String STUB_ID_KEY = "id";
     protected static Logger LOGGER = Logger.getLogger(ConfigureStubResource.class);
 
-    protected RequestRouter router;
     protected StubFactory stubFactory;
     protected ConfigurationResource configurationResource;
+    private Configuration configuration;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Collection<Map<String, Object>> getStub(@PathParam("localPath") String localPath,
             @QueryParam("ids[]") List<Integer> stubIds) {
-        return Lists.collect(router.getStubs(localPath, stubIds), new Block<StubRequestHandler, Map<String, Object>>() {
-            @Override
-            public Map<String, Object> invoke(StubRequestHandler stubRequestHandler) {
-                return stubRequestHandler.toMap();
-            }
-        });
+        return Lists.collect(configuration.getStubs(localPath, stubIds),
+                new Block<StubRequestHandler, Map<String, Object>>() {
+                    @Override
+                    public Map<String, Object> invoke(StubRequestHandler stubRequestHandler) {
+                        return stubRequestHandler.toMap();
+                    }
+                });
     }
 
     @POST
@@ -54,7 +56,7 @@ public class ConfigureStubResource {
         StubRequestHandler stubRequestHandler = stubFactory.createStubFor(localUri, stubDescription);
 
         LOGGER.debug(String.format("Adding stub for %1$s", localUri));
-        router.addStub(localUri, stubRequestHandler);
+        configuration.addStub(localUri, stubRequestHandler);
         return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());
     }
 
@@ -72,7 +74,7 @@ public class ConfigureStubResource {
         URI localURI = new URI(localPath);
         StubRequestHandler stubRequestHandler = stubFactory.createStubFor(localURI, stubDescription);
 
-        router.replaceStub(localURI, stubId, stubRequestHandler);
+        configuration.replaceStub(localURI, stubId, stubRequestHandler);
         return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());
     }
 
@@ -81,22 +83,10 @@ public class ConfigureStubResource {
     public Map<String, Map<String, Object>> deleteStub(@PathParam("localPath") URI localUri,
             @QueryParam(STUB_ID_KEY) int stubId) {
         LOGGER.debug(String.format("Deleting stub with id %1$d at path %2$s", stubId, localUri));
-        router.removeStub(localUri, stubId);
+        configuration.removeStub(localUri, stubId);
 
-        return configurationResource.getConfiguration();
+        return configurationResource.getConfigurationMap();
     }
-
-    protected static String trimToNull(String source) {
-        if (source == null) return null;
-
-        String result = source.trim();
-        if (result.length() == 0) {
-            result = null;
-        }
-
-        return result;
-    }
-
 
     public void setConfigurationResource(ConfigurationResource configurationResource) {
         this.configurationResource = configurationResource;
@@ -104,5 +94,5 @@ public class ConfigureStubResource {
 
     public void setStubFactory(StubFactory stubFactory) { this.stubFactory = stubFactory; }
 
-    public void setRouter(RequestRouter router) { this.router = router; }
+    public void setConfiguration(Configuration configuration) {this.configuration = configuration;}
 }

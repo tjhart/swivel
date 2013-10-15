@@ -1,5 +1,6 @@
 package com.tjh.swivel.controller;
 
+import com.tjh.swivel.model.Configuration;
 import com.tjh.swivel.model.StubFactory;
 import com.tjh.swivel.model.StubRequestHandler;
 import org.junit.Before;
@@ -24,7 +25,7 @@ public class ConfigureStubResourceTest {
     public static final URI LOCAL_URI = URI.create(LOCAL_PATH);
     public static final int STUB_HANDLER_ID = 123;
     private ConfigureStubResource configureStubResource;
-    private RequestRouter mockRouter;
+    private Configuration mockConfiguration;
     private Map<String, Object> json = new HashMap<String, Object>();
     private StubFactory mockStubFactory;
     private StubRequestHandler mockStubRequestHandler;
@@ -33,11 +34,11 @@ public class ConfigureStubResourceTest {
     @Before
     public void setUp() throws Exception {
         configureStubResource = new ConfigureStubResource();
-        mockRouter = mock(RequestRouter.class);
+        mockConfiguration = mock(Configuration.class);
         mockStubFactory = mock(StubFactory.class);
         mockStubRequestHandler = mock(StubRequestHandler.class);
 
-        configureStubResource.setRouter(mockRouter);
+        configureStubResource.setConfiguration(mockConfiguration);
         configureStubResource.setStubFactory(mockStubFactory);
         ConfigurationResource mockConfigurationResource = mock(ConfigurationResource.class);
         configureStubResource.setConfigurationResource(mockConfigurationResource);
@@ -57,7 +58,7 @@ public class ConfigureStubResourceTest {
     public void putStubDefersToRouter() throws URISyntaxException, ScriptException {
         configureStubResource.postStub(LOCAL_PATH, json);
 
-        verify(mockRouter).addStub(LOCAL_URI, mockStubRequestHandler);
+        verify(mockConfiguration).addStub(LOCAL_URI, mockStubRequestHandler);
     }
 
     @Test
@@ -73,7 +74,7 @@ public class ConfigureStubResourceTest {
 
         configureStubResource.deleteStub(LOCAL_URI, STUB_HANDLER_ID);
 
-        verify(mockRouter).removeStub(LOCAL_URI, STUB_HANDLER_ID);
+        verify(mockConfiguration).removeStub(LOCAL_URI, STUB_HANDLER_ID);
     }
 
 }

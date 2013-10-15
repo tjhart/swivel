@@ -1,5 +1,6 @@
 package com.tjh.swivel.controller;
 
+import com.tjh.swivel.model.Configuration;
 import com.tjh.swivel.model.ShuntRequestHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,14 +24,14 @@ public class ConfigureShuntResourceTest {
     public static final String LOCAL_PATH = "extra/path";
     public static final URI LOCAL_URI = URI.create(LOCAL_PATH);
     private ConfigureShuntResource configureShuntResource;
-    private RequestRouter mockRouter;
+    private Configuration mockConfiguration;
 
     @Before
     public void setUp() throws Exception {
         configureShuntResource = new ConfigureShuntResource();
-        mockRouter = mock(RequestRouter.class);
+        mockConfiguration = mock(Configuration.class);
 
-        configureShuntResource.setRouter(mockRouter);
+        configureShuntResource.setConfiguration(mockConfiguration);
         ConfigurationResource mockConfigurationResource = mock(ConfigurationResource.class);
         configureShuntResource.setConfigurationResource(mockConfigurationResource);
     }
@@ -39,14 +40,14 @@ public class ConfigureShuntResourceTest {
     public void putShuntAddsShuntToRouter() throws URISyntaxException, MalformedURLException {
         configureShuntResource.putShunt(LOCAL_URI, SHUNT_JSON);
 
-        verify(mockRouter).setShunt(LOCAL_URI, new ShuntRequestHandler(new URL(REMOTE_URI)));
+        verify(mockConfiguration).setShunt(LOCAL_URI, new ShuntRequestHandler(new URL(REMOTE_URI)));
     }
 
     @Test
     public void deleteShuntRemovesShuntFromRouter() throws URISyntaxException {
         configureShuntResource.deleteShunt(LOCAL_URI);
 
-        verify(mockRouter).deleteShunt(LOCAL_URI);
+        verify(mockConfiguration).deleteShunt(LOCAL_URI);
     }
 
 }

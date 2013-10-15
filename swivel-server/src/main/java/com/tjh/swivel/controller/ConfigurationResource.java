@@ -2,8 +2,8 @@ package com.tjh.swivel.controller;
 
 import com.tjh.swivel.model.ShuntRequestHandler;
 import com.tjh.swivel.model.StubRequestHandler;
-import com.tjh.swivel.utils.MapToJSONConverter;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import vanderbilt.util.Block;
 import vanderbilt.util.Block2;
 import vanderbilt.util.Lists;
@@ -16,6 +16,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -26,16 +28,19 @@ public class ConfigurationResource {
     public static final String SHUNT_KEY = "shunt";
 
     protected static Logger LOGGER = Logger.getLogger(ConfigurationResource.class);
-    private final MapToJSONConverter mapToJSONConverter = new MapToJSONConverter();
+    private final ObjectMapper objectMapper = new ObjectMapper();
     protected RequestRouter router;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getConfigurationResponse() {
+    public Response getConfigurationResponse() throws IOException {
+        StringWriter stringWriter = new StringWriter();
+        objectMapper.writeValue(stringWriter, getConfiguration());
+
         return Response.ok()
                 .type(MediaType.APPLICATION_JSON)
                 .header("Content-Disposition", "attachment; filename=\"swivelConfig.json\"")
-                .entity(mapToJSONConverter.toJSON(getConfiguration()))
+                .entity(stringWriter.toString())
                 .build();
     }
 

@@ -74,5 +74,4 @@ public class ConfigureStubResourceTest {
 
         verify(mockConfiguration).removeStub(LOCAL_URI, STUB_HANDLER_ID);
     }
-
 }

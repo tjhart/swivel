@@ -23,7 +23,7 @@ import java.util.Map;
 @Path("config")
 public class ConfigurationResource {
     protected static Logger LOGGER = Logger.getLogger(ConfigurationResource.class);
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper = new ObjectMapper();
     private Configuration configuration;
 
     @GET
@@ -46,7 +46,9 @@ public class ConfigurationResource {
             throws IOException {
         Map<String, Map<String, Object>> swivelConfig = objectMapper.readValue(inputStream, Map.class);
 
+        LOGGER.debug("swivelConfig = " + swivelConfig);
 
+//        configuration.load(swivelConfig);
         return configuration.toMap();
     }
 
@@ -70,4 +72,6 @@ public class ConfigurationResource {
     }
 
     public void setConfiguration(Configuration configuration) {this.configuration = configuration;}
+
+    public void setObjectMapper(ObjectMapper objectMapper) { this.objectMapper = objectMapper; }
 }

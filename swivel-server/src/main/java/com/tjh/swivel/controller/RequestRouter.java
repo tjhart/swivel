@@ -62,6 +62,7 @@ public class RequestRouter {
 
     private String[] toKeys(URI localURI) {return localURI.getPath().split("/");}
 
+    //<editor-fold desc="bean">
     public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
     }

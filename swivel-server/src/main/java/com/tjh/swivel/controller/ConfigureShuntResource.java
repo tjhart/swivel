@@ -25,7 +25,6 @@ public class ConfigureShuntResource {
 
     protected static Logger LOGGER = Logger.getLogger(ConfigureShuntResource.class);
 
-    protected ConfigurationResource configurationResource;
     private Configuration configuration;
 
     @PUT
@@ -38,7 +37,7 @@ public class ConfigureShuntResource {
             LOGGER.debug(String.format("Configuring shunt: proxying %1$s to %2$s", localPath, remoteURL));
 
             configuration.setShunt(localPath, new ShuntRequestHandler(new URL(remoteURL)));
-            return configurationResource.getConfigurationMap();
+            return configuration.toMap();
         } catch (IllegalArgumentException iae) {
             throw new WebApplicationException(iae, Response.Status.CONFLICT);
         } catch (ClassCastException cce) {
@@ -55,11 +54,7 @@ public class ConfigureShuntResource {
 
         configuration.deleteShunt(localPath);
 
-        return configurationResource.getConfigurationMap();
-    }
-
-    public void setConfigurationResource(ConfigurationResource configurationResource) {
-        this.configurationResource = configurationResource;
+        return configuration.toMap();
     }
 
     public void setConfiguration(Configuration configuration) {this.configuration = configuration;}

@@ -31,7 +31,6 @@ public class ConfigureStubResource {
     protected static Logger LOGGER = Logger.getLogger(ConfigureStubResource.class);
 
     protected StubFactory stubFactory;
-    protected ConfigurationResource configurationResource;
     private Configuration configuration;
 
     @GET
@@ -85,11 +84,7 @@ public class ConfigureStubResource {
         LOGGER.debug(String.format("Deleting stub with id %1$d at path %2$s", stubId, localUri));
         configuration.removeStub(localUri, stubId);
 
-        return configurationResource.getConfigurationMap();
-    }
-
-    public void setConfigurationResource(ConfigurationResource configurationResource) {
-        this.configurationResource = configurationResource;
+        return configuration.toMap();
     }
 
     public void setStubFactory(StubFactory stubFactory) { this.stubFactory = stubFactory; }

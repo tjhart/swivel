@@ -40,8 +40,6 @@ public class ConfigureStubResourceTest {
 
         configureStubResource.setConfiguration(mockConfiguration);
         configureStubResource.setStubFactory(mockStubFactory);
-        ConfigurationResource mockConfigurationResource = mock(ConfigurationResource.class);
-        configureStubResource.setConfigurationResource(mockConfigurationResource);
 
         when(mockStubFactory.createStubFor(any(URI.class), anyMap())).thenReturn(mockStubRequestHandler);
         when(mockStubRequestHandler.getId()).thenReturn(STUB_HANDLER_ID);

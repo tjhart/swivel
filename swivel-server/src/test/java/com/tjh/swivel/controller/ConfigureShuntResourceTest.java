@@ -32,8 +32,6 @@ public class ConfigureShuntResourceTest {
         mockConfiguration = mock(Configuration.class);
 
         configureShuntResource.setConfiguration(mockConfiguration);
-        ConfigurationResource mockConfigurationResource = mock(ConfigurationResource.class);
-        configureShuntResource.setConfigurationResource(mockConfigurationResource);
     }
 
     @Test
@@ -49,5 +47,4 @@ public class ConfigureShuntResourceTest {
 
         verify(mockConfiguration).deleteShunt(LOCAL_URI);
     }
-
 }

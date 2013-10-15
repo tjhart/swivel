@@ -16,11 +16,10 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
           p:configuration-ref="configuration"/>
 
     <bean id="configureShuntResource" class="com.tjh.swivel.controller.ConfigureShuntResource"
-          p:configuration-ref="configuration" p:configurationResource-ref="configurationResource"/>
+          p:configuration-ref="configuration"/>
 
     <bean id="configureStubResource" class="com.tjh.swivel.controller.ConfigureStubResource"
-          p:configuration-ref="configuration" p:stubFactory-ref="stubFactory"
-          p:configurationResource-ref="configurationResource"/>
+          p:configuration-ref="configuration" p:stubFactory-ref="stubFactory"/>
 
     <bean id="requestFactory" class="com.tjh.swivel.controller.HttpUriRequestFactory"/>
 

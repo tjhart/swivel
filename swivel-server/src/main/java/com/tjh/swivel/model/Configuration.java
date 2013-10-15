@@ -150,18 +150,32 @@ public class Configuration {
     public void removePath(URI localUri) { uriHandlers.remove(localUri.toString()); }
 
     public void reset() { uriHandlers.clear(); }
+
     @SuppressWarnings("unchecked")
     private List<StubRequestHandler> getStubRequestHandlers(String path) {
         return (List<StubRequestHandler>) uriHandlers.get(path).get(Configuration.STUB_NODE);
     }
 
-    //<editor-fold desc="bean">
-    public Map<String, Map<String, Object>> getUriHandlers() {
-        final HashMap<String, Map<String, Object>> result = new HashMap<String, Map<String, Object>>(uriHandlers);
-        Maps.eachPair(result, new Block2<String, Map<String, Object>, Object>() {
+    public Map<String, Map<String, Object>> toMap() {
+        final HashMap<String, Map<String, Object>> result =
+                new HashMap<String, Map<String, Object>>(uriHandlers.size());
+        Maps.eachPair(uriHandlers, new Block2<String, Map<String, Object>, Object>() {
             @Override
-            public Object invoke(String s, Map<String, Object> stringObjectMap) {
-                result.put(s, new HashMap<String, Object>(stringObjectMap));
+            public Object invoke(String path, Map<String, Object> handlerMap) {
+                Map<String, Object> stubsAndShunt = new HashMap<String, Object>();
+                if (handlerMap.containsKey(STUB_NODE)) {
+                    stubsAndShunt.put("stubs", Lists.collect((List<StubRequestHandler>) handlerMap.get(STUB_NODE),
+                            new Block<StubRequestHandler, Map<String, Object>>() {
+                                @Override
+                                public Map<String, Object> invoke(StubRequestHandler stubRequestHandler) {
+                                    return stubRequestHandler.toMap();
+                                }
+                            }));
+                }
+                if (handlerMap.containsKey(SHUNT_NODE)) {
+                    stubsAndShunt.put("shunt", ((ShuntRequestHandler) handlerMap.get(SHUNT_NODE)).toMap());
+                }
+                result.put(path, stubsAndShunt);
                 return null;
             }
         });

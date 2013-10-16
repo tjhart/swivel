@@ -8,16 +8,41 @@ import org.apache.log4j.Logger;
 import org.hamcrest.StringDescription;
 import vanderbilt.util.Maps;
 
+import javax.script.ScriptException;
 import java.net.URI;
 import java.util.Map;
 
 import static vanderbilt.util.Validators.notNull;
 
 public abstract class AbstractStubRequestHandler implements StubRequestHandler {
+    public static final String THEN_KEY = "then";
+    public static final String WHEN_KEY = "when";
+    public static final String SCRIPT_KEY = "script";
+    public static final String DESCRIPTION_KEY = "description";
+
     private static Logger logger = Logger.getLogger(AbstractStubRequestHandler.class);
+    private static ResponseFactory responseFactory = new ResponseFactory();
+
     protected final WhenMatcher matcher;
     private final Map<String, Object> then;
     private final String description;
+
+    public static StubRequestHandler createStubFor(Map<String, Object> stubDescription) throws ScriptException {
+        StubRequestHandler result;
+        String description = (String) stubDescription.get(DESCRIPTION_KEY);
+        WhenMatcher matcher = new WhenMatcher((Map<String, String>) stubDescription.get(WHEN_KEY));
+        Map<String, Object> then = (Map<String, Object>) stubDescription.get(THEN_KEY);
+        if (then.containsKey(SCRIPT_KEY)) {
+            result = new DynamicStubRequestHandler(description, matcher, (String) then.get(SCRIPT_KEY));
+        } else {
+            result = new StaticStubRequestHandler(description, matcher, responseFactory.createResponse(then), then);
+        }
+        return result;
+    }
+
+    static void setResponseFactory(ResponseFactory responseFactory) {
+        AbstractStubRequestHandler.responseFactory = responseFactory;
+    }
 
     public AbstractStubRequestHandler(String description, WhenMatcher matcher, Map<String, Object> then) {
         this.description = notNull("description", description);
@@ -55,10 +80,10 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     @Override
     public Map<String, Object> toMap() {
         return Maps.<String, Object>asMap(
-                "description", description,
+                DESCRIPTION_KEY, description,
                 "id", getId(),
-                "when", matcher.toMap(),
-                "then", then
+                WHEN_KEY, matcher.toMap(),
+                THEN_KEY, then
         );
     }
     //</editor-fold>

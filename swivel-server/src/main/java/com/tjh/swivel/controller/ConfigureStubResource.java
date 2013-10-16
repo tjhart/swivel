@@ -1,7 +1,7 @@
 package com.tjh.swivel.controller;
 
+import com.tjh.swivel.model.AbstractStubRequestHandler;
 import com.tjh.swivel.model.Configuration;
-import com.tjh.swivel.model.StubFactory;
 import com.tjh.swivel.model.StubRequestHandler;
 import org.apache.log4j.Logger;
 import vanderbilt.util.Block;
@@ -30,7 +30,6 @@ public class ConfigureStubResource {
     public static final String STUB_ID_KEY = "id";
     protected static Logger LOGGER = Logger.getLogger(ConfigureStubResource.class);
 
-    protected StubFactory stubFactory;
     private Configuration configuration;
 
     @GET
@@ -52,7 +51,7 @@ public class ConfigureStubResource {
     public Map<String, Object> postStub(@PathParam("localPath") String localPath, Map<String, Object> stubDescription)
             throws URISyntaxException, ScriptException {
         URI localUri = new URI(localPath);
-        StubRequestHandler stubRequestHandler = stubFactory.createStubFor(stubDescription);
+        StubRequestHandler stubRequestHandler = createStub(stubDescription);
 
         LOGGER.debug(String.format("Adding stub for %1$s", localUri));
         configuration.addStub(localUri, stubRequestHandler);
@@ -71,7 +70,7 @@ public class ConfigureStubResource {
 
         LOGGER.debug(String.format("Replacing stub %1$s:%2$d with %3$s", localPath, stubId, stubDescription));
         URI localURI = new URI(localPath);
-        StubRequestHandler stubRequestHandler = stubFactory.createStubFor(stubDescription);
+        StubRequestHandler stubRequestHandler = createStub(stubDescription);
 
         configuration.replaceStub(localURI, stubId, stubRequestHandler);
         return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());
@@ -87,7 +86,9 @@ public class ConfigureStubResource {
         return configuration.toMap();
     }
 
-    public void setStubFactory(StubFactory stubFactory) { this.stubFactory = stubFactory; }
+    protected StubRequestHandler createStub(Map<String, Object> stubDescription) throws ScriptException {
+        return AbstractStubRequestHandler.createStubFor(stubDescription);
+    }
 
     public void setConfiguration(Configuration configuration) {this.configuration = configuration;}
 }

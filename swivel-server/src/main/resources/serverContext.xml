@@ -8,9 +8,6 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 
     <import resource="routerContext.xml"/>
 
-    <bean id="stubFactory" class="com.tjh.swivel.model.StubFactory"
-          p:responseFactory-ref="responseFactory"/>
-
     <bean id="configurationResource" class="com.tjh.swivel.controller.ConfigurationResource"
           p:configuration-ref="configuration"/>
 
@@ -18,7 +15,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
           p:configuration-ref="configuration"/>
 
     <bean id="configureStubResource" class="com.tjh.swivel.controller.ConfigureStubResource"
-          p:configuration-ref="configuration" p:stubFactory-ref="stubFactory"/>
+          p:configuration-ref="configuration"/>
 
     <bean id="requestFactory" class="com.tjh.swivel.controller.HttpUriRequestFactory"/>
 

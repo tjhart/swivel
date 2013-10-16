@@ -159,7 +159,7 @@ public class Configuration {
             @Override
             public Object invoke(String path, Map<String, Object> handlerMap) {
                 Map<String, Object> stubsAndShunt = new HashMap<String, Object>();
-                if (handlerMap.containsKey(STUB_NODE)) {
+                if (!((List)handlerMap.get(STUB_NODE)).isEmpty()) {
                     stubsAndShunt.put(STUBS_MAP_KEY, Lists.collect((List<StubRequestHandler>) handlerMap.get(STUB_NODE),
                             new Block<StubRequestHandler, Map<String, Object>>() {
                                 @Override

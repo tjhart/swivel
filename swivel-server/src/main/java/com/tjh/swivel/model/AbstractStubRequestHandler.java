@@ -57,7 +57,7 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
         return Maps.<String, Object>asMap(
                 "description", description,
                 "id", getId(),
-                "when", matcher.getWhen(),
+                "when", matcher.toMap(),
                 "then", then
         );
     }

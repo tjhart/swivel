@@ -10,10 +10,8 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class StubFactoryTest {
 
@@ -25,28 +23,14 @@ public class StubFactoryTest {
             StubFactory.WHEN_KEY, WHEN_MAP,
             StubFactory.THEN_KEY, THEN_MAP);
     private StubFactory stubFactory;
-    private MatcherFactory mockMatcherFactory;
     private ResponseFactory mockResponseFactory;
 
     @Before
     public void setUp() throws Exception {
         stubFactory = new StubFactory();
-        mockMatcherFactory = mock(MatcherFactory.class);
         mockResponseFactory = mock(ResponseFactory.class);
 
-        stubFactory.setMatcherFactory(mockMatcherFactory);
         stubFactory.setResponseFactory(mockResponseFactory);
-
-        WhenMatcher mockMatcher = mock(WhenMatcher.class);
-        when(mockMatcherFactory.buildMatcher(anyMap()))
-                .thenReturn(mockMatcher);
-    }
-
-    @Test
-    public void createStubForDefersToMatcherFactory() throws ScriptException {
-        stubFactory.createStubFor(STATIC_DESCRIPTION);
-
-        verify(mockMatcherFactory).buildMatcher(WHEN_MAP);
     }
 
     @Test

@@ -8,7 +8,6 @@ public class StubFactory {
     public static final String WHEN_KEY = "when";
     public static final String SCRIPT_KEY = "script";
     public static final String DESCRIPTION_KEY = "description";
-    private MatcherFactory matcherFactory;
     private ResponseFactory responseFactory;
 
     @SuppressWarnings("unchecked")
@@ -17,7 +16,7 @@ public class StubFactory {
         //description when displaying on the GUI
         StubRequestHandler result;
         String description = (String) stubMap.get(DESCRIPTION_KEY);
-        WhenMatcher matcher = matcherFactory.buildMatcher((Map<String, String>) stubMap.get(WHEN_KEY));
+        WhenMatcher matcher = new WhenMatcher((Map<String, String>) stubMap.get(WHEN_KEY));
         Map<String, Object> then = (Map<String, Object>) stubMap.get(THEN_KEY);
         if (then.containsKey(SCRIPT_KEY)) {
             result = new DynamicStubRequestHandler(description, matcher, (String) then.get(SCRIPT_KEY));
@@ -27,9 +26,5 @@ public class StubFactory {
         return result;
     }
 
-    public void setResponseFactory(ResponseFactory responseFactory) {
-        this.responseFactory = responseFactory;
-    }
-
-    public void setMatcherFactory(MatcherFactory matcherFactory) { this.matcherFactory = matcherFactory; }
+    public void setResponseFactory(ResponseFactory responseFactory) { this.responseFactory = responseFactory; }
 }

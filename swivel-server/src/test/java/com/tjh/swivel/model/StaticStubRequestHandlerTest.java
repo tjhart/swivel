@@ -1,37 +1,34 @@
 package com.tjh.swivel.model;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;
+import vanderbilt.util.Maps;
 
-import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class StaticStubRequestHandlerTest {
 
     private StaticStubRequestHandler staticResponseHandler;
-    private HttpResponse mockHttpResponse;
 
     @Before
     public void before() {
-        mockHttpResponse = mock(HttpResponse.class);
-        WhenMatcher mockMatcher = mock(WhenMatcher.class);
-        Map<String, Object> then = mock(Map.class);
-        staticResponseHandler = new StaticStubRequestHandler("description", mockMatcher, mockHttpResponse, then);
-    }
+        staticResponseHandler = new StaticStubRequestHandler(Maps.<String, Object>asMap(
+                AbstractStubRequestHandler.DESCRIPTION_KEY, "description",
+                AbstractStubRequestHandler.WHEN_KEY, Maps.asMap(WhenMatcher.METHOD_KEY, "GET"),
 
-    @Test
-    public void constructorCapturesResponse() {
-        assertThat(staticResponseHandler.httpResponse, sameInstance(mockHttpResponse));
+                AbstractStubRequestHandler.THEN_KEY,
+                Maps.asMap(
+                        ResponseFactory.STATUS_CODE_KEY, 200,
+                        ResponseFactory.REASON_KEY, "OK"
+                )
+        ));
     }
 
     @Test
     public void handleReturnsResponse() {
-        assertThat(staticResponseHandler.handle(mock(HttpUriRequest.class), null, null),
-                sameInstance(mockHttpResponse));
+        assertThat(staticResponseHandler.handle(mock(HttpUriRequest.class), null, null), notNullValue());
     }
 }

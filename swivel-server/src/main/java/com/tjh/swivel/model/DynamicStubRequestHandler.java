@@ -4,26 +4,20 @@ import com.tjh.swivel.utils.ScriptWrapper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
-import vanderbilt.util.Maps;
 
 import javax.script.Bindings;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 import java.net.URI;
+import java.util.Map;
 
 public class DynamicStubRequestHandler extends AbstractStubRequestHandler {
     protected ScriptWrapper scriptWrapper;
     protected ResponseFactory responseFactory = new ResponseFactory();
 
-    public DynamicStubRequestHandler(String description, WhenMatcher matcher, String sourceScript,
-            String engineName) throws ScriptException {
-        super(description, matcher, Maps.<String, Object>asMap("script", sourceScript));
-        this.scriptWrapper = new ScriptWrapper(engineName, sourceScript);
-    }
-
-    public DynamicStubRequestHandler(String description, WhenMatcher matcher, String sourceScript)
-            throws ScriptException {
-        this(description, matcher, sourceScript, "javascript");
+    public DynamicStubRequestHandler(Map<String, Object> stubDescription) throws ScriptException {
+        super(stubDescription);
+        this.scriptWrapper = new ScriptWrapper((String)then.get(SCRIPT_KEY));
     }
 
     @Override

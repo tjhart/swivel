@@ -10,10 +10,9 @@ import java.util.Map;
 public class StaticStubRequestHandler extends AbstractStubRequestHandler {
     protected final HttpResponse httpResponse;
 
-    public StaticStubRequestHandler(String description, WhenMatcher matcher, HttpResponse httpResponse,
-            Map<String, Object> then) {
-        super(description, matcher, then);
-        this.httpResponse = httpResponse;
+    public StaticStubRequestHandler(Map<String, Object> stubDescription) {
+        super(stubDescription);
+        this.httpResponse = responseFactory.createResponse(then);
     }
 
     @Override

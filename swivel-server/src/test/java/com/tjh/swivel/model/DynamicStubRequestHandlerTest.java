@@ -6,6 +6,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import vanderbilt.util.Maps;
 
 import javax.script.Bindings;
 import javax.script.ScriptException;
@@ -28,9 +29,16 @@ public class DynamicStubRequestHandlerTest {
     private HttpUriRequest mockRequest;
 
     @Before
-    public void setUp() throws Exception {
-        WhenMatcher mockMatcher = mock(WhenMatcher.class);
-        dynamicResponseHandler = new DynamicStubRequestHandler(DESCRIPTION, mockMatcher, SOURCE_SCRIPT);
+    public void setUp() throws ScriptException {
+        dynamicResponseHandler = new DynamicStubRequestHandler(Maps.<String, Object>asMap(
+                AbstractStubRequestHandler.DESCRIPTION_KEY, DESCRIPTION,
+                AbstractStubRequestHandler.WHEN_KEY, Maps.asMap(WhenMatcher.METHOD_KEY, "GET"),
+
+                AbstractStubRequestHandler.THEN_KEY,
+                Maps.asMap(
+                        AbstractStubRequestHandler.SCRIPT_KEY, SOURCE_SCRIPT
+                )
+        ));
         mockRequest = mock(HttpUriRequest.class);
     }
 

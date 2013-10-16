@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static vanderbilt.util.Validators.notNull;
 
+@SuppressWarnings("unchecked")
 public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     public static final String THEN_KEY = "then";
     public static final String WHEN_KEY = "when";
@@ -21,33 +22,30 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     public static final String DESCRIPTION_KEY = "description";
 
     private static Logger logger = Logger.getLogger(AbstractStubRequestHandler.class);
-    private static ResponseFactory responseFactory = new ResponseFactory();
+    protected static ResponseFactory responseFactory = new ResponseFactory();
 
     protected final WhenMatcher matcher;
-    private final Map<String, Object> then;
+    protected final Map<String, Object> then;
     private final String description;
 
     public static StubRequestHandler createStubFor(Map<String, Object> stubDescription) throws ScriptException {
         StubRequestHandler result;
-        String description = (String) stubDescription.get(DESCRIPTION_KEY);
-        WhenMatcher matcher = new WhenMatcher((Map<String, String>) stubDescription.get(WHEN_KEY));
-        Map<String, Object> then = (Map<String, Object>) stubDescription.get(THEN_KEY);
-        if (then.containsKey(SCRIPT_KEY)) {
-            result = new DynamicStubRequestHandler(description, matcher, (String) then.get(SCRIPT_KEY));
+        if (((Map<String, Object>) stubDescription.get(THEN_KEY)).containsKey(SCRIPT_KEY)) {
+            result = new DynamicStubRequestHandler(stubDescription);
         } else {
-            result = new StaticStubRequestHandler(description, matcher, responseFactory.createResponse(then), then);
+            result = new StaticStubRequestHandler(stubDescription);
         }
         return result;
     }
 
-    static void setResponseFactory(ResponseFactory responseFactory) {
-        AbstractStubRequestHandler.responseFactory = responseFactory;
+    public AbstractStubRequestHandler(Map<String, Object> stubDescription) {
+        this.description = notNull(DESCRIPTION_KEY, (String) stubDescription.get(DESCRIPTION_KEY));
+        this.matcher = new WhenMatcher((Map<String, String>) stubDescription.get(WHEN_KEY));
+        this.then = notNull(THEN_KEY, (Map<String, Object>) stubDescription.get(THEN_KEY));
     }
 
-    public AbstractStubRequestHandler(String description, WhenMatcher matcher, Map<String, Object> then) {
-        this.description = notNull("description", description);
-        this.matcher = notNull("matcher", matcher);
-        this.then = notNull("then", then);
+    static void setResponseFactory(ResponseFactory responseFactory) {
+        AbstractStubRequestHandler.responseFactory = responseFactory;
     }
 
     //<editor-fold desc="StubRequestHandler">

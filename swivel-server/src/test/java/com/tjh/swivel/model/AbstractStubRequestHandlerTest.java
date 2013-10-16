@@ -1,5 +1,6 @@
 package com.tjh.swivel.model;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import vanderbilt.util.Maps;
@@ -24,10 +25,14 @@ public class AbstractStubRequestHandlerTest {
     private ResponseFactory mockResponseFactory;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mockResponseFactory = mock(ResponseFactory.class);
-
         AbstractStubRequestHandler.setResponseFactory(mockResponseFactory);
+    }
+
+    @AfterClass
+    public static void afterClass(){
+        AbstractStubRequestHandler.setResponseFactory(new ResponseFactory());
     }
 
     @Test
@@ -48,7 +53,8 @@ public class AbstractStubRequestHandlerTest {
         StubRequestHandler stubRequestHandler = AbstractStubRequestHandler.createStubFor(Maps.<String, Object>asMap(
                 AbstractStubRequestHandler.DESCRIPTION_KEY, DESCRIPTION,
                 AbstractStubRequestHandler.WHEN_KEY, WHEN_MAP,
-                AbstractStubRequestHandler.THEN_KEY, Maps.asMap(AbstractStubRequestHandler.SCRIPT_KEY, "(function(){})();")
+                AbstractStubRequestHandler.THEN_KEY,
+                Maps.asMap(AbstractStubRequestHandler.SCRIPT_KEY, "(function(){})();")
         ));
 
         assertThat(stubRequestHandler, instanceOf(DynamicStubRequestHandler.class));

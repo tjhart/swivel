@@ -146,8 +146,10 @@ public class Configuration {
             }
         });
 
-        reset();
-        uriHandlers.putAll(newConfig);
+        synchronized (this) {
+            reset();
+            uriHandlers.putAll(newConfig);
+        }
     }
 
     public Map<String, Map<String, Object>> toMap() {
@@ -192,8 +194,9 @@ public class Configuration {
 
     private void loadStubs(List<Map<String, Object>> stubDescriptions, Map<String, Object> nodeMap) {
         if (stubDescriptions != null && !stubDescriptions.isEmpty()) {
-            ((List<StubRequestHandler>) nodeMap.get(Configuration.STUB_NODE)).addAll(
-                    Lists.collect(stubDescriptions, new Block<Map<String, Object>, StubRequestHandler>() {
+            ((List<StubRequestHandler>) nodeMap
+                    .get(Configuration.STUB_NODE))
+                    .addAll(Lists.collect(stubDescriptions, new Block<Map<String, Object>, StubRequestHandler>() {
                         @Override
                         public StubRequestHandler invoke(Map<String, Object> stubDescription) {
                             try {

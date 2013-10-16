@@ -10,46 +10,49 @@ import vanderbilt.util.Lists;
 import vanderbilt.util.Maps;
 import vanderbilt.util.PopulatingMap;
 
+import javax.script.ScriptException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
+@SuppressWarnings("unchecked")
 public class Configuration {
     public static final String SHUNT_NODE = "^shunt";
     public static final String STUB_NODE = "^stub";
     public static final String STUBS_MAP_KEY = "stubs";
     public static final String SHUNT_MAP_KEY = "shunt";
+    public static final UriHandlersPopulator POPULATOR = new UriHandlersPopulator();
 
     public static Logger LOGGER = Logger.getLogger(Configuration.class);
 
     protected final Map<String, Map<String, Object>> uriHandlers = new PopulatingMap<String, Map<String, Object>>(
-            new ConcurrentHashMap<String, Map<String, Object>>(),
-            new UriHandlersPopulator(ConcurrentHashMap.class, CopyOnWriteArrayList.class)
-    );
+            new ConcurrentHashMap<String, Map<String, Object>>(), POPULATOR);
 
+    //<editor-fold desc="query">
     public RequestHandler findRequestHandler(HttpRequestBase request, String matchedPath) {
         RequestHandler result = null;
         LOGGER.debug("checking for handlers at " + matchedPath);
         if (uriHandlers.containsKey(matchedPath)) {
             Map<String, Object> stringObjectMap = uriHandlers.get(matchedPath);
             result = findStub(stringObjectMap, request);
-            if (result == null && stringObjectMap.containsKey(Configuration.SHUNT_NODE)) {
-                result = (RequestHandler) stringObjectMap.get(Configuration.SHUNT_NODE);
-                if (result != null) {
-                    LOGGER.debug("found shunt " + result);
+            if (result == null) {
+                if (stringObjectMap.containsKey(Configuration.SHUNT_NODE)) {
+                    result = (RequestHandler) stringObjectMap.get(Configuration.SHUNT_NODE);
+                    if (result != null) {
+                        LOGGER.debug("found shunt " + result);
+                    }
                 }
-            } else if (result != null) {
+            } else {
                 LOGGER.debug("found stub " + result);
             }
         }
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     RequestHandler findStub(Map<String, Object> stringObjectMap, final HttpUriRequest request) {
         return Lists.find((Collection<StubRequestHandler>) stringObjectMap.get(Configuration.STUB_NODE),
                 new Block<StubRequestHandler, Boolean>() {
@@ -63,7 +66,17 @@ public class Configuration {
                 });
     }
 
-    @SuppressWarnings("unchecked")
+    public Collection<StubRequestHandler> getStubs(String localPath, final List<Integer> stubIds) {
+        return Lists.select(getStubRequestHandlers(localPath), new Block<StubRequestHandler, Boolean>() {
+            @Override
+            public Boolean invoke(StubRequestHandler stubRequestHandler) {
+                return stubIds.isEmpty() || stubIds.contains(stubRequestHandler.getId());
+            }
+        });
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="modify">
     public void removeStub(URI localUri, final int stubHandlerId) {
         String path = localUri.getPath();
         Map<String, Object> handlerMap = uriHandlers.get(path);
@@ -88,7 +101,6 @@ public class Configuration {
         uriHandlers.get(localURI.getPath()).put(Configuration.SHUNT_NODE, requestHandler);
     }
 
-    @SuppressWarnings("unchecked")
     public void addStub(URI localUri, StubRequestHandler stubRequestHandler) {
         LOGGER.debug(String.format("Adding stub <%1$s> to <%2$s>", stubRequestHandler, localUri));
         ((List) uriHandlers.get(localUri.getPath())
@@ -99,24 +111,6 @@ public class Configuration {
     public void deleteShunt(URI localURI) {
         String path = localURI.getPath();
         clean(path, uriHandlers.get(path), Configuration.SHUNT_NODE);
-    }
-
-    private void clean(String path, Map<String, Object> handlerMap, String nodeType) {
-        Object shuntRequestHandler = handlerMap.remove(nodeType);
-        if (handlerMap.isEmpty()) {
-            uriHandlers.remove(path);
-        }
-
-        LOGGER.debug(String.format("Removed <%1$s> from <%2$s>", shuntRequestHandler, path));
-    }
-
-    public Collection<StubRequestHandler> getStubs(String localPath, final List<Integer> stubIds) {
-        return Lists.select(getStubRequestHandlers(localPath), new Block<StubRequestHandler, Boolean>() {
-            @Override
-            public Boolean invoke(StubRequestHandler stubRequestHandler) {
-                return stubIds.isEmpty() || stubIds.contains(stubRequestHandler.getId());
-            }
-        });
     }
 
     public void replaceStub(URI localURI, int stubId, StubRequestHandler stubRequestHandler) {
@@ -136,10 +130,24 @@ public class Configuration {
     public void removePath(URI localUri) { uriHandlers.remove(localUri.toString()); }
 
     public void reset() { uriHandlers.clear(); }
+    //</editor-fold>
 
-    @SuppressWarnings("unchecked")
-    private List<StubRequestHandler> getStubRequestHandlers(String path) {
-        return (List<StubRequestHandler>) uriHandlers.get(path).get(Configuration.STUB_NODE);
+    //<editor-fold desc="marshalling">
+    public void load(Map<String, Map<String, Object>> configMap) {
+        final Map<String, Map<String, Object>> newConfig = new PopulatingMap<String, Map<String, Object>>(
+                POPULATOR);
+        Maps.eachPair(configMap, new Block2<String, Map<String, Object>, Object>() {
+            @Override
+            public Object invoke(String uri, Map<String, Object> shuntsAndStubs) {
+                Map<String, Object> nodeMap = newConfig.get(uri);
+                loadShunt((Map<String, String>) shuntsAndStubs.get(Configuration.SHUNT_MAP_KEY), nodeMap);
+                loadStubs((List<Map<String, Object>>) shuntsAndStubs.get(Configuration.STUBS_MAP_KEY), nodeMap);
+                return null;
+            }
+        });
+
+        reset();
+        uriHandlers.putAll(newConfig);
     }
 
     public Map<String, Map<String, Object>> toMap() {
@@ -167,7 +175,44 @@ public class Configuration {
         });
         return result;
     }
+    //</editor-fold>
 
-    public void load(Map<String, Map<String, Object>> configMap) {
+    private List<StubRequestHandler> getStubRequestHandlers(String path) {
+        return (List<StubRequestHandler>) uriHandlers.get(path).get(Configuration.STUB_NODE);
+    }
+
+    private void clean(String path, Map<String, Object> handlerMap, String nodeType) {
+        Object shuntRequestHandler = handlerMap.remove(nodeType);
+        if (handlerMap.isEmpty()) {
+            uriHandlers.remove(path);
+        }
+
+        LOGGER.debug(String.format("Removed <%1$s> from <%2$s>", shuntRequestHandler, path));
+    }
+
+    private void loadStubs(List<Map<String, Object>> stubDescriptions, Map<String, Object> nodeMap) {
+        if (stubDescriptions != null && !stubDescriptions.isEmpty()) {
+            ((List<StubRequestHandler>) nodeMap.get(Configuration.STUB_NODE)).addAll(
+                    Lists.collect(stubDescriptions, new Block<Map<String, Object>, StubRequestHandler>() {
+                        @Override
+                        public StubRequestHandler invoke(Map<String, Object> stubDescription) {
+                            try {
+                                return AbstractStubRequestHandler.createStubFor(stubDescription);
+                            } catch (ScriptException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }));
+        }
+    }
+
+    private void loadShunt(Map<String, String> shuntDescription, Map<String, Object> nodeMap) {
+        try {
+            if (shuntDescription != null) {
+                nodeMap.put(Configuration.SHUNT_NODE, new ShuntRequestHandler(shuntDescription));
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

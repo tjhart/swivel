@@ -18,28 +18,34 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
             DIALOG_BUTTONS = {
                 reset: {
                     text: 'OK',
-                    click: function () {
+                    click: function (e) {
                         $(this).dialog('close');
                         $view.trigger('reset.swivelView');
+
+                        e.preventDefault();
                     }
                 },
                 'add-or-edit-shunt': {
                     text: 'OK',
-                    click: function () {
+                    click: function (e) {
                         var dialog = $(this);
                         dialog.dialog('close');
                         $view.trigger([mode, '-shunt.swivelView'].join(''), {
                             remoteURL: dialog.find('#remoteURL').val(),
                             path: dialog.find('#shuntPath').val()
                         });
+
+                        e.preventDefault();
                     }
                 },
                 'load-configuration': {
                     text: 'Load Configuration',
-                    click: function () {
+                    click: function (e) {
                         var dialog = $(this);
                         dialog.dialog('close');
                         $view.trigger('load-configuration.swivelView', dialog.find('#swivelConfig')[0].files[0]);
+
+                        e.preventDefault();
                     }
                 }
             };

@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Map;
 
 @Path("config/shunt/{localPath: .*}")
@@ -33,10 +32,9 @@ public class ConfigureShuntResource {
     public Map<String, Map<String, Object>> putShunt(@PathParam("localPath") URI localPath, Map<String, String> json)
             throws URISyntaxException {
         try {
-            String remoteURL = json.get(REMOTE_URL_KEY);
-            LOGGER.debug(String.format("Configuring shunt: proxying %1$s to %2$s", localPath, remoteURL));
+            LOGGER.debug(String.format("Configuring shunt: proxying %1$s with %2$s", localPath, json));
 
-            configuration.setShunt(localPath, new ShuntRequestHandler(new URL(remoteURL)));
+            configuration.setShunt(localPath, new ShuntRequestHandler(json));
             return configuration.toMap();
         } catch (IllegalArgumentException iae) {
             throw new WebApplicationException(iae, Response.Status.CONFLICT);

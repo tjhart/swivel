@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,7 +82,7 @@ public class ConfigurationResource {
         try {
             if (shuntDescription != null) {
                 nodeMap.put(Configuration.SHUNT_NODE,
-                        new ShuntRequestHandler(new URL(shuntDescription.get(ShuntRequestHandler.REMOTE_URL_KEY))));
+                        new ShuntRequestHandler(shuntDescription));
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);

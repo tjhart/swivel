@@ -9,7 +9,6 @@ import vanderbilt.util.Maps;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Map;
 
 import static org.mockito.Mockito.mock;
@@ -38,7 +37,7 @@ public class ConfigureShuntResourceTest {
     public void putShuntAddsShuntToRouter() throws URISyntaxException, MalformedURLException {
         configureShuntResource.putShunt(LOCAL_URI, SHUNT_JSON);
 
-        verify(mockConfiguration).setShunt(LOCAL_URI, new ShuntRequestHandler(new URL(REMOTE_URI)));
+        verify(mockConfiguration).setShunt(LOCAL_URI, new ShuntRequestHandler(SHUNT_JSON));
     }
 
     @Test

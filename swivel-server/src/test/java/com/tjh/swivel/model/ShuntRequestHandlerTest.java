@@ -6,13 +6,14 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;
+import vanderbilt.util.Maps;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
-import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -27,9 +28,11 @@ public class ShuntRequestHandlerTest {
     public static final URI EXPECTED_URI = URI.create("http://someServer:1234/deep");
     public static final URI MATCHED_URI = URI.create("/some/path");
 
+    public static final String REMOTE_URL = "http://someServer:1234";
+
     static {
         try {
-            SHUNT_URL = new URL("http://someServer:1234");
+            SHUNT_URL = new URL(REMOTE_URL);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -48,12 +51,12 @@ public class ShuntRequestHandlerTest {
         when(mockRequest.getURI()).thenReturn(RELATIVE_URI);
         when(mockClient.execute(any(HttpUriRequest.class))).thenReturn(mockResponse);
 
-        shuntRequestHandler = new ShuntRequestHandler(SHUNT_URL);
+        shuntRequestHandler = new ShuntRequestHandler(Maps.asMap(ShuntRequestHandler.REMOTE_URL_KEY, REMOTE_URL));
     }
 
     @Test
     public void constructionCapturesShuntURL() {
-        assertThat(shuntRequestHandler.remoteURL, sameInstance(SHUNT_URL));
+        assertThat(shuntRequestHandler.remoteURL, equalTo(SHUNT_URL));
     }
 
     @Test

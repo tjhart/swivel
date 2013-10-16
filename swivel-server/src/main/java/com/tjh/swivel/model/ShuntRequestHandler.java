@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import vanderbilt.util.Maps;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -22,7 +23,9 @@ public class ShuntRequestHandler implements RequestHandler<HttpRequestBase> {
     protected Logger logger = Logger.getLogger(ShuntRequestHandler.class);
     protected final URL remoteURL;
 
-    public ShuntRequestHandler(URL remoteURL) { this.remoteURL = remoteURL; }
+    public ShuntRequestHandler(Map<String, String> shuntDescription) throws MalformedURLException {
+        this.remoteURL = new URL(shuntDescription.get(REMOTE_URL_KEY));
+    }
 
     public HttpResponse handle(HttpRequestBase request, URI matchedURI, HttpClient client) {
         try {

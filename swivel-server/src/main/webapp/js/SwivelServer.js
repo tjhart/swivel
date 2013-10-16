@@ -85,5 +85,16 @@ define(['jQuery', 'json2'], function ($, json2) {
                 data: json2.stringify(stubData)
             }).done(callback || defaultCallback);
         };
+
+        this.loadConfiguration = function (formData, callback) {
+            return $.ajax({
+                url: [baseUrl, CONFIG_PATH].join('/'),
+                type: 'PUT',
+                contentType: false,
+                processData: false,
+                data: formData
+            })
+                .done(callback || defaultCallback);
+        }
     };
 });

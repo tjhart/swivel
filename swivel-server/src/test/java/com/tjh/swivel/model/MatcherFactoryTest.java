@@ -23,7 +23,6 @@ import static org.mockito.Mockito.when;
 public class MatcherFactoryTest {
 
     public static final Map<String, String> STUB_DESCRIPTION = Maps.asMap(MatcherFactory.METHOD_KEY, "POST");
-    public static final URI LOCAL_URI = URI.create("some/path");
     public static final String APPLICATION_JSON = ContentType.APPLICATION_JSON.toString();
     public static final String CONTENT = "fred";
     public static final StringEntity STRING_ENTITY = new StringEntity(CONTENT, ContentType.APPLICATION_JSON);
@@ -49,14 +48,14 @@ public class MatcherFactoryTest {
         //This is backwards from normal - expected is usually on the left.
         //but if I put the actual on the left, when the assertion fails, I get a nice
         //description of what's wrong
-        assertThat(actualRequest, matcherFactory.buildMatcher(LOCAL_URI, STUB_DESCRIPTION));
+        assertThat(actualRequest, matcherFactory.buildMatcher(STUB_DESCRIPTION));
     }
 
     @Test
     public void buildMatcherDefersToBuildOptionalMatcher() throws IOException {
         MatcherFactory builderSpy = spy(matcherFactory);
 
-        builderSpy.buildMatcher(LOCAL_URI, STUB_DESCRIPTION);
+        builderSpy.buildMatcher(STUB_DESCRIPTION);
 
         verify(builderSpy).buildOptionalMatcher(STUB_DESCRIPTION);
     }

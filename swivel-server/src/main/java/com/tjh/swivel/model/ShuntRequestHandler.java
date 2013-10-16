@@ -18,6 +18,7 @@ import java.util.Map;
 public class ShuntRequestHandler implements RequestHandler<HttpRequestBase> {
 
     public static final String CONTENT_BASE_HEADER = "Content-Base";
+    public static final String REMOTE_URL_KEY = "remoteURL";
     protected Logger logger = Logger.getLogger(ShuntRequestHandler.class);
     protected final URL remoteURL;
 
@@ -50,7 +51,7 @@ public class ShuntRequestHandler implements RequestHandler<HttpRequestBase> {
 
     @Override
     public Map<String, Object> toMap() {
-        return Maps.<String, Object>asMap("remoteURL", remoteURL.toString());
+        return Maps.<String, Object>asMap(REMOTE_URL_KEY, remoteURL.toString());
     }
 
     //<editor-fold desc="Object">

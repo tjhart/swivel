@@ -5,13 +5,11 @@ import org.junit.Test;
 import vanderbilt.util.Maps;
 
 import javax.script.ScriptException;
-import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -19,7 +17,6 @@ import static org.mockito.Mockito.when;
 
 public class StubFactoryTest {
 
-    public static final URI LOCAL_URI = URI.create("some/url");
     public static final Map<String, String> WHEN_MAP = Collections.emptyMap();
     private static final Map<String, Object> THEN_MAP = Collections.emptyMap();
     public static final String DESCRIPTION = "description";
@@ -41,33 +38,33 @@ public class StubFactoryTest {
         stubFactory.setResponseFactory(mockResponseFactory);
 
         WhenMatcher mockMatcher = mock(WhenMatcher.class);
-        when(mockMatcherFactory.buildMatcher(any(URI.class), anyMap()))
+        when(mockMatcherFactory.buildMatcher(anyMap()))
                 .thenReturn(mockMatcher);
     }
 
     @Test
     public void createStubForDefersToMatcherFactory() throws ScriptException {
-        stubFactory.createStubFor(LOCAL_URI, STATIC_DESCRIPTION);
+        stubFactory.createStubFor(STATIC_DESCRIPTION);
 
-        verify(mockMatcherFactory).buildMatcher(LOCAL_URI, WHEN_MAP);
+        verify(mockMatcherFactory).buildMatcher(WHEN_MAP);
     }
 
     @Test
     public void createStubForDefersToResponseFactoryForStaticDescriptions() throws ScriptException {
-        stubFactory.createStubFor(LOCAL_URI, STATIC_DESCRIPTION);
+        stubFactory.createStubFor(STATIC_DESCRIPTION);
 
         verify(mockResponseFactory).createResponse(THEN_MAP);
     }
 
     @Test
     public void createStubForCreatesStaticStubRequestHandlerForStaticDescriptions() throws ScriptException {
-        assertThat(stubFactory.createStubFor(LOCAL_URI, STATIC_DESCRIPTION),
+        assertThat(stubFactory.createStubFor(STATIC_DESCRIPTION),
                 instanceOf(StaticStubRequestHandler.class));
     }
 
     @Test
     public void createStubForCreatesDynamicStubResponseHandlerForDynamicDescriptions() throws ScriptException {
-        StubRequestHandler stubRequestHandler = stubFactory.createStubFor(LOCAL_URI, Maps.<String, Object>asMap(
+        StubRequestHandler stubRequestHandler = stubFactory.createStubFor(Maps.<String, Object>asMap(
                 StubFactory.DESCRIPTION_KEY, DESCRIPTION,
                 StubFactory.WHEN_KEY, WHEN_MAP,
                 StubFactory.THEN_KEY, Maps.asMap(StubFactory.SCRIPT_KEY, "(function(){})();")

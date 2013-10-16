@@ -172,6 +172,16 @@ define(['jQuery'], function ($) {
                 return ajaxResultBuilder(data)
                     .done(callback || defaultCallback);
             };
+
+            this.loadConfiguration = function (formData, callback) {
+                console.log('TestSwivelServer.loadConfiguration');
+                console.log('can\'t fake this out in test');
+                console.log('formData is');
+                console.log(formData);
+
+                return ajaxResultBuilder(data)
+                    .done(callback || defaultCallback);
+            }
         };
     }
 );

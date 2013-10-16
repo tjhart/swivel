@@ -21,28 +21,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Configuration {
     public static final String SHUNT_NODE = "^shunt";
     public static final String STUB_NODE = "^stub";
+    public static final String STUBS_MAP_KEY = "stubs";
+    public static final String SHUNT_MAP_KEY = "shunt";
 
     public static Logger LOGGER = Logger.getLogger(Configuration.class);
 
     protected final Map<String, Map<String, Object>> uriHandlers = new PopulatingMap<String, Map<String, Object>>(
             new ConcurrentHashMap<String, Map<String, Object>>(),
-            new Block2<Map<String, Map<String, Object>>, Object, Map<String, Object>>() {
-                @Override
-                public Map<String, Object> invoke(Map<String, Map<String, Object>> stringMapMap, Object o) {
-                    return new PopulatingMap<String, Object>(new ConcurrentHashMap<String, Object>(),
-                            new Block2<Map<String, Object>, Object, Object>() {
-                                @Override
-                                public Object invoke(Map<String, Object> stringObjectMap, Object o) {
-                                    Object result = null;
-                                    if (STUB_NODE.equals(o)) {
-                                        result = new CopyOnWriteArrayList();
-                                    }
-
-                                    return result;
-                                }
-                            });
-                }
-            }
+            new UriHandlersPopulator(ConcurrentHashMap.class, CopyOnWriteArrayList.class)
     );
 
     public RequestHandler findRequestHandler(HttpRequestBase request, String matchedPath) {
@@ -164,7 +150,7 @@ public class Configuration {
             public Object invoke(String path, Map<String, Object> handlerMap) {
                 Map<String, Object> stubsAndShunt = new HashMap<String, Object>();
                 if (handlerMap.containsKey(STUB_NODE)) {
-                    stubsAndShunt.put("stubs", Lists.collect((List<StubRequestHandler>) handlerMap.get(STUB_NODE),
+                    stubsAndShunt.put(STUBS_MAP_KEY, Lists.collect((List<StubRequestHandler>) handlerMap.get(STUB_NODE),
                             new Block<StubRequestHandler, Map<String, Object>>() {
                                 @Override
                                 public Map<String, Object> invoke(StubRequestHandler stubRequestHandler) {
@@ -173,12 +159,15 @@ public class Configuration {
                             }));
                 }
                 if (handlerMap.containsKey(SHUNT_NODE)) {
-                    stubsAndShunt.put("shunt", ((ShuntRequestHandler) handlerMap.get(SHUNT_NODE)).toMap());
+                    stubsAndShunt.put(SHUNT_MAP_KEY, ((ShuntRequestHandler) handlerMap.get(SHUNT_NODE)).toMap());
                 }
                 result.put(path, stubsAndShunt);
                 return null;
             }
         });
         return result;
+    }
+
+    public void load(Map<String, Map<String, Object>> configMap) {
     }
 }

@@ -59,8 +59,10 @@ define(['jQuery'], function ($) {
                     });
             }).on('add-stub.swivelView',function (event, path) {
                 document.location = 'editStub.html';
-            }).on('get-config.swivelView', function (event, path) {
+            }).on('get-config.swivelView',function (event, path) {
                 document.location = 'rest/config';
+            }).on('load-configuration.swivelView', function (event, data) {
+                swivelServer.loadConfiguration(data, clientLoadConfigurationSuccess);
             });
     };
 });

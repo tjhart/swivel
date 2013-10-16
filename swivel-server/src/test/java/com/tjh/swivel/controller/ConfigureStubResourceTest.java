@@ -14,7 +14,6 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -41,7 +40,7 @@ public class ConfigureStubResourceTest {
         configureStubResource.setConfiguration(mockConfiguration);
         configureStubResource.setStubFactory(mockStubFactory);
 
-        when(mockStubFactory.createStubFor(any(URI.class), anyMap())).thenReturn(mockStubRequestHandler);
+        when(mockStubFactory.createStubFor(anyMap())).thenReturn(mockStubRequestHandler);
         when(mockStubRequestHandler.getId()).thenReturn(STUB_HANDLER_ID);
     }
 
@@ -49,7 +48,7 @@ public class ConfigureStubResourceTest {
     public void putStubDefersToFactory() throws ScriptException, URISyntaxException {
         configureStubResource.postStub(LOCAL_PATH, json);
 
-        verify(mockStubFactory).createStubFor(LOCAL_URI, json);
+        verify(mockStubFactory).createStubFor(json);
     }
 
     @Test

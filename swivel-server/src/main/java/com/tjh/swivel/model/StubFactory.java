@@ -1,7 +1,6 @@
 package com.tjh.swivel.model;
 
 import javax.script.ScriptException;
-import java.net.URI;
 import java.util.Map;
 
 public class StubFactory {
@@ -13,12 +12,12 @@ public class StubFactory {
     private ResponseFactory responseFactory;
 
     @SuppressWarnings("unchecked")
-    public StubRequestHandler createStubFor(URI localURI, Map<String, Object> stubMap) throws ScriptException {
+    public StubRequestHandler createStubFor(Map<String, Object> stubMap) throws ScriptException {
         //TODO:TJH - add a description entry in the top level map - use that
         //description when displaying on the GUI
         StubRequestHandler result;
         String description = (String) stubMap.get(DESCRIPTION_KEY);
-        WhenMatcher matcher = matcherFactory.buildMatcher(localURI, (Map<String, String>) stubMap.get(WHEN_KEY));
+        WhenMatcher matcher = matcherFactory.buildMatcher((Map<String, String>) stubMap.get(WHEN_KEY));
         Map<String, Object> then = (Map<String, Object>) stubMap.get(THEN_KEY);
         if (then.containsKey(SCRIPT_KEY)) {
             result = new DynamicStubRequestHandler(description, matcher, (String) then.get(SCRIPT_KEY));

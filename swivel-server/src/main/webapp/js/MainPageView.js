@@ -13,7 +13,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
         },
         CANCEL_BUTTON = {text: 'Cancel', click: function () {$(this).dialog('close');}};
 
-    return function ($configTree, $resetDialog, $addShuntDialog) {
+    return function ($configTree, $resetDialog, $addShuntDialog, $loadConfigDialog) {
         var view = this, $view = $(this), mode = 'add',
             DIALOG_BUTTONS = {
                 reset: {
@@ -32,6 +32,14 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                             remoteURL: dialog.find('#remoteURL').val(),
                             path: dialog.find('#shuntPath').val()
                         });
+                    }
+                },
+                'load-configuration': {
+                    text: 'Load Configuration',
+                    click: function () {
+                        var dialog = $(this);
+                        dialog.dialog('close');
+                        $view.trigger('load-configuration.swivelView', dialog.find('#swivelConfig')[0].files[0]);
                     }
                 }
             };
@@ -138,7 +146,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     ]} });
         }
 
-        $.each([$resetDialog, $addShuntDialog], function (idx, dialog) {
+        $.each([$resetDialog, $addShuntDialog, $loadConfigDialog], function (idx, dialog) {
             if (dialog) {
                 dialog.dialog($.extend({
                     buttons: [
@@ -171,6 +179,10 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
         $('#getConfig').button()
             .click(function () {
                 $view.trigger('get-config.swivelView');
+            });
+        $('#loadConfig').button()
+            .click(function () {
+                $loadConfigDialog.dialog('open');
             });
     };
 });

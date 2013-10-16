@@ -52,7 +52,7 @@ public class ConfigureStubResource {
     public Map<String, Object> postStub(@PathParam("localPath") String localPath, Map<String, Object> stubDescription)
             throws URISyntaxException, ScriptException {
         URI localUri = new URI(localPath);
-        StubRequestHandler stubRequestHandler = stubFactory.createStubFor(localUri, stubDescription);
+        StubRequestHandler stubRequestHandler = stubFactory.createStubFor(stubDescription);
 
         LOGGER.debug(String.format("Adding stub for %1$s", localUri));
         configuration.addStub(localUri, stubRequestHandler);
@@ -71,7 +71,7 @@ public class ConfigureStubResource {
 
         LOGGER.debug(String.format("Replacing stub %1$s:%2$d with %3$s", localPath, stubId, stubDescription));
         URI localURI = new URI(localPath);
-        StubRequestHandler stubRequestHandler = stubFactory.createStubFor(localURI, stubDescription);
+        StubRequestHandler stubRequestHandler = stubFactory.createStubFor(stubDescription);
 
         configuration.replaceStub(localURI, stubId, stubRequestHandler);
         return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());

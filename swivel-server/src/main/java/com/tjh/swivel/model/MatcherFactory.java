@@ -4,7 +4,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.hamcrest.Matcher;
 
 import javax.script.ScriptException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +33,7 @@ public class MatcherFactory {
     //some of the more complicated XML post matching stubs are going to be brittle
     //consider options for managing that - significant whitespace flag? (or more simply, xml/json)
     @SuppressWarnings("unchecked")
-    public WhenMatcher buildMatcher(URI localURI, Map<String, String> when) {
+    public WhenMatcher buildMatcher(Map<String, String> when) {
 
         List<Matcher<HttpUriRequest>> matchers = new ArrayList<Matcher<HttpUriRequest>>(STATIC_MATCHER_COUNT);
         matchers.add(hasMethod(equalTo(when.get(METHOD_KEY))));

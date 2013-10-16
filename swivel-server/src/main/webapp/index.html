@@ -21,6 +21,7 @@
         <button id="addShunt">Add Shunt</button>
         <button id="addStub">Add Stub</button>
         <button id="getConfig">Export</button>
+        <button id="loadConfig">Load Configuration...</button>
     </div>
 </div>
 
@@ -29,13 +30,19 @@
         Are you sure you want to reset Swivel? All stubs and shunts will be removed.
     </div>
     <div id="addOrEditShuntDialog" title="Add Shunt" data-action="add-or-edit-shunt">
-        <form name="addShunt">
+        <form name="addShunt" action="#">
             <div class="shuntElements">
                 <label for="shuntPath">Swivel Path</label>
                 <input id="shuntPath" type="text" name="path"/>
                 <label for="remoteURL">Remote URL:</label>
                 <input id="remoteURL" type="text" name="remoteURL"/>
             </div>
+        </form>
+    </div>
+    <div id="loadConfigDialog" title="Load Swivel Configuration" data-action="load-configuration">
+        <form action="#">
+            <label for="swivelConfig">File</label>
+            <input id="swivelConfig" type="file" name="swivelConfig"/>
         </form>
     </div>
 </div>

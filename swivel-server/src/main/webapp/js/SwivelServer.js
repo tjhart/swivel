@@ -86,13 +86,13 @@ define(['jQuery', 'json2'], function ($, json2) {
             }).done(callback || defaultCallback);
         };
 
-        this.loadConfiguration = function (formData, callback) {
+        this.loadConfiguration = function (config, callback) {
             return $.ajax({
                 url: [baseUrl, CONFIG_PATH].join('/'),
                 type: 'PUT',
-                contentType: 'multipart/form-data',
+                contentType: 'application/json',
                 processData: false,
-                data: formData
+                data: config
             })
                 .done(callback || defaultCallback);
         }

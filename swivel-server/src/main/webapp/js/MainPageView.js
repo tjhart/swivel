@@ -43,7 +43,8 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     click: function (e) {
                         var dialog = $(this);
                         dialog.dialog('close');
-                        $view.trigger('load-configuration.swivelView', document.getElementById('swivelConfig').files[0]);
+                        $view.trigger('load-configuration.swivelView',
+                            document.getElementById('swivelConfig').files[0]);
 
                         e.preventDefault();
                     }

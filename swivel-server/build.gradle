@@ -31,7 +31,6 @@ dependencies {
     compile group: 'com.sun.jersey', name: 'jersey-json', version: project.jerseyVersion
 
     runtime group: 'org.mozilla', name: 'rhino', version: '1.7R4'
-    compile group: 'com.sun.jersey.contribs', name: 'jersey-multipart', version: project.jerseyVersion
 
     providedCompile group: 'javax.servlet', name: 'servlet-api', version: '2.5'
 

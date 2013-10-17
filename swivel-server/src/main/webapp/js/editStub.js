@@ -5,13 +5,23 @@ requirejs.config({
     paths: {
         jQuery: 'lib/jquery-1.8.3.min',
         'jQuery-ui': 'lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min',
-        json2: 'lib/json2'
+        json2: 'lib/json2',
+        codemirror: 'lib/codemirror-3.18/lib/codemirror',
+        'cm-javascript': 'lib/codemirror-3.18/mode/javascript/javascript',
+        'cm-xml': 'lib/codemirror-3.18/mode/xml/xml',
+        'cm-matchbrackets': 'lib/codemirror-3.18/addon/edit/matchbrackets',
+        'cm-closebrackets': 'lib/codemirror-3.18/addon/edit/closebrackets'
 
     },
     shim: {
         jQuery: {deps: ['json2'], exports: 'jQuery'},
         'jQuery-ui': ['jQuery'],
-        json2: {exports: 'JSON'}
+        json2: {exports: 'JSON'},
+        codemirror: {exports: 'CodeMirror'},
+        'cm-javascript': ['codemirror'],
+        'cm-xml': ['codemirror'],
+        'cm-matchbrackets': ['codemirror'],
+        'cm-closebrackets': ['codemirror']
     }
 });
 

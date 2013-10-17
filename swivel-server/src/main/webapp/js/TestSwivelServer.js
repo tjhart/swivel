@@ -153,6 +153,9 @@ define(['jQuery'], function ($) {
 
             this.editStub = function (stubData, callback) {
                 var stubs = data[stubData.path].stubs, i;
+                console.log('TestSwivelServer#editStub');
+                console.log('stubData:');
+                console.log(stubData);
                 for (i = 0; i < stubs.length; i++) {
                     if (parseInt(stubs[i].id) === parseInt(stubData.id)) {
                         stubs[i] = stubData;
@@ -164,6 +167,9 @@ define(['jQuery'], function ($) {
             };
 
             this.addStub = function (stubData, callback) {
+                console.log('TestSwivelServer#addStub');
+                console.log('stubData:');
+                console.log(stubData);
                 stubCounter = stubCounter + 1;
                 stubData.id = stubCounter;
                 var stubs = data[stubData.path] = data[stubData.path] || {stubs: []};

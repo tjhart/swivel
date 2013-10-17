@@ -90,7 +90,7 @@ define(['jQuery', 'json2'], function ($, json2) {
             return $.ajax({
                 url: [baseUrl, CONFIG_PATH].join('/'),
                 type: 'PUT',
-                contentType: false,
+                contentType: 'multipart/form-data',
                 processData: false,
                 data: formData
             })

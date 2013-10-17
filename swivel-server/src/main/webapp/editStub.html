@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link type="text/css" rel="stylesheet" media="all" href="css/swivel.css"/>
     <link type="text/css" rel="stylesheet" media="all"
           href="js/lib/jquery-ui-1.10.3.custom/css/swivel/jquery-ui-1.10.3.custom.css"/>
+    <link type="text/css" rel="stylesheet" media="all" href="js/lib/codemirror-3.18/lib/codemirror.css"/>
+    <link type="text/css" rel="stylesheet" media="all" href="js/lib/codemirror-3.18/theme/neat.css"/>
+    <link type="text/css" rel="stylesheet" media="all" href="css/swivel.css"/>
 
     <script type="text/javascript" src="js/lib/require.js" data-main="js/editStub.js"></script>
     <title>Edit Stub</title>
@@ -57,12 +59,13 @@
                     </div>
                     <div>
                         <label for="content">Content:</label>
-                        <textarea id="content" name="content" class="verticalAlignTop" placeholder="(empty)"></textarea>
+
+                        <div id="content" class="editor verticalAlignTop"></div>
                     </div>
                     <div>
                         <label for="whenScript">Script:</label>
-                        <textarea id="whenScript" name="whenScript" class="verticalAlignTop" placeholder="(empty)"
-                                  cols="120"></textarea>
+
+                        <div id="whenScript" class="editor verticalAlignTop"></div>
                     </div>
                 </div>
             </div>
@@ -90,13 +93,13 @@
                         </div>
                         <div>
                             <label for="content2">Content:</label>
-                            <textarea id="content2" name="content2" class="verticalAlignTop"
-                                      placeholder="(empty)"></textarea>
+
+                            <div id="content2" class="editor verticalAlignTop"></div>
 
                         </div>
                     </div>
                     <div class="script ui-helper-hidden">
-                        <textarea id="thenScript" name="thenScript" placeholder="(empty)" cols="120"></textarea>
+                        <div id="thenScript" class="editor"></div>
                     </div>
                 </div>
             </div>

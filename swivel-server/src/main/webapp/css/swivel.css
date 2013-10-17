@@ -103,11 +103,6 @@ form {
     left: 700px;
 }
 
-.type {
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-
 .type label {
     width: 80px;
 }
@@ -152,4 +147,30 @@ form button {
 
 input {
     font-size: 18px;
+}
+
+.editor {
+    display: inline-block;
+    font-size: 14px;
+    border: 1px solid #443f29;
+    margin: 2px 5px 2px 0;
+}
+
+.when .CodeMirror {
+    width: 405px;
+    height: 175px;
+}
+
+.then .CodeMirror {
+    width: 405px;
+    height: 320px;
+}
+
+#thenScript {
+    margin-left: 40px;
+}
+
+#thenScript .CodeMirror {
+    width: 500px;
+    height: 413px;
 }

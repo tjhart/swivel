@@ -19,7 +19,7 @@ dependencies {
     providedCompile group: 'javax.ws.rs', name: 'jsr311-api', version: '1.1.1'
 
     compile group: 'org.springframework', name: 'spring-beans', version: project.springVersion
-    runtime group: 'org.springframework', name: 'spring-context', version: project.springVersion
+    compile group: 'org.springframework', name: 'spring-context', version: project.springVersion
     runtime group: 'org.springframework', name: 'spring-web', version: project.springVersion
 
     runtime(group: 'com.sun.jersey.contribs', name: 'jersey-spring', version: project.jerseyVersion) {

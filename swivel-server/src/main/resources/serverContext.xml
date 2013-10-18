@@ -8,8 +8,10 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 
     <import resource="routerContext.xml"/>
 
+    <bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper"/>
+
     <bean id="configurationResource" class="com.tjh.swivel.controller.ConfigurationResource"
-          p:configuration-ref="configuration"/>
+          p:configuration-ref="configuration" p:objectMapper-ref="objectMapper"/>
 
     <bean id="configureShuntResource" class="com.tjh.swivel.controller.ConfigureShuntResource"
           p:configuration-ref="configuration"/>
@@ -24,4 +26,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     <bean id="proxyResource" class="com.tjh.swivel.controller.ProxyResource"
           p:router-ref="requestRouter" p:requestFactory-ref="requestFactory"
           p:responseFactory-ref="jerseyResponseFactory"/>
+
+    <bean id="swivelStoppedListener" class="com.tjh.swivel.controller.SwivelClosedListener"
+          p:configuration-ref="configuration" p:objectMapper-ref="objectMapper"/>
 </beans>

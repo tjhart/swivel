@@ -12,6 +12,10 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+    
+    <listener>
+        <listener-class></listener-class>
+    </listener>
 
     <servlet>
         <servlet-name>JerseySpringServlet</servlet-name>
@@ -43,5 +47,5 @@
     <welcome-file-list>
         <welcome-file>/index.html</welcome-file>
     </welcome-file-list>
-
+    
 </web-app>

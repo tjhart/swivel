@@ -132,12 +132,12 @@ define(['jQuery', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml', 'cm-matc
                     event = 'edit-stub.swivelView';
                 }
                 $('#when')
-                    .find('input, select, textarea, #whenScript')
+                    .find('input, select, div.editor')
                     .each(getStubPart(WHEN_HASH, stubData.when));
 
                 $('#then')
                     .find(['.', $('[name="thenType"]:checked').val()].join(''))
-                    .find('input, textarea, #thenScript')
+                    .find('input, div.editor')
                     .each(getStubPart(THEN_HASH, stubData.then));
 
                 if (stubData.then.statusCode) {

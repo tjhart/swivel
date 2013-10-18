@@ -15,8 +15,10 @@ public class SwivelRefreshedListener extends SwivelListener implements Applicati
     public void onApplicationEvent(ContextRefreshedEvent event) {
         try {
             File saveFile = getSaveFile();
-            LOGGER.debug("Reading configuration from " + saveFile.getPath());
-            configuration.load(objectMapper.readValue(saveFile, Map.class));
+            if(saveFile.exists()){
+                LOGGER.debug("Reading configuration from " + saveFile.getPath());
+                configuration.load(objectMapper.readValue(saveFile, Map.class));
+            }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }

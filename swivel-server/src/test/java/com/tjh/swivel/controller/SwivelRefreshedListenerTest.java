@@ -14,6 +14,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class SwivelRefreshedListenerTest {
 
@@ -37,6 +38,8 @@ public class SwivelRefreshedListenerTest {
         doReturn(mockFile)
                 .when(swivelRefreshedListener)
                 .getSaveFile();
+
+        when(mockFile.exists()).thenReturn(true);
     }
 
     @Test

@@ -27,6 +27,9 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
           p:router-ref="requestRouter" p:requestFactory-ref="requestFactory"
           p:responseFactory-ref="jerseyResponseFactory"/>
 
-    <bean id="swivelStoppedListener" class="com.tjh.swivel.controller.SwivelClosedListener"
+    <bean id="swivelClosedListener" class="com.tjh.swivel.controller.SwivelClosedListener"
+          p:configuration-ref="configuration" p:objectMapper-ref="objectMapper"/>
+
+    <bean id="swivelRefreshedListener" class="com.tjh.swivel.controller.SwivelRefreshedListener"
           p:configuration-ref="configuration" p:objectMapper-ref="objectMapper"/>
 </beans>

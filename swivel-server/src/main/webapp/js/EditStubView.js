@@ -1,7 +1,7 @@
 "use strict";
 
-define(['jQuery', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml', 'cm-matchbrackets', 'cm-closebrackets'],
-    function ($, CodeMirror) {
+define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml', 'cm-matchbrackets', 'cm-closebrackets'],
+    function ($, utils, CodeMirror) {
         var CONTENT_TYPES = ['application/json', 'text/javascript', 'application/xml', 'text/html', 'text/plain',
                 'text/css', 'application/x-www-form-urlencoded'],
             STATUS_CODES = ["100", "101",
@@ -80,7 +80,7 @@ define(['jQuery', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml', 'cm-matc
                 $('#cancel')
                     .button()
                     .click(function () {
-                        window.location = 'index.html';
+                        utils.navigate('index.html');
                     });
                 $('#submit')
                     .button()

@@ -1,3 +1,5 @@
+"use strict";
+
 define(['MainPageController', 'SwivelServer', 'MainPageView', 'jQuery', 'jsHamcrest', 'jsMockito'],
     function (MainPageController, SwivelServer, MainPageView, $, jsHamcrest, jsMockito) {
         jsHamcrest.Integration.QUnit();

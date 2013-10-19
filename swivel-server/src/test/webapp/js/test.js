@@ -35,5 +35,5 @@ requirejs.config({
 
 (function () {
     require(['test/MainPageControllerTest', 'test/MainPageViewTest', 'test/MainPageViewDialogTest',
-        'test/SwivelServerTest', 'test/EditStubControllerTest']);
+        'test/SwivelServerTest', 'test/EditStubControllerTest', 'test/EditStubViewTest']);
 })();

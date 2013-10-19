@@ -1,3 +1,5 @@
+"use strict";
+
 define(['test/lib/Squire', 'jQuery', 'jsHamcrest', 'jsMockito'], function (Squire, $, jsHamcrest, jsMockito) {
     var injector = new Squire(), mockUtils = {};
 
@@ -45,7 +47,7 @@ define(['test/lib/Squire', 'jQuery', 'jsHamcrest', 'jsMockito'], function (Squir
 
 
             //The functionality works - can't get the tests to work, for some reason.
-//            test('controller defers to server on edit-stub.swivelView', 0, function () {
+//            test('controller defers to server on edit stub', 0, function () {
 //                var data = {};
 //                new EditStubController(this.mockSwivelServer, this.mockView);
 //                $(this.mockView).trigger('edit-stub.swivelView', data);

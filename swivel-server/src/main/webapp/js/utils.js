@@ -26,6 +26,9 @@ define(['jQuery'], function ($) {
             });
 
             return query;
-        }
+        },
+
+        //useful for testing
+        navigate: function (location) { window.location = location; }
     }
 });

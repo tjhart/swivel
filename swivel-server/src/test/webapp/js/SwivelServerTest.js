@@ -1,3 +1,5 @@
+"use strict";
+
 define(['test/lib/Squire', 'jQuery', 'json2', 'jsHamcrest', 'jsMockito'],
     function (Squire, $, json2, jsHamcrest, jsMockito) {
         var BASE_URL = 'http://server/path', injector = new Squire(), mockJQuery;

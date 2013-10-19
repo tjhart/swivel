@@ -1,3 +1,5 @@
+"use strict";
+
 define(['MainPageView', 'jQuery', 'jsHamcrest', 'jsMockito'], function (MainPageView, $, jsHamcrest, jsMockito) {
     jsHamcrest.Integration.QUnit();
     jsMockito.Integration.QUnit();

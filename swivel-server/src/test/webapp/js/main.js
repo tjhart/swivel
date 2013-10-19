@@ -24,5 +24,5 @@ requirejs.config({
 });
 
 (function () {
-    require(['test/MainPageControllerTest', 'test/MainPageViewTest']);
+    require(['test/MainPageControllerTest', 'test/MainPageViewTest', 'test/MainPageViewDialogTest']);
 })();

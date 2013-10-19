@@ -140,6 +140,9 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                 });
         };
 
+        //useful for testing
+        this._setMode = function (addOrEdit) { mode = addOrEdit; };
+
         //can be null in testing situations
         if ($configTree) {
             $configTree.one('loaded.jstree',function () {

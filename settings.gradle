@@ -1,2 +1,3 @@
 include 'swivel-server'
 include 'java-configuration-client'
+include 'integration-tests'

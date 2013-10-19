@@ -1,4 +1,4 @@
-package com.tjh.swivel.config.functional;
+package com.tjh.swivel.integration;
 
 import com.tjh.swivel.config.SwivelConfigurer;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -23,7 +23,7 @@ import static com.tjh.swivel.config.Swivel.get;
 import static com.tjh.swivel.config.Swivel.ok;
 import static com.tjh.swivel.config.Swivel.post;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThat;
 
 public class SwivelConfigurerTest {
 

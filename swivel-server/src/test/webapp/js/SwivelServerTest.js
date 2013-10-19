@@ -1,77 +1,190 @@
-RequireJSTestCase('swivel Server Tests', {
-    Squire: 'Squire',
-    $: 'jQuery',
+define(['test/lib/Squire', 'jQuery', 'json2', 'jsHamcrest', 'jsMockito'],
+    function (Squire, $, json2, jsHamcrest, jsMockito) {
+        var BASE_URL = 'http://server/path', injector = new Squire(), mockJQuery;
 
-    json2: 'json2',
-    jsMockito: 'jsMockito',
-    jsHamcrest: 'jsHamcrest'
-}, {
-    BASE_URL: 'http://server/path',
-    setUp: function (queue) {
-        this.r.jsHamcrest.Integration.JsTestDriver();
-        this.r.jsMockito.Integration.JsTestDriver();
+        jsHamcrest.Integration.QUnit();
+        jsMockito.Integration.QUnit();
 
-        var that = this, injector;
+        mockJQuery = {param: $.param};
 
-        function returnAjaxResult() {
-            return that.ajaxResult;
-        }
+        injector.mock('jQuery', mockJQuery);
+        injector.require(['SwivelServer'], function (SwivelServer) {
+            var ajaxResult;
 
-        this.ajaxResult = {
-            done: mockFunction('done', returnAjaxResult),
-            fail: mockFunction('fail', returnAjaxResult),
-            always: mockFunction('always', returnAjaxResult)
-        };
+            function returnAjaxResult() { return ajaxResult; }
 
-        this.mockJQuery = {ajax: mockFunction('ajax', returnAjaxResult), extend: this.r.$.extend};
+            module('SwivelServer tests', {
+                setup: function () {
+                    this.swivelServer = new SwivelServer(BASE_URL);
 
-        injector = new this.r.Squire();
-        injector.mock('jQuery', this.mockJQuery);
+                    //reset ajax for each test
+                    mockJQuery.ajax = mockFunction('ajax', returnAjaxResult);
 
-        queue.call('Injecting dependencies', function (callbacks) {
-            injector.require(['SwivelServer'], callbacks.add(function (SwivelServer) {
-                that.swivelServer = new SwivelServer(that.BASE_URL);
-            }));
+                    ajaxResult = {
+                        done: mockFunction('done', returnAjaxResult),
+                        fail: mockFunction('fail', returnAjaxResult),
+                        always: mockFunction('always', returnAjaxResult)
+                    };
+                }
+            });
+
+            test('getConfig calls expected URL on server', 0, function () {
+                this.swivelServer.getConfig();
+
+                verify(mockJQuery.ajax)(allOf(
+                    hasMember('url', equalTo(BASE_URL + '/rest/config')),
+                    hasMember('accept', equalTo('application/json')),
+                    hasMember('type', equalTo('GET'))
+                ));
+            });
+
+            test('deleteShunt calls expected URL on server', 0, function () {
+                this.swivelServer.deleteShunt('some/path');
+
+                verify(mockJQuery.ajax)(
+                    allOf(
+                        hasMember('url', equalTo(BASE_URL + '/rest/config/shunt/some/path')),
+                        hasMember('type', equalTo('DELETE'))
+                    )
+                );
+            });
+
+            test('deleteStub calls expected URL', 0, function () {
+                this.swivelServer.deleteStub({id: 1, path: 'some/path'});
+
+                verify(mockJQuery.ajax)(
+                    allOf(
+                        hasMember('url', equalTo(BASE_URL + '/rest/config/stub/some/path?id=1')),
+                        hasMember('type', equalTo('DELETE')),
+                        hasMember('accept', equalTo('application/json'))
+                    )
+                );
+            });
+
+            test('putShunt calls expected URL on server', 0, function () {
+                var shuntData = {path: 'local/uri', remoteURL: 'http://some/remote/url'};
+                this.swivelServer.putShunt(shuntData);
+
+                verify(mockJQuery.ajax)(
+                    allOf(
+                        hasMember('url', equalTo(BASE_URL + '/rest/config/shunt/local/uri')),
+                        hasMember('type', equalTo('PUT')),
+                        hasMember('accept', equalTo('application/json')),
+                        hasMember('contentType', equalTo('application/json')),
+                        hasMember('data', equalTo(json2.stringify({remoteURL: shuntData.remoteURL})))
+                    )
+                );
+            });
+
+            test('deletePath calls expected URL', 0, function () {
+                this.swivelServer.deletePath('some/path');
+
+                verify(mockJQuery.ajax)(
+                    allOf(
+                        hasMember('url', equalTo(BASE_URL + '/rest/config/path/some/path')),
+                        hasMember('type', equalTo('DELETE')),
+                        hasMember('accept', equalTo('application/json'))
+                    )
+                )
+            });
+
+            test('reset calls expected URL', 0, function () {
+                this.swivelServer.reset();
+
+                verify(mockJQuery.ajax)(
+                    allOf(
+                        hasMember('url', equalTo(BASE_URL + '/rest/config')),
+                        hasMember('type', equalTo('DELETE')),
+                        hasMember('accept', equalTo('application/json'))
+                    )
+                );
+            });
+
+            test('getStubs calls expected URL', 0, function () {
+                this.swivelServer.getStubs({path: 'some/path', ids: [1, 2, 3]});
+
+                verify(mockJQuery.ajax)(
+                    allOf(
+                        hasMember('url', equalTo(BASE_URL + '/rest/config/stub/some/path?' + $.param({ids: [1, 2, 3]}))),
+                        hasMember('type', equalTo('GET')),
+                        hasMember('accept', equalTo('application/json'))
+                    )
+                );
+            });
+
+            test('editStub calls expected URL', 0, function () {
+                var stubData = {path: 'some/path', id: 1};
+                this.swivelServer.editStub(stubData);
+
+                verify(mockJQuery.ajax)(
+                    allOf(
+                        hasMember('url', equalTo(BASE_URL + '/rest/config/stub/some/path/1')),
+                        hasMember('type', equalTo('PUT')),
+                        hasMember('contentType', equalTo('application/json')),
+                        hasMember('data', equalTo(json2.stringify(stubData)))
+                    )
+                );
+            });
+
+            test('addStub calls expected URL', 0, function () {
+                var stubData = {path: 'some/path'};
+                this.swivelServer.addStub(stubData);
+
+                verify(mockJQuery.ajax)(
+                    allOf(
+                        hasMember('url', equalTo(BASE_URL + '/rest/config/stub/some/path')),
+                        hasMember('type', equalTo('POST')),
+                        hasMember('contentType', equalTo('application/json')),
+                        hasMember('data', equalTo(json2.stringify(stubData)))
+                    )
+                );
+            });
+
+            test('loadConfiguration calls expected URL', 0, function () {
+                var data = {};
+                this.swivelServer.loadConfiguration(data);
+
+                verify(mockJQuery.ajax)(
+                    allOf(
+                        hasMember('url', equalTo(BASE_URL + '/rest/config')),
+                        hasMember('type', equalTo('PUT')),
+                        hasMember('contentType', equalTo('application/json')),
+                        hasMember('processData', is(false)),
+                        hasMember('data', equalTo(data))
+                    )
+                );
+            });
+
+            test('all server methods pass callback to done', 0, function () {
+                var SINGLE_ARG_METHODS = ['getConfig', 'reset'], that = this;
+
+                function myCallback() {}
+
+                $.each(this.swivelServer, function (key) {
+                    var args = [
+                        {},
+                        myCallback
+                    ];
+                    if (that.swivelServer.hasOwnProperty(key)) {
+                        ajaxResult.done = mockFunction('done', returnAjaxResult);
+                        if (SINGLE_ARG_METHODS.indexOf(key) > -1) {
+                            args = [myCallback];
+                        }
+                        that.swivelServer[key].apply(that.swivelServer, args);
+
+                        verify(ajaxResult.done)(myCallback);
+                    }
+                });
+            });
+
+            test('all server methods return promise', function () {
+                var that = this;
+                $.each(this.swivelServer, function (key) {
+                    if (that.swivelServer.hasOwnProperty(key)) {
+                        ajaxResult.done = mockFunction('done', returnAjaxResult);
+                        assertThat(that.swivelServer[key]({}), equalTo(ajaxResult));
+                    }
+                });
+            });
         });
-    },
-
-    'test getConfig calls expected URL on server': function () {
-        this.swivelServer.getConfig();
-
-        verify(this.mockJQuery.ajax)(allOf(
-            hasMember('url', equalTo(this.BASE_URL + '/rest/config')),
-            hasMember('accept', equalTo('application/json')),
-            hasMember('type', equalTo('GET'))
-        ));
-    },
-
-    'test getConfig returns promise': function () {
-        assertThat(this.swivelServer.getConfig(), equalTo(this.ajaxResult));
-    },
-
-    'test deleteShunt calls expected URL on server': function () {
-        this.swivelServer.deleteShunt('some/path');
-
-        verify(this.mockJQuery.ajax)(
-            allOf(
-                hasMember('url', equalTo(this.BASE_URL + '/rest/config/shunt/some/path')),
-                hasMember('type', equalTo('DELETE'))
-            )
-        );
-    },
-
-    'test putShunt calls expected URL on server': function () {
-        var shuntData = {path: 'local/uri', remoteURL: 'http://some/remote/url'};
-        this.swivelServer.putShunt(shuntData);
-
-        verify(this.mockJQuery.ajax)(
-            allOf(
-                hasMember('url', equalTo(this.BASE_URL + '/rest/config/shunt/local/uri')),
-                hasMember('type', equalTo('PUT')),
-                hasMember('accept', equalTo('application/json')),
-                hasMember('contentType', equalTo('application/json')),
-                hasMember('data', equalTo(this.r.json2.stringify({remoteURL: shuntData.remoteURL})))
-            )
-        );
-    }
-});
+    });

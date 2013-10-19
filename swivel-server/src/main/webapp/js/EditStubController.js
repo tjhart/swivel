@@ -4,9 +4,7 @@ define(['jQuery', 'utils'], function ($, utils) {
     return function (swivelServer, editStubView) {
         var query = utils.getQuery();
 
-        function goHome() {
-            window.location = 'index.html';
-        }
+        function goHome() { window.location = 'index.html'; }
 
         if (query.id) {
             swivelServer.getStubs(query, function (data) {

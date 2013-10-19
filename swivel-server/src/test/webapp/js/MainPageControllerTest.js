@@ -19,23 +19,21 @@ define(['MainPageController', 'SwivelServer', 'MainPageView', 'jQuery', 'jsHamcr
             }
         });
 
-        asyncTest('listens for view to load', 0, function () {
+        test('listens for view to load', 0, function () {
             this.controller.loadConfiguration = mockFunction();
 
             $(this.mockView).trigger('loaded.swivelView');
 
             verify(this.controller.loadConfiguration)();
-            start();
         });
 
-        asyncTest('loadConfiguration defers to server', 0, function () {
+        test('loadConfiguration defers to server', 0, function () {
             this.controller.loadConfiguration();
 
             verify(this.mockSwivelServer).getConfig();
-            start();
         });
 
-        asyncTest('loadConfiguration done defers to success', 0, function () {
+        test('loadConfiguration done defers to success', 0, function () {
             var doneHandler;
             when(this.mockSwivelServer)
                 .getConfig(typeOf('function'))
@@ -50,10 +48,9 @@ define(['MainPageController', 'SwivelServer', 'MainPageView', 'jQuery', 'jsHamcr
             doneHandler('data');
 
             verify(this.controller.loadConfigurationSuccess)('data');
-            start();
         });
 
-        asyncTest('getConfig done defers to view to load the data', 0, function () {
+        test('getConfig done defers to view to load the data', 0, function () {
             this.controller.loadConfigurationSuccess(SERVER_DATA);
 
             verify(this.mockView).loadConfigurationData(
@@ -73,19 +70,16 @@ define(['MainPageController', 'SwivelServer', 'MainPageView', 'jQuery', 'jsHamcr
                         ))
                     )
                 ));
-
-            start();
         });
 
-        asyncTest('delete shunt listener defers to server', 0, function () {
+        test('delete shunt listener defers to server', 0, function () {
             var shuntData = {path: 'some/path'};
             $(this.mockView).trigger('delete-shunt.swivelView', shuntData);
 
             verify(this.mockSwivelServer).deleteShunt('some/path');
-            start();
         });
 
-        asyncTest('delete shunt success loads configuration', 0, function () {
+        test('delete shunt success loads configuration', 0, function () {
             var doneHandler;
             this.controller.loadConfigurationSuccess = mockFunction();
             when(this.mockSwivelServer).deleteShunt(anything(), typeOf('function')).then(function (path, handler) {
@@ -97,18 +91,16 @@ define(['MainPageController', 'SwivelServer', 'MainPageView', 'jQuery', 'jsHamcr
             doneHandler('data');
 
             verify(this.controller.loadConfigurationSuccess)('data');
-            start();
         });
 
-        asyncTest('delete stub listener defers to server', 0, function () {
+        test('delete stub listener defers to server', 0, function () {
             var stubData = {path: 'some/path', id: 1};
             $(this.mockView).trigger('delete-stub.swivelView', stubData);
 
             verify(this.mockSwivelServer).deleteStub(stubData);
-            start();
         });
 
-        asyncTest('delete stub success loads configuration', 0, function () {
+        test('delete stub success loads configuration', 0, function () {
             var doneHandler;
             this.controller.loadConfigurationSuccess = mockFunction();
             when(this.mockSwivelServer).deleteStub(anything(), typeOf('function')).then(function (stubData, handler) {
@@ -120,10 +112,9 @@ define(['MainPageController', 'SwivelServer', 'MainPageView', 'jQuery', 'jsHamcr
             doneHandler('data');
 
             verify(this.controller.loadConfigurationSuccess)('data');
-            start();
         });
 
-        asyncTest('delete path listener deletes path', 0, function () {
+        test('delete path listener deletes path', 0, function () {
             var doneHandler, pathData = {path: 'some/path', stubs: [
                 {path: 'some/path', id: 1}
             ]};
@@ -139,8 +130,6 @@ define(['MainPageController', 'SwivelServer', 'MainPageView', 'jQuery', 'jsHamcr
 
             doneHandler('data');
             verify(this.controller.loadConfigurationSuccess)('data');
-            start();
         });
-
     });
 

@@ -1,11 +1,8 @@
-RequireJSTestCase('MainPageView tests', {
-    MainPageView: 'MainPageView',
+define(['MainPageView', 'jQuery', 'jsHamcrest', 'jsMockito'], function (MainPageView, $, jsHamcrest, jsMockito) {
+    jsHamcrest.Integration.QUnit();
+    jsMockito.Integration.QUnit();
 
-    $: 'jQuery',
-    jsHamcrest: 'jsHamcrest',
-    jsMockito: 'jsMockito'
-}, {
-    NODE_DATA: [
+    var NODE_DATA = [
         {
             path: 'some/path',
             shunt: {remoteURL: 'http://remoteHost/path'},
@@ -14,114 +11,122 @@ RequireJSTestCase('MainPageView tests', {
                 {id: 2, description: 'stub 2 description'}
             ]
         }
-    ],
-    setUp: function () {
-        /*:DOC +=
-         <ul>
-         <li class="path">
-         <ins>&nbsp;</ins>
-         <a href="#">
-         <ins>&nbsp;</ins>
-         <button class="delete" title="Delete" role="button">
-         <span></span>
-         <span></span>
-         </button>
-         some/path
-         </a>
-         <ul>
-         <li class="shunt">
-         <ins>&nbsp;</ins>
-         <a href="#">
-         <ins>&nbsp;</ins>
-         <button class="delete" title="Delete" role="button">
-         <span></span>
-         <span></span>
-         </button>
-         shunt: http://localhost/path
-         </a>
-         </li>
-         <li class="stubs">
-         <ins>&nbsp;</ins>
-         <a href="#">
-         <ins>&nbsp;</ins>
-         stubs
-         </a>
-         <ul>
-         <li class="stub">
-         <ins>&nbsp;</ins>
-         <a href="#">
-         <ins>&nbsp;</ins>
-         <button class="delete" title="Delete" role="button">
-         <span></span>
-         <span></span>
-         </button>
-         <button class="info" title="Edit" role="button">
-         <span></span>
-         <span></span>
-         </button>
-         Stub: 1
-         </a>
-         </li>
-         <li class="stub">
-         <ins>&nbsp;</ins>
-         <a href="#">
-         <ins>&nbsp;</ins>
-         <button class="delete" title="Delete" role="button">
-         <span></span>
-         <span></span>
-         </button>
-         <button class="info" title="Edit" role="button">
-         <span></span>
-         <span></span>
-         </button>
-         Stub: 2
-         </a>
-         </li>
-         </ul>
-         </li>
-         </ul>
-         </li>
-         </ul>
+    ];
 
-         <button id="reset"></button>
-         */
-        this.r.jsHamcrest.Integration.JsTestDriver();
-        this.r.jsMockito.Integration.JsTestDriver();
+    module('MainPageView tests', {
+        setup: function () {
+            $('#qunit-fixture').append(
+                '       <ul> ' +
+                    '       <li class="path"> ' +
+                    '       <ins>&nbsp;</ins> ' +
+                    '       <a href="#"> ' +
+                    '          <ins>&nbsp;</ins> ' +
+                    '           <button class="delete" title="Delete" role="button"> ' +
+                    '               <span></span> ' +
+                    '              <span></span> ' +
+                    '           </button>' +
+                    '           some/path ' +
+                    '       </a> ' +
+                    '       <ul> ' +
+                    '           <li class="shunt"> ' +
+                    '               <ins>&nbsp;</ins> ' +
+                    '               <a href="#"> ' +
+                    '                   <ins>&nbsp;</ins> ' +
+                    '                   <button class="delete" title="Delete" role="button"> ' +
+                    '                       <span></span> ' +
+                    '                       <span></span> ' +
+                    '                   </button> ' +
+                    '                   shunt: http://localhost/path ' +
+                    '               </a> ' +
+                    '           </li> ' +
+                    '           <li class="stubs"> ' +
+                    '               <ins>&nbsp;</ins> ' +
+                    '               <a href="#"> ' +
+                    '                   <ins>&nbsp;</ins> ' +
+                    '                   stubs ' +
+                    '               </a> ' +
+                    '               <ul> ' +
+                    '                  <li class="stub"> ' +
+                    '                       <ins>&nbsp;</ins> ' +
+                    '                       <a href="#"> ' +
+                    '                           <ins>&nbsp;</ins> ' +
+                    '                           <button class="delete" title="Delete" role="button"> ' +
+                    '                               <span></span> ' +
+                    '                               <span></span> ' +
+                    '                          </button> ' +
+                    '                           <button class="info" title="Edit" role="button"> ' +
+                    '                               <span></span> ' +
+                    '                               <span></span> ' +
+                    '                           </button> ' +
+                    '                           Stub: 1 ' +
+                    '                      </a> ' +
+                    '                   </li> ' +
+                    '                   <li class="stub"> ' +
+                    '                       <ins>&nbsp;</ins> ' +
+                    '                       <a href="#"> ' +
+                    '                           <ins>&nbsp;</ins> ' +
+                    '                           <button class="delete" title="Delete" role="button"> ' +
+                    '                               <span></span> ' +
+                    '                              <span></span> ' +
+                    '                           </button> ' +
+                    '                           <button class="info" title="Edit" role="button"> ' +
+                    '                               <span></span> ' +
+                    '                               <span></span> ' +
+                    '                           </button> ' +
+                    '                           Stub: 2 ' +
+                    '                      </a> ' +
+                    '                   </li> ' +
+                    '               </ul> ' +
+                    '          </li> ' +
+                    '       </ul>' +
+                    '   </li> ' +
+                    '</ul>' +
+                    '<button id="reset"></button>' +
+                    '<button id="loadConfig"></button>' +
+                    '<button id="addShunt"></button>' +
+                    '<button id="addStub"></button>' +
+                    '<button id="getConfig"></button>');
 
-        this.pathData = {path: 'some/path'};
-        this.shuntData = {};
-        this.stubData = {};
+            this.shuntData = {};
+            this.stubData = {};
+            this.pathData = {path: 'some/path'};
 
-        this.r.$('.path').data('path-data', this.pathData);
-        this.r.$('.stub').data('stub-data', this.stubData);
-        this.r.$('.shunt').data('shunt-data', this.shuntData);
+            $('.shunt').data('shunt-data', this.shuntData);
+            $('.stub').data('stub-data', this.stubData);
+            $('.path').data('path-data', this.pathData);
 
-        this.mockConfigTree = mock(this.r.$);
-        this.mockJQueryObject = mock(this.r.$);
-        this.mockResetDialog = mock(this.r.$);
+            this.mockConfigTree = mock($);
+            this.mockJQueryObject = mock($);
+            this.mockResetDialog = mock($);
+            this.mockAddShuntDialog = mock($);
+            this.mockLoadConfigDialog = mock($);
 
-        when(this.mockJQueryObject)
-            .find(anything())
-            .thenReturn(this.mockJQueryObject);
-        when(this.mockJQueryObject)
-            .not(anything())
-            .thenReturn(this.mockJQueryObject);
-        when(this.mockConfigTree)
-            .one(anything(), anything())
-            .thenReturn(this.mockConfigTree);
-        when(this.mockConfigTree)
-            .find(anything())
-            .thenReturn(this.mockJQueryObject);
-        when(this.mockConfigTree)
-            .jstree()
-            .thenReturn(this.mockConfigTree);
+            when(this.mockConfigTree)
+                .one(anything(), anything())
+                .thenReturn(this.mockConfigTree);
+            when(this.mockConfigTree)
+                .find(anything())
+                .thenReturn(this.mockJQueryObject);
+            when(this.mockConfigTree)
+                .jstree()
+                .thenReturn(this.mockConfigTree);
+            when(this.mockAddShuntDialog)
+                .find(anything())
+                .thenReturn(this.mockJQueryObject);
+            when(this.mockJQueryObject)
+                .removeClass(anything())
+                .thenReturn(this.mockJQueryObject);
+            when(this.mockJQueryObject)
+                .prop(anything(), anything())
+                .thenReturn(this.mockJQueryObject);
 
-        this.view = new this.r.MainPageView(this.mockConfigTree, this.mockResetDialog);
-        this.view.$remoteURL = this.mockJQueryObject;
-        this.view.targetPath = {path: 'some/path'};
-    },
+            this.view = new MainPageView(this.mockConfigTree, this.mockResetDialog, this.mockAddShuntDialog,
+                this.mockLoadConfigDialog);
+        }
+    });
 
-    'test construction configures tree': function () {
+
+    test('construction configures tree', 0, function () {
         verify(this.mockConfigTree).jstree(allOf(
             hasMember('core', hasMember('html_titles', is(true))),
             hasMember('plugins', allOf(hasItem('json_data'), hasItem('themeroller'))),
@@ -132,59 +137,59 @@ RequireJSTestCase('MainPageView tests', {
                     hasMember('attr', hasMember('id', equalTo('configRoot')))
                 ))))
         ));
-    },
+    });
 
-    'test construction listens for loaded.jstree': function () {
+    test('construction listens for loaded.jstree', 0, function () {
         verify(this.mockConfigTree).one('loaded.jstree', typeOf('function'));
-    },
+    });
 
-    'test loadConfigurationData creates path node': function () {
-        var mockPathNode = mock(this.r.$);
+    test('loadConfigurationData creates path node', 0, function () {
+        var mockPathNode = mock($);
         this.view.addClickEvents = mockFunction();
 
         when(this.mockConfigTree).jstree('create_node', anything(), anything(), anything())
             .thenReturn(mockPathNode);
-        this.view.loadConfigurationData(this.NODE_DATA);
+        this.view.loadConfigurationData(NODE_DATA);
 
         verify(this.mockConfigTree).jstree('create_node', this.view.rootNode, 'last', allOf(
-            hasMember('data', containsString(this.NODE_DATA[0].path)),
+            hasMember('data', containsString(NODE_DATA[0].path)),
             hasMember('state', equalTo('open'))
         ));
-    },
+    });
 
-    'test loadConfigurationData creates shunt leaf': function () {
-        var mockPathNode = mock(this.r.$);
+    test('loadConfigurationData creates shunt leaf', 0, function () {
+        var mockPathNode = mock($);
         this.view.addClickEvents = mockFunction();
 
         when(this.mockConfigTree).jstree('create_node', anything(), anything(), anything())
             .thenReturn(mockPathNode);
         when(mockPathNode).data(anything(), anything()).thenReturn(mockPathNode);
-        this.view.loadConfigurationData(this.NODE_DATA);
+        this.view.loadConfigurationData(NODE_DATA);
 
         verify(this.mockConfigTree).jstree('create_node', mockPathNode, 'inside', allOf(
-            hasMember('data', containsString('shunt: ' + this.NODE_DATA[0].shunt.remoteURL)),
+            hasMember('data', containsString('shunt: ' + NODE_DATA[0].shunt.remoteURL)),
             hasMember('attr', hasMember('class', equalTo('shunt')))
         ));
-    },
+    });
 
-    'test loadConfigurationData creates stub nodes': function () {
-        var mockPathNode = mock(this.r.$);
+    test('loadConfigurationData creates stub nodes', 0, function () {
+        var mockPathNode = mock($);
         this.view.addClickEvents = mockFunction();
 
         when(this.mockConfigTree).jstree('create_node', anything(), anything(), anything())
             .thenReturn(mockPathNode);
         when(mockPathNode).data(anything(), anything()).thenReturn(mockPathNode);
 
-        this.view.loadConfigurationData(this.NODE_DATA);
+        this.view.loadConfigurationData(NODE_DATA);
         verify(this.mockConfigTree).jstree('create_node', mockPathNode, 'last', allOf(
             hasMember('data', equalTo('stubs')),
             hasMember('state', equalTo('open')),
             hasMember('attr', hasMember('class', equalTo('stubs')))
         ));
-    },
+    });
 
-    'test loadConfigurationData creates stub leafs': function () {
-        var mockPathNode = mock(this.r.$), mockStubsNode = mock(this.r.$);
+    test('loadConfigurationData creates stub leafs', 0, function () {
+        var mockPathNode = mock($), mockStubsNode = mock($);
         this.view.addClickEvents = mockFunction();
 
         when(this.mockConfigTree).jstree('create_node', this.view.rootNode, anything(), anything())
@@ -195,77 +200,152 @@ RequireJSTestCase('MainPageView tests', {
             .thenReturn(mockStubsNode);
         when(mockPathNode).data(anything(), anything()).thenReturn(mockPathNode);
 
-        this.view.loadConfigurationData(this.NODE_DATA);
+        this.view.loadConfigurationData(NODE_DATA);
         verify(this.mockConfigTree).jstree('create_node', mockStubsNode, 'last', allOf(
-            hasMember('data', containsString(this.NODE_DATA[0].stubs[0].id)),
+            hasMember('data', containsString(NODE_DATA[0].stubs[0].id)),
             hasMember('attr', hasMember('class', equalTo('stub')))
         ));
         verify(this.mockConfigTree).jstree('create_node', mockStubsNode, 'last', allOf(
-            hasMember('data', containsString(this.NODE_DATA[0].stubs[1].description)),
+            hasMember('data', containsString(NODE_DATA[0].stubs[1].description)),
             hasMember('attr', hasMember('class', equalTo('stub')))
         ));
-    },
+    });
 
-    'test shunt delete button triggers as expected': function () {
-        var $deleteShuntButton = this.r.$('.shunt button.delete'), triggeredData;
+    test('shunt delete button triggers as expected', 1, function () {
+        var that = this, $deleteShuntButton = $('.shunt button.delete');
 
         when(this.mockConfigTree)
             .find('.shunt button.delete')
             .thenReturn($deleteShuntButton);
         this.view.addClickEvents();
-        this.r.$(this.view).one('delete-shunt.swivelView', function (event, data) {
-            triggeredData = data;
+        $(this.view).one('delete-shunt.swivelView', function (event, data) {
+            assertThat(data, equalTo(that.shuntData));
         });
 
         $deleteShuntButton.click();
+    });
 
-        assertThat(triggeredData, equalTo(this.shuntData));
-    },
-
-    'test stub delete button triggers as expected': function () {
-        var $deleteStubButton = this.r.$('.stub button.delete'), triggeredData;
+    test('stub delete button triggers as expected', 1, function () {
+        var that = this, $deleteStubButton = $('.stub button.delete');
 
         when(this.mockConfigTree)
             .find('.stub button.delete')
             .thenReturn($deleteStubButton);
         this.view.addClickEvents();
-        this.r.$(this.view).one('delete-stub.swivelView', function (event, data) {
-            triggeredData = data;
+        $(this.view).one('delete-stub.swivelView', function (event, data) {
+            assertThat(data, equalTo(that.stubData));
         });
 
         $deleteStubButton.click();
+    });
 
-        assertThat(triggeredData, equalTo(this.stubData));
-    },
-
-    'test delete path button triggers as expected': function () {
-        var $deletePathButton = this.r.$('.path > a > button.delete'), triggeredData;
+    test('delete path button triggers as expected', 1, function () {
+        var that = this, $deletePathButton = $('.path > a > button.delete');
 
         when(this.mockConfigTree)
             .find('.path > a > button.delete')
             .thenReturn($deletePathButton);
         this.view.addClickEvents();
-        this.r.$(this.view).one('delete-path.swivelView', function (event, data) {
-            triggeredData = data;
+        $(this.view).one('delete-path.swivelView', function (event, data) {
+            assertThat(data, equalTo(that.pathData));
         });
 
         $deletePathButton.click();
+    });
 
-        assertThat(triggeredData, equalTo(this.pathData));
-    },
+    test('init configures dialogs', 0, function () {
+        $.each([this.mockResetDialog, this.mockAddShuntDialog, this.mockLoadConfigDialog], function (i, dialog) {
+            verify(dialog).dialog(allOf(
+                hasMember('autoOpen', is(false)),
+                hasMember('closeOnEscape', is(false)),
+                hasMember('modal', is(true)),
+                hasMember('resizable', is(false))
+            ));
+        });
+    });
 
-    'test init configures dialog': function () {
-        verify(this.mockResetDialog).dialog(allOf(
-            hasMember('autoOpen', is(false)),
-            hasMember('closeOnEscape', is(false)),
-            hasMember('modal', is(true)),
-            hasMember('resizable', is(false))
-        ));
-    },
-
-    'test reset opens dialog': function () {
-        this.r.$('#reset').click();
+    test('reset opens dialog', 0, function () {
+        $('#reset').click();
 
         verify(this.mockResetDialog).dialog('open');
-    }
+    });
+
+    test('addShunt enablesShuntPath', function () {
+        var $fixture = $('#qunit-fixture').append(
+            '   <form>' +
+                '   <input id="shuntPath" type="text"/>' +
+                '   <input id="remoteURL" type="text"/>' +
+                '</form>'
+        ), $shuntPath;
+        $shuntPath = $('#shuntPath');
+
+        when(this.mockAddShuntDialog)
+            .find('#shuntPath')
+            .thenReturn($shuntPath);
+        $('#addShunt').click();
+
+        assertThat($shuntPath.hasClass('ui-state-disabled'), is(false));
+        assertThat($shuntPath.prop('readonly'), is(false));
+    });
+
+    test('addShunt clears values', function () {
+        var $fixture = $('#qunit-fixture').append(
+            '   <form>' +
+                '   <input id="shuntPath" type="text"/>' +
+                '   <input id="remoteURL" type="text"/>' +
+                '</form>'
+        ), $shuntPath, $remoteURL;
+        $shuntPath = $('#shuntPath');
+        $remoteURL = $('#remoteURL');
+
+        when(this.mockAddShuntDialog)
+            .find('#shuntPath')
+            .thenReturn($shuntPath);
+        when(this.mockAddShuntDialog)
+            .find('#remoteURL')
+            .thenReturn($remoteURL);
+        $('#addShunt').click();
+
+        assertThat($shuntPath.val(), equalTo(''));
+        assertThat($remoteURL.val(), equalTo(''));
+    });
+
+    test('addShunt sets title', 0, function () {
+        $('#addShunt').click();
+
+        verify(this.mockAddShuntDialog).dialog('option', 'title', 'Add Shunt');
+    });
+
+    test('addShunt opens dialog', 0, function () {
+        $('#addShunt').click();
+
+        verify(this.mockAddShuntDialog).dialog('open');
+    });
+
+    test('addStub triggers event', 1, function () {
+        var triggered = false;
+        $(this.view).on('add-stub.swivelView', function () {
+            triggered = true;
+        });
+
+        $('#addStub').click();
+        assertThat(triggered, is(true));
+    });
+
+    test('getConfig triggeres event', 1, function () {
+        var triggered = false;
+        $(this.view).on('get-config.swivelView', function () {
+            triggered = true;
+        });
+
+        $('#getConfig').click();
+        assertThat(triggered, is(true));
+    });
+
+    test('loadConfig opens dialog', 0, function () {
+        $('#loadConfig').click();
+
+        verify(this.mockLoadConfigDialog).dialog('open');
+    });
 });
+

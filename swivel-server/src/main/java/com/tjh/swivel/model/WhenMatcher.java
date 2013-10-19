@@ -28,8 +28,7 @@ public class WhenMatcher implements Matcher<HttpUriRequest> {
     public static final String CONTENT_KEY = "content";
     public static final String SCRIPT_KEY = "script";
     public static final String QUERY_KEY = "query";
-    public static final int STATIC_MATCHER_COUNT = 2;
-    public static final int OPTIONAL_MATCHER_COUNT = 5;
+    public static final int OPTIONAL_MATCHER_COUNT = 6;
 
     private final Matcher<? extends HttpUriRequest> matcher;
     private final Map<String, String> when;
@@ -44,18 +43,12 @@ public class WhenMatcher implements Matcher<HttpUriRequest> {
     //consider options for managing that - significant whitespace flag? (or more simply, xml/json)
     @SuppressWarnings("unchecked")
     private Matcher<? extends HttpUriRequest> createMatcher() {
-        List<Matcher<HttpUriRequest>> matchers = new ArrayList<Matcher<HttpUriRequest>>(STATIC_MATCHER_COUNT);
-        matchers.add(hasMethod(equalTo(when.get(METHOD_KEY))));
-
-        matchers.add(buildOptionalMatcher());
-        return allOf(matchers.toArray(new Matcher[matchers.size()]));
-    }
-
-    @SuppressWarnings("unchecked")
-    protected Matcher<HttpUriRequest> buildOptionalMatcher() {
         try {
-            List<Matcher<HttpUriRequest>> result =
-                    new ArrayList<Matcher<HttpUriRequest>>(OPTIONAL_MATCHER_COUNT);
+            List<Matcher<HttpUriRequest>> result = new ArrayList<Matcher<HttpUriRequest>>(OPTIONAL_MATCHER_COUNT);
+            if(when.containsKey(METHOD_KEY)){
+                result.add(hasMethod(equalTo(when.get(METHOD_KEY))));
+            }
+
             String queryString = when.get(QUERY_KEY);
             if (queryString != null) {
                 result.add(hasQueryString(equalTo(queryString)));

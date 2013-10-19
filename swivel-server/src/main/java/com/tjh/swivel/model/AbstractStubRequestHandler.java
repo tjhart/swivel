@@ -20,11 +20,12 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     public static final String WHEN_KEY = "when";
     public static final String SCRIPT_KEY = "script";
     public static final String DESCRIPTION_KEY = "description";
+    public static final String ID_KEY = "id";
 
     private static Logger logger = Logger.getLogger(AbstractStubRequestHandler.class);
     protected static ResponseFactory responseFactory = new ResponseFactory();
 
-    protected final WhenMatcher matcher;
+    protected WhenMatcher matcher;
     protected final Map<String, Object> then;
     private final String description;
 
@@ -79,7 +80,7 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     public Map<String, Object> toMap() {
         return Maps.<String, Object>asMap(
                 DESCRIPTION_KEY, description,
-                "id", getId(),
+                ID_KEY, getId(),
                 WHEN_KEY, matcher.toMap(),
                 THEN_KEY, then
         );

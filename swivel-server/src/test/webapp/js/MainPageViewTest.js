@@ -36,6 +36,10 @@ define(['MainPageView', 'jQuery', 'jsHamcrest', 'jsMockito'], function (MainPage
                     '                       <span></span> ' +
                     '                       <span></span> ' +
                     '                   </button> ' +
+                    '                   <button class="edit" title="Edit" role="button"> ' +
+                    '                       <span></span> ' +
+                    '                       <span></span> ' +
+                    '                   </button> ' +
                     '                   shunt: http://localhost/path ' +
                     '               </a> ' +
                     '           </li> ' +
@@ -54,7 +58,7 @@ define(['MainPageView', 'jQuery', 'jsHamcrest', 'jsMockito'], function (MainPage
                     '                               <span></span> ' +
                     '                               <span></span> ' +
                     '                          </button> ' +
-                    '                           <button class="info" title="Edit" role="button"> ' +
+                    '                           <button class="edit" title="Edit" role="button"> ' +
                     '                               <span></span> ' +
                     '                               <span></span> ' +
                     '                           </button> ' +
@@ -69,7 +73,7 @@ define(['MainPageView', 'jQuery', 'jsHamcrest', 'jsMockito'], function (MainPage
                     '                               <span></span> ' +
                     '                              <span></span> ' +
                     '                           </button> ' +
-                    '                           <button class="info" title="Edit" role="button"> ' +
+                    '                           <button class="edit" title="Edit" role="button"> ' +
                     '                               <span></span> ' +
                     '                               <span></span> ' +
                     '                           </button> ' +
@@ -87,7 +91,7 @@ define(['MainPageView', 'jQuery', 'jsHamcrest', 'jsMockito'], function (MainPage
                     '<button id="addStub"></button>' +
                     '<button id="getConfig"></button>');
 
-            this.shuntData = {};
+            this.shuntData = {path: 'some/path', shunt: {remoteURL: 'http://host/path'}};
             this.stubData = {};
             this.pathData = {path: 'some/path'};
 
@@ -115,6 +119,9 @@ define(['MainPageView', 'jQuery', 'jsHamcrest', 'jsMockito'], function (MainPage
                 .thenReturn(this.mockJQueryObject);
             when(this.mockJQueryObject)
                 .removeClass(anything())
+                .thenReturn(this.mockJQueryObject);
+            when(this.mockJQueryObject)
+                .addClass(anything())
                 .thenReturn(this.mockJQueryObject);
             when(this.mockJQueryObject)
                 .prop(anything(), anything())
@@ -253,6 +260,106 @@ define(['MainPageView', 'jQuery', 'jsHamcrest', 'jsMockito'], function (MainPage
         $deletePathButton.click();
     });
 
+    test('edit stub triggers as expected', 1, function () {
+        var $editStubButton = $('.stub button.edit'), that = this;
+
+        when(this.mockConfigTree)
+            .find('.stub button.edit')
+            .thenReturn($editStubButton);
+        this.view.addClickEvents();
+        $(this.view).one('edit-stub.swivelView', function (event, data) {
+            assertThat(data, equalTo(that.stubData));
+        });
+
+        $editStubButton.click();
+    });
+
+    test('edit shunt disables shuntPath', function () {
+        var $fixture = $('#qunit-fixture').append(
+            '   <form>' +
+                '   <input id="shuntPath" type="text"/>' +
+                '   <input id="remoteURL" type="text"/>' +
+                '</form>'
+        ), $editShuntButton = $('.shunt button.edit'), $shuntPath;
+        $shuntPath = $('#shuntPath');
+
+        when(this.mockAddShuntDialog)
+            .find('#shuntPath')
+            .thenReturn($shuntPath);
+        when(this.mockConfigTree)
+            .find('.shunt button.edit')
+            .thenReturn($editShuntButton);
+        this.view.addClickEvents();
+        $editShuntButton.click();
+
+        assertThat($shuntPath.hasClass('ui-state-disabled'), is(true));
+        assertThat($shuntPath.prop('readonly'), is(true));
+    });
+
+    test('edit shunt sets input values', function () {
+        var $fixture = $('#qunit-fixture').append(
+            '   <form>' +
+                '   <input id="shuntPath" type="text"/>' +
+                '   <input id="remoteURL" type="text"/>' +
+                '</form>'
+        ), $editShuntButton = $('.shunt button.edit'), $shuntPath, $remoteURL;
+        $shuntPath = $('#shuntPath');
+        $remoteURL = $('#remoteURL');
+
+        when(this.mockAddShuntDialog)
+            .find('#shuntPath')
+            .thenReturn($shuntPath);
+        when(this.mockAddShuntDialog)
+            .find('#remoteURL')
+            .thenReturn($remoteURL);
+        when(this.mockConfigTree)
+            .find('.shunt button.edit')
+            .thenReturn($editShuntButton);
+        this.view.addClickEvents();
+        $editShuntButton.click();
+
+        assertThat($shuntPath.val(), equalTo(this.shuntData.path));
+        assertThat($remoteURL.val(), equalTo(this.shuntData.shunt.remoteURL));
+    });
+
+    test('edit shunt sets dialog title', 0, function () {
+        var $editShuntButton = $('.shunt button.edit');
+
+        when(this.mockAddShuntDialog)
+            .find('#shuntPath')
+            .thenReturn(this.mockJQueryObject);
+        when(this.mockAddShuntDialog)
+            .find('#remoteURL')
+            .thenReturn(this.mockJQueryObject);
+        when(this.mockConfigTree)
+            .find('.shunt button.edit')
+            .thenReturn($editShuntButton);
+        this.view.addClickEvents();
+
+        $editShuntButton.click();
+
+        verify(this.mockAddShuntDialog).dialog('option', 'title', 'Edit Shunt');
+    });
+
+    test('edit shunt opens dialog', 0, function () {
+        var $editShuntButton = $('.shunt button.edit');
+
+        when(this.mockAddShuntDialog)
+            .find('#shuntPath')
+            .thenReturn(this.mockJQueryObject);
+        when(this.mockAddShuntDialog)
+            .find('#remoteURL')
+            .thenReturn(this.mockJQueryObject);
+        when(this.mockConfigTree)
+            .find('.shunt button.edit')
+            .thenReturn($editShuntButton);
+        this.view.addClickEvents();
+
+        $editShuntButton.click();
+
+        verify(this.mockAddShuntDialog).dialog('open');
+    });
+
     test('init configures dialogs', 0, function () {
         $.each([this.mockResetDialog, this.mockAddShuntDialog, this.mockLoadConfigDialog], function (i, dialog) {
             verify(dialog).dialog(allOf(
@@ -332,7 +439,7 @@ define(['MainPageView', 'jQuery', 'jsHamcrest', 'jsMockito'], function (MainPage
         assertThat(triggered, is(true));
     });
 
-    test('getConfig triggeres event', 1, function () {
+    test('getConfig triggers event', 1, function () {
         var triggered = false;
         $(this.view).on('get-config.swivelView', function () {
             triggered = true;

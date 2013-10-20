@@ -1,0 +1,22 @@
+{
+    "some/path": {
+        "shunt": {
+            "remoteURL": "http://host/path"
+        }
+    },
+    "some/other/path": {
+        "stubs": [
+            {
+                "id": 1,
+                "description": "simple stub",
+                "when": {
+                    "method": "GET"
+                },
+                "then": {
+                    "statusCode": 200,
+                    "reason": "OK"
+                }
+            }
+        ]
+    }
+}

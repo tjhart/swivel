@@ -7,6 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/integration-tests/src/main/resources" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/integration-tests/src/test/resources" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/integration-tests/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/integration-tests/src/test/casper" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/integration-tests/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/integration-tests/build" />
     </content>
@@ -26,6 +27,7 @@
     <orderEntry type="library" exported="" name="cglib-nodep-2.1_3" level="project" />
     <orderEntry type="library" scope="TEST" name="objenesis-1.0" level="project" />
     <orderEntry type="module" module-name="java-configuration-client" exported="" />
+    <orderEntry type="library" scope="TEST" name="casper" level="application" />
   </component>
 </module>
 

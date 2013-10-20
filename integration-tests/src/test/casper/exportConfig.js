@@ -1,12 +1,12 @@
 (function () {
-    var utils = require('utils');
+    function getConfigEntries() {
+        return $('#configRoot').find('ul').length;
+    }
 
-    var configFound = false, config;
+    var config;
 
     casper.options.onResourceReceived = function (casper, resource) {
-        config = null;
-        configFound = resource.url.match(/\/config$/) != null;
-        if (configFound) {
+        if (resource.url.match(/\/config$/)) {
             config = resource;
         }
     };
@@ -14,12 +14,24 @@
     casper.test.comment('Exporting config');
 
     casper.start('http://localhost:8080/swivel_server_war_exploded/', function () {
-        casper.waitFor(function () {return configFound});
+        casper.waitUntilVisible('#loadConfig', function () {
+            casper.click('#loadConfig');
+            casper.fill('#loadConfigDialog form', {
+                'swivelConfig': 'integration-tests/src/test/casper/testSwivelConfig.json'
+            });
+            casper.click('#loadConfigOK');
+
+            casper.waitUntilVisible('#configRoot', function () {
+                var entries = casper.evaluate(getConfigEntries);
+                casper.echo('Configuration now has ' + entries + ' entries');
+                config = null;
+            });
+        });
     });
 
     casper.then(function () {
         casper.click('#getConfig');
-        casper.waitFor(function () {return configFound}, function () {
+        casper.waitFor(function () {return config != null}, function () {
             var headers = {};
             casper.each(config.headers, function (casper, item) {
                 headers[item.name] = item.value;

@@ -17,6 +17,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
         var view = this, $view = $(this), mode = 'add',
             DIALOG_BUTTONS = {
                 reset: {
+                    id: 'resetOK',
                     text: 'OK',
                     click: function (e) {
                         $(this).dialog('close');
@@ -26,6 +27,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     }
                 },
                 'add-or-edit-shunt': {
+                    id: 'addShuntOK',
                     text: 'OK',
                     click: function (e) {
                         var dialog = $(this);
@@ -39,6 +41,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     }
                 },
                 'load-configuration': {
+                    id:'loadConfigOK',
                     text: 'Load Configuration',
                     click: function (e) {
                         var dialog = $(this);

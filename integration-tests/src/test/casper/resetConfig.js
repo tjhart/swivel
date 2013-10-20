@@ -12,7 +12,7 @@
             casper.fill('#loadConfigDialog form', {
                 'swivelConfig': 'integration-tests/src/test/casper/testSwivelConfig.json'
             });
-            casper.clickLabel('Load Configuration');
+            casper.click('#loadConfigOK');
 
             casper.waitUntilVisible('#configRoot', function () {
                 var entries = casper.evaluate(getConfigEntries);
@@ -27,7 +27,7 @@
     });
 
     casper.then(function () {
-        casper.clickLabel('OK');
+        casper.click('#resetOK');
         casper.test.assertNotVisible('#resetDialog', 'Reset Dialog dismissed');
     });
 

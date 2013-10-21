@@ -1,13 +1,18 @@
+//TODO:TJH - refactor into 2 modules - one specific for casper tests, one generic for Node environment
+
 (function () {
+    //YELLOWTAG:TJH - this should probably be part of the config.
     const BASE_URL = 'http://localhost:8080/swivel_server_war_exploded/';
     exports.BASE_URL = BASE_URL;
     exports.HOME_URL = BASE_URL + 'index.html';
     exports.EDIT_STUB_URL = BASE_URL + 'editStub.html';
+    exports.PROXY_URL = BASE_URL + 'rest/proxy';
+
     const CONFIG_URL = BASE_URL + 'rest/config';
+    const APPLICATION_JSON_HEADER = {'Content-Type': 'application/json'};
 
     var webpage = require('webpage');
     var fs = require('fs');
-
 
     function getConfigEntries() {
         return casper.evaluate(function () {return __utils__.findAll('.stub,.shunt').length;});
@@ -25,7 +30,7 @@
         var config = fs.read('integration-tests/src/test/casper/testSwivelConfig.json'),
             page = webpage.create();
 
-        page.customHeaders = {'Content-Type': 'application/json'};
+        page.customHeaders = APPLICATION_JSON_HEADER;
 
         page.open(CONFIG_URL, 'PUT', config, function (status) {
             page.close();
@@ -68,4 +73,18 @@
     }
 
     exports.getEditorText = getEditorText;
+
+    function configureShunt(shuntConfig) {
+        var page = webpage.create();
+        page.customHeaders = APPLICATION_JSON_HEADER;
+        page.open([CONFIG_URL, 'shunt', shuntConfig.path].join('/'), 'PUT', JSON.stringify(shuntConfig),
+            function (status) {
+                page.close();
+                if (status === 'fail') {
+                    throw 'configureShunt failed';
+                }
+            });
+    }
+
+    exports.configureShunt = configureShunt;
 })();

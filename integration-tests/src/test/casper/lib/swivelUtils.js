@@ -33,22 +33,28 @@
         page.customHeaders = APPLICATION_JSON_HEADER;
 
         page.open(CONFIG_URL, 'PUT', config, function (status) {
-            page.close();
-            if (status === 'fail') {
-                throw 'load config failed';
+            try {
+                page.close();
+                if (status === 'fail') {
+                    throw 'load config failed';
+                }
+            } finally {
+                casper.emit('config.loaded');
             }
         });
     }
 
     exports.loadTestConfig = loadTestConfig;
 
-    function reset() {
+    function reset(callback) {
         var page = webpage.create();
         page.open(CONFIG_URL, 'DELETE', function (status) {
             page.close();
             if (status === 'fail') {
                 throw 'reset failed';
             }
+            casper.emit('swivel.reset');
+            if (callback) callback();
         });
     }
 
@@ -74,7 +80,7 @@
 
     exports.getEditorText = getEditorText;
 
-    function configureShunt(path, shuntConfig) {
+    function configureShunt(path, shuntConfig, callback) {
         var page = webpage.create();
         page.customHeaders = APPLICATION_JSON_HEADER;
         page.open([CONFIG_URL, 'shunt', path].join('/'), 'PUT', JSON.stringify(shuntConfig), function (status) {
@@ -82,12 +88,14 @@
             if (status === 'fail') {
                 throw 'configureShunt failed';
             }
+            casper.emit('swivel.shunt.configured');
+            if (callback) callback();
         });
     }
 
     exports.configureShunt = configureShunt;
 
-    function configureStub(path, stubConfig) {
+    function configureStub(path, stubConfig, callback) {
         var page = webpage.create();
         page.customHeaders = APPLICATION_JSON_HEADER;
         page.open([CONFIG_URL, 'stub', path].join('/'), 'POST', JSON.stringify(stubConfig), function (status) {
@@ -95,6 +103,8 @@
             if (status === 'fail') {
                 throw 'configureStub failed';
             }
+            casper.emit('swivel.stub.configured');
+            if (callback) callback();
         });
     }
 

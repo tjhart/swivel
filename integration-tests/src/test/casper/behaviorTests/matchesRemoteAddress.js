@@ -9,17 +9,19 @@
             runTests();
         }
     }
-    swivelUtils.reset();
-    swivelUtils.configureStub('some/path', {
-        description: 'Testing: this stub matches 127.0.0.1',
-        when: {remoteAddress: '0:0:0:0:0:0:0:1'},//localhost match
-        then: {statusCode: 200, reason: 'OK'}
-    }, checkConfigurationComplete);
-    swivelUtils.configureStub('some/other/path', {
-        description: 'Testing:this stub should not match during automated testing',
-        when: {remoteAddress: '999.999.999.999'},
-        then: {statusCode: 200, reason: 'OK'}
-    }, checkConfigurationComplete);
+
+    swivelUtils.reset(function () {
+        swivelUtils.configureStub('some/path', {
+            description: 'Testing: this stub matches 127.0.0.1',
+            when: {remoteAddress: '0:0:0:0:0:0:0:1'},//localhost match
+            then: {statusCode: 200, reason: 'OK'}
+        }, checkConfigurationComplete);
+        swivelUtils.configureStub('some/other/path', {
+            description: 'Testing:this stub should not match during automated testing',
+            when: {remoteAddress: '999.999.999.999'},
+            then: {statusCode: 200, reason: 'OK'}
+        }, checkConfigurationComplete);
+    });
 
     function runTests() {
         casper.test.begin('stub matches remoteAddress tests', function (test) {

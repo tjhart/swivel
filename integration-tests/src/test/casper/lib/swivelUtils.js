@@ -26,21 +26,18 @@
 
     exports.waitForConfigToLoad = waitForConfigToLoad;
 
-    function loadTestConfig() {
+    function loadTestConfig(callback) {
         var config = fs.read('integration-tests/src/test/casper/testSwivelConfig.json'),
             page = webpage.create();
 
         page.customHeaders = APPLICATION_JSON_HEADER;
 
         page.open(CONFIG_URL, 'PUT', config, function (status) {
-            try {
-                page.close();
-                if (status === 'fail') {
-                    throw 'load config failed';
-                }
-            } finally {
-                casper.emit('config.loaded');
+            page.close();
+            if (status === 'fail') {
+                throw 'load config failed';
             }
+            if (callback) callback();
         });
     }
 
@@ -53,7 +50,6 @@
             if (status === 'fail') {
                 throw 'reset failed';
             }
-            casper.emit('swivel.reset');
             if (callback) callback();
         });
     }
@@ -88,7 +84,6 @@
             if (status === 'fail') {
                 throw 'configureShunt failed';
             }
-            casper.emit('swivel.shunt.configured');
             if (callback) callback();
         });
     }
@@ -103,7 +98,6 @@
             if (status === 'fail') {
                 throw 'configureStub failed';
             }
-            casper.emit('swivel.stub.configured');
             if (callback) callback();
         });
     }

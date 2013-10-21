@@ -20,38 +20,39 @@
         response.close();
     });
 
-    swivelUtils.reset();
-    swivelUtils.configureShunt('testServer', {remoteURL: 'http://127.0.0.1:8090'});
-
-    casper.test.begin('Shunt behavior tests', function (test) {
-        casper.start(PROXY_URL, function () {
-            test.assertSelectorHasText('body', 'url:/some/path, method:GET');
-        });
-
-        casper.then(function () {
-            casper.open(PROXY_URL, {method: 'DELETE'})
-                .then(function () {
-                    test.assertSelectorHasText('body', 'url:/some/path, method:DELETE');
+    swivelUtils.reset(function () {
+        swivelUtils.configureShunt('testServer', {remoteURL: 'http://127.0.0.1:8090'}, function () {
+            casper.test.begin('Shunt behavior tests', function (test) {
+                casper.start(PROXY_URL, function () {
+                    test.assertSelectorHasText('body', 'url:/some/path, method:GET');
                 });
-        });
 
-        casper.then(function () {
-            casper.open(PROXY_URL, {method: 'PUT', data: {foo: 'foo', bar: 1}, headers: {'Content-Type': 'application/json'}})
-                .then(function () {
-                    test.assertSelectorHasText('body', 'url:/some/path, method:PUT, contentType:application/json, post:foo=foo&bar=1');
+                casper.then(function () {
+                    casper.open(PROXY_URL, {method: 'DELETE'})
+                        .then(function () {
+                            test.assertSelectorHasText('body', 'url:/some/path, method:DELETE');
+                        });
                 });
-        });
 
-        casper.then(function () {
-            casper.open(PROXY_URL, {method: 'POST', data: 'plainData', headers: {'Content-Type': 'text/plain'}})
-                .then(function () {
-                    test.assertSelectorHasText('body', 'url:/some/path, method:POST, contentType:text/plain, post:plainData');
+                casper.then(function () {
+                    casper.open(PROXY_URL, {method: 'PUT', data: {foo: 'foo', bar: 1}, headers: {'Content-Type': 'application/json'}})
+                        .then(function () {
+                            test.assertSelectorHasText('body', 'url:/some/path, method:PUT, contentType:application/json, post:foo=foo&bar=1');
+                        });
                 });
-        });
 
-        casper.run(function () {
-            server.close();
-            test.done();
+                casper.then(function () {
+                    casper.open(PROXY_URL, {method: 'POST', data: 'plainData', headers: {'Content-Type': 'text/plain'}})
+                        .then(function () {
+                            test.assertSelectorHasText('body', 'url:/some/path, method:POST, contentType:text/plain, post:plainData');
+                        });
+                });
+
+                casper.run(function () {
+                    server.close();
+                    test.done();
+                });
+            });
         });
     });
 })();

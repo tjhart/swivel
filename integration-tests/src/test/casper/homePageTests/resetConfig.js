@@ -21,7 +21,7 @@
 
         casper.then(function () {
             swivelUtils.whenConfigLoaded(function () {
-                test.assertElementCount('.stub,.shunt', 0, 'Configuration root has zero entries');
+                test.assertElementCount('.path,.stub,.shunt', 0, 'Configuration root has zero entries');
             });
         });
 

@@ -77,6 +77,12 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
             };
 
             this.configure = function () {
+                var editorElement = {
+                    content: document.getElementById('content'),
+                    content2: document.getElementById('content2'),
+                    whenScript: document.getElementById('whenScript'),
+                    thenScript: document.getElementById('thenScript')
+                };
                 $('#cancel')
                     .button()
                     .click(function () {
@@ -110,14 +116,15 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
                 $('.content').removeClass('ui-helper-hidden');
                 //The script editors need to be initialized *after* the content is made visible. Otherwise,
                 //they don't render properly
-                this.content = CodeMirror(document.getElementById('content'),
-                    $.extend({smartIndent: false}, CODEMIRROR_OPTS));
-                this.content2 = CodeMirror(document.getElementById('content2'),
-                    $.extend({smartIndent: false}, CODEMIRROR_OPTS));
-                this.whenScript = CodeMirror(document.getElementById('whenScript'),
-                    $.extend({mode: 'javascript'}, CODEMIRROR_OPTS));
-                this.thenScript = CodeMirror(document.getElementById('thenScript'),
-                    $.extend({mode: 'javascript'}, CODEMIRROR_OPTS));
+                this.content = CodeMirror(editorElement.content, $.extend({smartIndent: false}, CODEMIRROR_OPTS));
+                this.content2 = CodeMirror(editorElement.content2, $.extend({smartIndent: false}, CODEMIRROR_OPTS));
+                this.whenScript = CodeMirror(editorElement.whenScript, $.extend({mode: 'javascript'}, CODEMIRROR_OPTS));
+                this.thenScript = CodeMirror(editorElement.thenScript, $.extend({mode: 'javascript'}, CODEMIRROR_OPTS));
+
+                //put the editors in the DOM so the casper test scripts can find them
+                $.each(editorElement, function (key, val) {
+                    $(val).data('editor', view[key]);
+                });
             };
 
             this.editStub = function () {

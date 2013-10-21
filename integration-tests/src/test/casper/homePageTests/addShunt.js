@@ -25,7 +25,9 @@
 
         casper.then(function () {
             swivelUtils.whenConfigLoaded(function () {
+                test.assertSelectorHasText('.path', 'some/path', 'path is listed');
                 test.assertElementCount('.shunt', 1, 'shunt is listed');
+                test.assertSelectorHasText('.shunt', 'http://host/some/path', 'remoteURL is displayed');
             });
         });
 

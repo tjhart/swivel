@@ -4,10 +4,7 @@
 
     casper.test.begin('Load configuration', function (test) {
         casper.start(swivelUtils.HOME_URL, function () {
-            swivelUtils.whenConfigLoaded(function () {
-                casper.click('#reset');
-                casper.click('#resetOK');
-            });
+            swivelUtils.reset();
         });
 
         casper.then(function () {

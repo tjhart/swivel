@@ -9,18 +9,9 @@
     };
 
     casper.test.begin('Exporting config', function (test) {
-        casper.start('http://localhost:8080/swivel_server_war_exploded/', function () {
-            casper.waitUntilVisible('#loadConfig', function () {
-                casper.click('#loadConfig');
-                casper.fill('#loadConfigDialog form', {
-                    'swivelConfig': 'integration-tests/src/test/casper/testSwivelConfig.json'
-                });
-                casper.click('#loadConfigOK');
-
-                casper.waitUntilVisible('#configRoot', function () {
-                    casper.echo('Configuration now has ' + swivelUtils.getConfigEntries() + ' entries');
-                    config = null;
-                });
+        casper.start(swivelUtils.HOME_URL, function () {
+            swivelUtils.loadTestConfig(function () {
+                config = null;
             });
         });
 

@@ -1,7 +1,8 @@
 (function () {
 
-    casper.test.begin('Add a shunt', function(test){
-        casper.start('http://localhost:8080/swivel_server_war_exploded/', function () {
+    var swivelUtils = require('../lib/swivelUtils');
+    casper.test.begin('Add a shunt', function (test) {
+        casper.start(swivelUtils.HOME_URL, function () {
             casper.viewport(1280, 1024).then(function () {
                 casper.waitUntilVisible('#configRoot', function () {
                     casper.click('#reset');
@@ -24,7 +25,7 @@
 
         casper.then(function () {
             casper.waitUntilVisible('#configRoot', function () {
-                test.assertElementCount('#configRoot ul', 2, 'shunt is listed');
+                test.assertElementCount('.shunt', 1, 'shunt is listed');
             });
         });
 

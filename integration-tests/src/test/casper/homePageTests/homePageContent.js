@@ -1,7 +1,7 @@
 (function () {
+    var swivelUtils = require('../lib/swivelUtils');
     casper.test.begin('Home page loaded content', function (test) {
-
-        casper.start('http://localhost:8080/swivel_server_war_exploded/', function () {
+        casper.start(swivelUtils.HOME_URL, function () {
             test.assertHttpStatus(200);
             test.assertTitle('Swivel');
         });

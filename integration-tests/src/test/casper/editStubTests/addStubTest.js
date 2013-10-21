@@ -45,12 +45,9 @@
                 swivelUtils.waitForConfigToLoad(function () {
                     test.assertSelectorHasText('.path', EXPECTED_FORM.path, 'stub path listed');
                     test.assertSelectorHasText('.stub', EXPECTED_FORM.description, 'stub description listed');
+                    casper.click('.stub button.edit');
                 });
             });
-        });
-
-        casper.then(function () {
-            casper.click('.stub button.edit');
         });
 
         casper.then(function () {

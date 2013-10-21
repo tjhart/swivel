@@ -27,7 +27,6 @@
     <orderEntry type="library" exported="" name="cglib-nodep-2.1_3" level="project" />
     <orderEntry type="library" scope="TEST" name="objenesis-1.0" level="project" />
     <orderEntry type="module" module-name="java-configuration-client" exported="" />
-    <orderEntry type="library" scope="TEST" name="casperjs-1.1.0-DEV" level="application" />
   </component>
 </module>
 

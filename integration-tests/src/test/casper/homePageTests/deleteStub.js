@@ -9,6 +9,7 @@
             casper.click('.stub button.delete');
             swivelUtils.whenConfigLoaded(function () {
                 test.assertDoesntExist('.stub', 'Stub deleted');
+                test.assertElementCount('.path', 1, 'stub path automatically removed');
             });
         });
 

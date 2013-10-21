@@ -159,7 +159,7 @@ public class Configuration {
             @Override
             public Object invoke(String path, Map<String, Object> handlerMap) {
                 Map<String, Object> stubsAndShunt = new HashMap<String, Object>();
-                if (!((List)handlerMap.get(STUB_NODE)).isEmpty()) {
+                if (!((List) handlerMap.get(STUB_NODE)).isEmpty()) {
                     stubsAndShunt.put(STUBS_MAP_KEY, Lists.collect((List<StubRequestHandler>) handlerMap.get(STUB_NODE),
                             new Block<StubRequestHandler, Map<String, Object>>() {
                                 @Override
@@ -183,8 +183,14 @@ public class Configuration {
         return (List<StubRequestHandler>) uriHandlers.get(path).get(Configuration.STUB_NODE);
     }
 
-    private void clean(String path, Map<String, Object> handlerMap, String nodeType) {
+    void clean(String path, Map<String, Object> handlerMap, String nodeType) {
         Object shuntRequestHandler = handlerMap.remove(nodeType);
+        if (handlerMap.containsKey(STUB_NODE)) {
+            List stubs = (List) handlerMap.get(STUB_NODE);
+            if (stubs.isEmpty()) {
+                handlerMap.remove(STUB_NODE);
+            }
+        }
         if (handlerMap.isEmpty()) {
             uriHandlers.remove(path);
         }

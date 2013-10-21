@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -20,6 +21,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ConfigurationTest {
@@ -141,6 +143,26 @@ public class ConfigurationTest {
         configuration.replaceStub(LOCAL_URI, STUB_HANDLER_ID, mockNewStub);
 
         assertThat(configuration.getStubs(LOCAL_URI.getPath(), Collections.<Integer>emptyList()),
-                equalTo((Collection)Arrays.asList(mockNewStub)));
+                equalTo((Collection) Arrays.asList(mockNewStub)));
+    }
+
+    @Test
+    public void cleanRemovesNodeType() {
+        Map<String, Object> mockMap = mock(Map.class);
+        configuration.clean("some/path", mockMap, Configuration.SHUNT_NODE);
+
+        verify(mockMap).remove(Configuration.SHUNT_NODE);
+    }
+
+    @Test
+    public void cleanRemovesStubNodeIfEmpty() {
+        Map<String, Object> mockMap = mock(Map.class);
+        when(mockMap.containsKey(Configuration.STUB_NODE))
+                .thenReturn(true);
+        when(mockMap.get(Configuration.STUB_NODE))
+                .thenReturn(Collections.emptyList());
+
+        configuration.clean("some/path", mockMap, Configuration.SHUNT_NODE);
+        verify(mockMap).remove(Configuration.STUB_NODE);
     }
 }

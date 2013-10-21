@@ -4,9 +4,7 @@
 
     casper.test.begin('Reset Configuration test', function (test) {
         casper.start(swivelUtils.HOME_URL, function () {
-            swivelUtils.whenConfigLoaded(function () {
-                swivelUtils.loadTestConfig();
-            });
+            swivelUtils.loadTestConfig();
         });
 
         casper.then(function () {

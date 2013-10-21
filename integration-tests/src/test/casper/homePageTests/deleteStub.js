@@ -2,9 +2,7 @@
     var swivelUtils = require('../lib/swivelUtils');
     casper.test.begin('Delete stub', function (test) {
         casper.start(swivelUtils.HOME_URL, function () {
-            swivelUtils.whenConfigLoaded(function () {
-                swivelUtils.loadTestConfig();
-            });
+            swivelUtils.loadTestConfig();
         });
 
         casper.then(function () {

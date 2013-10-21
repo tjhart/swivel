@@ -4,12 +4,12 @@
 
     casper.test.begin('Add Stub Navigates as Expected', function (test) {
         casper.start(swivelUtils.HOME_URL, function () {
-            casper.waitUntilVisible('#addStub', function () {
+            swivelUtils.whenConfigLoaded(function () {
                 casper.click('#addStub');
             });
         });
 
-        casper.then(function(){
+        casper.then(function () {
             test.assertHttpStatus(200, 'Successful navigation');
             test.assertUrlMatch(urlRegexp, 'Navigation successful');
         });

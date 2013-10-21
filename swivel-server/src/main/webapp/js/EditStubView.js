@@ -33,7 +33,7 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
                 lineNumbers: true};
 
         return function () {
-            var view = this, $view = $(this);
+            var view = this, $view = $(this), $path = $('#path'), $description = $('#description');
 
             function loadStubPart(keyHash, source) {
                 $.each(source, function (sourceKey, sourceVal) {
@@ -64,11 +64,10 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
 
             this.setStub = function (path, stub) {
                 this.id = stub.id;
-                $('#path')
-                    .val(path)
+                $path.val(path)
                     .prop('readonly', true)
                     .addClass('ui-state-disabled');
-                $('#description').val(stub.description);
+                $description.val(stub.description);
                 if (stub.then.script) {
                     $('#scriptThen').click();
                 }
@@ -129,8 +128,8 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
 
             this.editStub = function () {
                 var stubData = {
-                    description: $('#description').val(),
-                    path: $('#path').val(),
+                    description: $description.val(),
+                    path: $path.val(),
                     when: { },
                     then: { } }, event = 'add-stub.swivelView';
 

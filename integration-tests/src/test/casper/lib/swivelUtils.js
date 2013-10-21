@@ -14,7 +14,7 @@ function whenConfigLoaded(callback) {
 exports.whenConfigLoaded = whenConfigLoaded;
 
 function loadTestConfig(callback) {
-    casper.waitUntilVisible('#loadConfig', function () {
+    whenConfigLoaded(function () {
         casper.click('#loadConfig');
         casper.fill('#loadConfigDialog form', {
             'swivelConfig': 'integration-tests/src/test/casper/testSwivelConfig.json'

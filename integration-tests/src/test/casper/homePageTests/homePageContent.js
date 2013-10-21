@@ -8,7 +8,7 @@
 
         casper.then(function () {
             swivelUtils.whenConfigLoaded(function () {
-                test.assertTrue(casper.getHTML('#configRoot > a').match(/Configuration/) != null,
+                test.assertSelectorHasText('#configRoot > a', 'Configuration',
                     'configuration root label is: "Configuration"');
                 test.assertVisible('#reset', 'Reset button is visible');
                 test.assertVisible('#addShunt', 'Add shunt button is visible');

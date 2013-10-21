@@ -41,7 +41,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     }
                 },
                 'load-configuration': {
-                    id:'loadConfigOK',
+                    id: 'loadConfigOK',
                     text: 'Load Configuration',
                     click: function (e) {
                         var dialog = $(this);
@@ -64,14 +64,12 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     data: [DELETE_BUTTON, item.path].join(''),
                     state: 'open',
                     attr: {class: 'path'}
-                })
-                    .data('path-data', item), i, stubNode, stub;
+                }).data('path-data', item), i, stubNode, stub;
                 if (item.shunt) {
                     $configTree.jstree('create_node', pathNode, 'inside', {
                         data: [DELETE_BUTTON, EDIT_BUTTON, 'shunt: ', item.shunt.remoteURL].join(''),
                         attr: {class: 'shunt'}
-                    })
-                        .data('shunt-data', item);
+                    }).data('shunt-data', item);
                 }
                 if (item.stubs) {
                     stubNode = $configTree.jstree('create_node', pathNode, 'last', {
@@ -84,8 +82,7 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                         $configTree.jstree('create_node', stubNode, 'last', {
                             data: [DELETE_BUTTON, EDIT_BUTTON, 'Stub: ', stub.description].join(''),
                             attr: {class: 'stub'}
-                        })
-                            .data('stub-data', stub);
+                        }).data('stub-data', stub);
                     }
                 }
             });

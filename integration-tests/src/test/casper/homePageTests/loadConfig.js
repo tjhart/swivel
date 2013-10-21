@@ -4,16 +4,6 @@
 
     casper.test.begin('Load configuration', function (test) {
         casper.start(swivelUtils.HOME_URL, function () {
-            swivelUtils.reset();
-        });
-
-        casper.then(function () {
-            swivelUtils.whenConfigLoaded(function () {
-                casper.echo('Reset Swivel to ' + swivelUtils.getConfigEntries() + ' entries');
-            });
-        });
-
-        casper.then(function () {
             swivelUtils.loadTestConfig(function () {
                 test.assertElementCount('.stub,.shunt', 2, 'Successfully loaded entries');
             });

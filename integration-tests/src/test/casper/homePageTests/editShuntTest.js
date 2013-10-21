@@ -10,17 +10,16 @@
         });
 
         casper.then(function () {
-            casper.waitUntilVisible('#addOrEditShuntDialog', function () {
-                test.assertExists('#shuntPath.ui-state-disabled', 'Path element has disabled class');
-                test.assertExists('#shuntPath[readonly]', 'path element is readonly');
-                casper.fill('#addOrEditShuntDialog form', {
-                    'remoteURL': 'http://different.host/path'
-                });
-                casper.click('#addShuntOK');
+            test.assertVisible('#addOrEditShuntDialog', 'Shut dialog is visible');
+            test.assertExists('#shuntPath.ui-state-disabled', 'Path element has disabled class');
+            test.assertExists('#shuntPath[readonly]', 'path element is readonly');
+            casper.fill('#addOrEditShuntDialog form', {
+                'remoteURL': 'http://different.host/path'
             });
+            casper.click('#addShuntOK');
         });
 
-        casper.then(function(){
+        casper.then(function () {
             test.assertSelectorHasText('.shunt', 'http://different.host/path', 'Shunt updated');
         });
 

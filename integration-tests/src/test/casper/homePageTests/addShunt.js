@@ -4,23 +4,19 @@
     casper.test.begin('Add a shunt', function (test) {
         casper.start(swivelUtils.HOME_URL, function () {
             casper.viewport(1280, 1024).then(function () {
-                swivelUtils.whenConfigLoaded(function () {
-                    casper.click('#reset');
-                    casper.click('#resetOK');
-                });
+                swivelUtils.reset();
             });
         });
 
         casper.then(function () {
             casper.click('#addShunt');
-            casper.waitUntilVisible('#addOrEditShuntDialog', function () {
-                casper.fill('#addOrEditShuntDialog form', {
-                    path: 'some/path',
-                    remoteURL: 'http://host/some/path'
-                });
-                casper.click('#addShuntOK');
-                casper.waitWhileVisible('#addOrEditShuntDialog');
+            test.assertVisible('#addOrEditShuntDialog', 'Add shunt dialog appears');
+            casper.fill('#addOrEditShuntDialog form', {
+                path: 'some/path',
+                remoteURL: 'http://host/some/path'
             });
+            casper.click('#addShuntOK');
+            casper.waitWhileVisible('#addOrEditShuntDialog');
         });
 
         casper.then(function () {

@@ -10,7 +10,6 @@
             statusCode: '200',
             reason: 'OK',
             responseContentType: 'text/xml'
-
         },
         EXPECTED_EDITORS = {
             content: '<node></node>',

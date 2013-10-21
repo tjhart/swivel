@@ -7,6 +7,7 @@
             query: 'query',
             remoteAddress: '127.0.0.1',
             requestContentType: 'application/xml',
+            thenType: 'static',
             statusCode: '200',
             reason: 'OK',
             responseContentType: 'text/xml'
@@ -31,7 +32,6 @@
         casper.then(function () {
             var key;
 
-            casper.click('#staticThen');
             casper.fill('form', EXPECTED_FORM);
 
             for (key in EXPECTED_EDITORS) {
@@ -62,12 +62,7 @@
 
                 test.assertExists('#path.ui-state-disabled', 'Path has ui-state-disabled class');
                 test.assertExists('#path[readonly]', 'path is read only');
-
-                for (key in EXPECTED_FORM) {
-                    if (EXPECTED_FORM.hasOwnProperty(key)) {
-                        test.assertEquals(form[key], EXPECTED_FORM[key], [key, 'is populated as expected'].join(' '));
-                    }
-                }
+                test.assertEquals(form, EXPECTED_FORM, 'form is populated as expected');
 
                 for (key in EXPECTED_EDITORS) {
                     if (key !== THEN_SCRIPT_KEY && EXPECTED_EDITORS.hasOwnProperty(key)) {

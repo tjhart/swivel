@@ -4,7 +4,7 @@
 
     swivelUtils.reset(function () {
         swivelUtils.configureStub('some/path', {
-            description: 'Test: static response',
+            description: 'Test: script response',
             when: {method: 'GET'},
             then: {script: '(function(request, matchedURI, responseFactory, client){\n' +
                 '   var content = \'requestedURI:\' + request.getURI() +\n' +

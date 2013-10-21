@@ -4,7 +4,7 @@
         server = require('webserver').create();
 
     const PROXY_URL = [swivelUtils.PROXY_URL, 'testServer/some/path'].join('/');
-    server.listen('127.0.0.1:8090', function (request, response) {
+    server.listen(8090, function (request, response) {
         var contentType = request.headers['Content-Type'];
         response.write('<html><body>' + 'url:' + request.url + ', method:' + request.method);
         if (contentType) {

@@ -74,17 +74,29 @@
 
     exports.getEditorText = getEditorText;
 
-    function configureShunt(shuntConfig) {
+    function configureShunt(path, shuntConfig) {
         var page = webpage.create();
         page.customHeaders = APPLICATION_JSON_HEADER;
-        page.open([CONFIG_URL, 'shunt', shuntConfig.path].join('/'), 'PUT', JSON.stringify(shuntConfig),
-            function (status) {
-                page.close();
-                if (status === 'fail') {
-                    throw 'configureShunt failed';
-                }
-            });
+        page.open([CONFIG_URL, 'shunt', path].join('/'), 'PUT', JSON.stringify(shuntConfig), function (status) {
+            page.close();
+            if (status === 'fail') {
+                throw 'configureShunt failed';
+            }
+        });
     }
 
     exports.configureShunt = configureShunt;
+
+    function configureStub(path, stubConfig) {
+        var page = webpage.create();
+        page.customHeaders = APPLICATION_JSON_HEADER;
+        page.open([CONFIG_URL, 'stub', path].join('/'), 'POST', JSON.stringify(stubConfig), function (status) {
+            page.close();
+            if (status === 'fail') {
+                throw 'configureStub failed';
+            }
+        });
+    }
+
+    exports.configureStub = configureStub;
 })();

@@ -7,7 +7,7 @@
         });
 
         casper.then(function () {
-            swivelUtils.whenConfigLoaded(function () {
+            swivelUtils.waitForConfigToLoad(function () {
                 test.assertSelectorHasText('#configRoot > a', 'Configuration',
                     'configuration root label is: "Configuration"');
                 test.assertVisible('#reset', 'Reset button is visible');

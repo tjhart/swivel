@@ -42,7 +42,7 @@
 
         casper.then(function () {
             casper.waitForUrl(swivelUtils.HOME_URL, function () {
-                swivelUtils.whenConfigLoaded(function () {
+                swivelUtils.waitForConfigToLoad(function () {
                     test.assertSelectorHasText('.path', EXPECTED_FORM.path, 'stub path listed');
                     test.assertSelectorHasText('.stub', EXPECTED_FORM.description, 'stub description listed');
                 });

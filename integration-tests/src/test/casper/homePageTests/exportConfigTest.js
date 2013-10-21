@@ -1,7 +1,7 @@
 (function () {
 
     var swivelUtils = require('../lib/swivelUtils'), config;
-
+    swivelUtils.loadTestConfig();
     casper.options.onResourceReceived = function (casper, resource) {
         if (resource.url.match(/\/config$/)) {
             config = resource;
@@ -10,7 +10,7 @@
 
     casper.test.begin('Exporting config', function (test) {
         casper.start(swivelUtils.HOME_URL, function () {
-            swivelUtils.loadTestConfig(function () {
+            swivelUtils.waitForConfigToLoad(function () {
                 config = null;
             });
         });

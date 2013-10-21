@@ -1,16 +1,16 @@
 (function () {
     var swivelUtils = require('../lib/swivelUtils');
+    swivelUtils.loadTestConfig();
     casper.test.begin('Delete stub', function (test) {
         casper.start(swivelUtils.HOME_URL, function () {
-            swivelUtils.loadTestConfig();
+            swivelUtils.waitForConfigToLoad(function () {
+                casper.click('.stub button.delete');
+            });
         });
 
         casper.then(function () {
-            casper.click('.stub button.delete');
-            swivelUtils.whenConfigLoaded(function () {
-                test.assertDoesntExist('.stub', 'Stub deleted');
-                test.assertElementCount('.path', 1, 'stub path automatically removed');
-            });
+            test.assertDoesntExist('.stub', 'Stub deleted');
+            test.assertElementCount('.path', 1, 'stub path automatically removed');
         });
 
         casper.run(function () {

@@ -1,14 +1,13 @@
 (function () {
     const BASE_URL = 'http://localhost:8080/swivel_server_war_exploded/';
-    const HOME_URL = BASE_URL + 'index.html';
-    const EDIT_STUB_URL = BASE_URL + 'editStub.html';
+    exports.BASE_URL = BASE_URL;
+    exports.HOME_URL = BASE_URL + 'index.html';
+    exports.EDIT_STUB_URL = BASE_URL + 'editStub.html';
     const CONFIG_URL = BASE_URL + 'rest/config';
 
     var webpage = require('webpage');
+    var fs = require('fs');
 
-    exports.BASE_URL = BASE_URL;
-    exports.HOME_URL = HOME_URL;
-    exports.EDIT_STUB_URL = EDIT_STUB_URL;
 
     function getConfigEntries() {
         return casper.evaluate(function () {return __utils__.findAll('.stub,.shunt').length;});
@@ -16,24 +15,23 @@
 
     exports.getConfigEntries = getConfigEntries;
 
-    function whenConfigLoaded(callback) {
+    function waitForConfigToLoad(callback) {
         casper.waitUntilVisible('#configRoot', callback);
     }
 
-    exports.whenConfigLoaded = whenConfigLoaded;
+    exports.waitForConfigToLoad = waitForConfigToLoad;
 
-    function loadTestConfig(callback) {
-        whenConfigLoaded(function () {
-            casper.click('#loadConfig');
-            casper.fill('#loadConfigDialog form', {
-                'swivelConfig': 'integration-tests/src/test/casper/testSwivelConfig.json'
-            });
-            casper.click('#loadConfigOK');
+    function loadTestConfig() {
+        var config = fs.read('integration-tests/src/test/casper/testSwivelConfig.json'),
+            page = webpage.create();
 
-            whenConfigLoaded(function () {
-                casper.echo('Configuration now has ' + getConfigEntries() + ' entries');
-                if (callback) callback();
-            });
+        page.customHeaders = {'Content-Type': 'application/json'};
+
+        page.open(CONFIG_URL, 'PUT', config, function (status) {
+            page.close();
+            if (status === 'fail') {
+                throw 'load config failed';
+            }
         });
     }
 
@@ -42,10 +40,10 @@
     function reset() {
         var page = webpage.create();
         page.open(CONFIG_URL, 'DELETE', function (status) {
-            if (status === 'fail') {
-                throw "reset failed";
-            }
             page.close();
+            if (status === 'fail') {
+                throw 'reset failed';
+            }
         });
     }
 

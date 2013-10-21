@@ -1,15 +1,14 @@
 (function () {
 
     var swivelUtils = require('../lib/swivelUtils');
+    swivelUtils.loadTestConfig();
 
     casper.test.begin('Reset Configuration test', function (test) {
         casper.start(swivelUtils.HOME_URL, function () {
-            swivelUtils.loadTestConfig();
-        });
-
-        casper.then(function () {
-            casper.click('#reset');
-            test.assertVisible('#resetDialog', 'Reset Dialog appears');
+            swivelUtils.waitForConfigToLoad(function () {
+                casper.click('#reset');
+                test.assertVisible('#resetDialog', 'Reset Dialog appears');
+            });
         });
 
         casper.then(function () {
@@ -18,7 +17,7 @@
         });
 
         casper.then(function () {
-            swivelUtils.whenConfigLoaded(function () {
+            swivelUtils.waitForConfigToLoad(function () {
                 test.assertElementCount('.path,.stub,.shunt', 0, 'Configuration root has zero entries');
             });
         });

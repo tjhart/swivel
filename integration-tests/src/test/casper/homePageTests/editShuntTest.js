@@ -1,9 +1,10 @@
 (function () {
     var swivelUtils = require('../lib/swivelUtils');
+    swivelUtils.loadTestConfig();
     casper.test.begin('Edit Shunt', function (test) {
         casper.start(swivelUtils.HOME_URL, function () {
             casper.viewport(1280, 1024, function () {
-                swivelUtils.loadTestConfig(function () {
+                swivelUtils.waitForConfigToLoad(function () {
                     casper.click('.shunt button.edit');
                 });
             });

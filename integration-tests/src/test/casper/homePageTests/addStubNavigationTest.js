@@ -4,7 +4,7 @@
 
     casper.test.begin('Add Stub Navigates as Expected', function (test) {
         casper.start(swivelUtils.HOME_URL, function () {
-            swivelUtils.whenConfigLoaded(function () {
+            swivelUtils.waitForConfigToLoad(function () {
                 casper.click('#addStub');
             });
         });

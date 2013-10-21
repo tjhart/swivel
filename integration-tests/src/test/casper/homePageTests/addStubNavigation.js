@@ -6,11 +6,12 @@
         casper.start(swivelUtils.HOME_URL, function () {
             casper.waitUntilVisible('#addStub', function () {
                 casper.click('#addStub');
-                casper.waitForUrl(urlRegexp, function () {
-                    test.assertHttpStatus(200, 'Successful navigation');
-                    test.assertUrlMatch(urlRegexp, 'Navigation successful');
-                });
             });
+        });
+
+        casper.then(function(){
+            test.assertHttpStatus(200, 'Successful navigation');
+            test.assertUrlMatch(urlRegexp, 'Navigation successful');
         });
 
         casper.run(function () {

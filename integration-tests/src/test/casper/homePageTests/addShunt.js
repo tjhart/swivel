@@ -4,7 +4,7 @@
     casper.test.begin('Add a shunt', function (test) {
         casper.start(swivelUtils.HOME_URL, function () {
             casper.viewport(1280, 1024).then(function () {
-                casper.waitUntilVisible('#configRoot', function () {
+                swivelUtils.whenConfigLoaded(function () {
                     casper.click('#reset');
                     casper.click('#resetOK');
                 });
@@ -24,7 +24,7 @@
         });
 
         casper.then(function () {
-            casper.waitUntilVisible('#configRoot', function () {
+            swivelUtils.whenConfigLoaded(function () {
                 test.assertElementCount('.shunt', 1, 'shunt is listed');
             });
         });

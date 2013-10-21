@@ -4,7 +4,7 @@
 
     casper.test.begin('Reset Configuration test', function (test) {
         casper.start(swivelUtils.HOME_URL, function () {
-            casper.waitUntilVisible('#loadConfig', function () {
+            swivelUtils.whenConfigLoaded(function () {
                 swivelUtils.loadTestConfig();
             });
         });
@@ -20,8 +20,7 @@
         });
 
         casper.then(function () {
-            casper.waitUntilVisible('#configRoot', function () {
-
+            swivelUtils.whenConfigLoaded(function () {
                 test.assertElementCount('.stub,.shunt', 0, 'Configuration root has zero entries');
             });
         });

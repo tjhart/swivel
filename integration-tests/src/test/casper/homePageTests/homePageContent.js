@@ -7,8 +7,7 @@
         });
 
         casper.then(function () {
-            this.waitUntilVisible('#configRoot', function () {
-
+            swivelUtils.whenConfigLoaded(function () {
                 test.assertTrue(casper.getHTML('#configRoot > a').match(/Configuration/) != null,
                     'configuration root label is: "Configuration"');
                 test.assertVisible('#reset', 'Reset button is visible');

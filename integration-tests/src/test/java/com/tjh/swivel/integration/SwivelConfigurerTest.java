@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import static com.tjh.swivel.config.Swivel.APPLICATION_URL_ENCODED_FORM;
+import static com.tjh.swivel.config.Swivel.TEXT_PLAIN;
 import static com.tjh.swivel.config.Swivel.get;
 import static com.tjh.swivel.config.Swivel.ok;
 import static com.tjh.swivel.config.Swivel.post;
@@ -51,7 +52,9 @@ public class SwivelConfigurerTest {
 
         swivelConfigurer
                 .when(get(PATH))
-                .then(ok().withContent(CONTENT))
+                .then(ok()
+                        .withContent(CONTENT)
+                        .as(TEXT_PLAIN))
                 .describe("get path returns content")
                 .configure();
 
@@ -69,14 +72,16 @@ public class SwivelConfigurerTest {
                 .when(post(PATH)
                         .withContent("some data"))
                 .then(ok()
-                        .withContent("you matched data"))
+                        .withContent("you matched data")
+                        .as(TEXT_PLAIN))
                 .describe("match some data on post")
                 .configure();
         swivelConfigurer
                 .when(post(PATH)
                         .withContent("some other data"))
                 .then(ok()
-                        .withContent("you matched some other data"))
+                        .withContent("you matched some other data")
+                        .as(TEXT_PLAIN))
                 .describe("match some other data on post")
                 .configure();
 
@@ -107,7 +112,8 @@ public class SwivelConfigurerTest {
                                 "       .matches(\"foo=bar\");\n" +
                                 "})(request);"))
                 .then(ok()
-                        .withContent("it matched!"))
+                        .withContent("it matched!")
+                        .as(TEXT_PLAIN))
                 .describe("Script matcher")
                 .configure();
 

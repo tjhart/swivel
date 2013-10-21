@@ -15,7 +15,6 @@ public class Then {
 
     public static final String SCRIPT_KEY = "script";
     public static final String STATUS_CODE_KEY = "statusCode";
-    public static final String REASON_KEY = "reason";
     public static final String CONTENT_KEY = "content";
     public static final String CONTENT_TYPE_KEY = "contentType";
     private final HttpResponseCode responseCode;
@@ -58,7 +57,6 @@ public class Then {
             } else {
                 Map<String, Object> optionalValues = Maps.<String, Object>asMap(
                         STATUS_CODE_KEY, responseCode.getCode(),
-                        REASON_KEY, responseCode.getReason(),
                         CONTENT_KEY, content,
                         CONTENT_TYPE_KEY, contentType);
                 for (Map.Entry<String, Object> entry : optionalValues.entrySet()) {

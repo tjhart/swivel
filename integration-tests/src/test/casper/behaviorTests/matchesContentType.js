@@ -6,7 +6,7 @@
         swivelUtils.configureStub('some/path', {
             description: 'Testing: Match content type',
             when: {contentType: 'application/xml'},
-            then: {statusCode: 200, reason: 'OK'}
+            then: {statusCode: 200}
         }, function () {
             casper.test.begin('Stub matches content type', function (test) {
                 casper.start().then(function () {

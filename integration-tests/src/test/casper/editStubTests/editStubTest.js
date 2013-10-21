@@ -8,7 +8,6 @@
             requestContentType: 'application/xml',
             thenType: 'script',
             statusCode: '',
-            reason: '',
             responseContentType: ''
         },
         WHEN_CONTENT =
@@ -20,7 +19,6 @@
                 '        \'<WebResponse></WebResponse>\';\n' +
                 '    return responseFactory.createResponse({\n' +
                 '        statusCode:200,\n' +
-                '        reason:\'OK\',\n' +
                 '        contentType:\'application/xml\',\n' +
                 '        content:content});\n' +
                 '})();';

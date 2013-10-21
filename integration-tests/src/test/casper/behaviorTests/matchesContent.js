@@ -6,7 +6,7 @@
         swivelUtils.configureStub('some/path', {
             description: 'Testing:Stub matching content',
             when: {content: 'fred'},
-            then: {statusCode: 200, reason: 'OK'}
+            then: {statusCode: 200}
         }, function () {
             casper.test.begin('stub matching content tests', function (test) {
                 casper.start().then(function () {

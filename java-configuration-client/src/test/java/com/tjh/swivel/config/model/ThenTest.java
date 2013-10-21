@@ -64,7 +64,6 @@ public class ThenTest {
         JSONObject jsonObject = then.toJSON();
 
         assertThat(jsonObject.getInt(Then.STATUS_CODE_KEY), equalTo(RESPONSE_CODE.getCode()));
-        assertThat(jsonObject.getString(Then.REASON_KEY), equalTo(RESPONSE_CODE.getReason()));
     }
 
     @Test

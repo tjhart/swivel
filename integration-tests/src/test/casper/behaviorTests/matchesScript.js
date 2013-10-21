@@ -10,7 +10,7 @@
                 '   var path = request.getURI().getPath();' +
                 '   return path.matches("some/path/\\\\d+/more/path");' +
                 '})(request);'},
-            then: {statusCode: 200, reason: 'OK'}
+            then: {statusCode: 200}
         }, function () {
             casper.test.begin('Stub matches script', function (test) {
                 casper.start([PROXY_URL, '12345/more/path'].join('/'), function () {

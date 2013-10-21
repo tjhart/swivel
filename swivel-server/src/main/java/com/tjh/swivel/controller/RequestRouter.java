@@ -47,8 +47,8 @@ public class RequestRouter {
         HttpResponse response;
         if (requestHandler == null) {
             LOGGER.debug("No handler found");
-            response = responseFactory.createResponse(404,
-                    "Not Found: Swivel found no handlers along path " + request.getURI());
+            response = responseFactory.createResponse(404
+            );
         } else {
 
             LOGGER.debug(String.format("Routing <%1$s> to <%2$s>. Matched path is: <%3$s>", request, requestHandler,

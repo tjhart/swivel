@@ -6,7 +6,7 @@
         swivelUtils.configureStub('some/path', {
             description: 'StubMatchingTest: This stub matches all gets',
             when: {method: 'DELETE'},
-            then: {statusCode: 200, reason: 'OK'}
+            then: {statusCode: 200}
         }, function () {
             casper.test.begin('Stub matching DELETE tests', function (test) {
                 casper.start(PROXY_URL, function () {

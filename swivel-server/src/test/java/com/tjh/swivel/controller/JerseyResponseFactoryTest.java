@@ -56,6 +56,5 @@ public class JerseyResponseFactoryTest {
         Response response = responseFactory.createResponse(mockHttpResponse);
 
         assertThat(response.getEntity(), notNullValue());
-
     }
 }

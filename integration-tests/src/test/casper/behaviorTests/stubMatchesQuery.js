@@ -6,7 +6,7 @@
         swivelUtils.configureStub('some/path', {
             description: 'StubMatchingTest: This stub matches a query',
             when: {query: 'queryString'},
-            then: {statusCode: 200, reason: 'OK'}
+            then: {statusCode: 200}
         }, function () {
             casper.test.begin('Stub matches query tests', function (test) {
                 casper.start([PROXY_URL, 'queryString'].join('?'), function () {

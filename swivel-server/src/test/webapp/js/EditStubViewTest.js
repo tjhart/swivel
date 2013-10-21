@@ -83,10 +83,6 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '                            <input id="statusCode" type="text" name="statusCode" placeholder="(empty)"/>' +
                                 '                        </div>' +
                                 '                        <div>' +
-                                '                            <label for="reason">Reason:</label>' +
-                                '                            <input id="reason" type="text" name="reason" placeholder="(empty)"/>' +
-                                '                        </div>' +
-                                '                        <div>' +
                                 '                            <label for="contentType2">Content Type:</label>' +
                                 '                            <input id="contentType2" type="text" name="responseContentType" placeholder="(empty)"/>' +
                                 '                        </div>' +
@@ -190,7 +186,6 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 this.view.content.setValue('{"application":"json"}');
                 this.view.whenScript.setValue('true;');
                 $('#statusCode').val(200);
-                $('#reason').val('OK');
                 $('#contentType2').val('application/xml');
                 this.view.content2.setValue('<xml></xml>');
 
@@ -208,7 +203,6 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                         script: 'true;'
                     }, then: {
                         statusCode: 200,
-                        reason: 'OK',
                         contentType: 'application/xml',
                         content: '<xml></xml>'
                     }});
@@ -223,7 +217,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 $('#description').val('description');
                 $('#method').val('GET');
                 $('#scriptThen').click();
-                this.view.thenScript.setValue('(function(){responseFactory.createResponse({statusCode:200, reason:"OK"})})();');
+                this.view.thenScript.setValue('(function(){responseFactory.createResponse({statusCode:200})})();');
 
                 this.view.editStub();
                 deepEqual(actualData, {
@@ -232,7 +226,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                     when: {
                         method: 'GET'
                     }, then: {
-                        script: '(function(){responseFactory.createResponse({statusCode:200, reason:"OK"})})();'
+                        script: '(function(){responseFactory.createResponse({statusCode:200})})();'
                     }});
             });
 
@@ -249,7 +243,6 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                         script: 'true;'
                     }, then: {
                         statusCode: 200,
-                        reason: 'OK',
                         contentType: 'application/xml',
                         content: '<xml></xml>'
                     }};
@@ -266,7 +259,6 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 assertThat(this.view.content.getValue(), equalTo(stubData.when.content));
 
                 assertThat($('#statusCode').val(), equalTo(stubData.then.statusCode));
-                assertThat($('#reason').val(), equalTo(stubData.then.reason));
                 assertThat($('#contentType2').val(), equalTo(stubData.then.contentType));
                 assertThat(this.view.content2.getValue(), equalTo(stubData.then.content));
 

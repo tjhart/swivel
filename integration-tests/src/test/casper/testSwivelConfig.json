@@ -13,8 +13,7 @@
                     "method": "GET"
                 },
                 "then": {
-                    "statusCode": 200,
-                    "reason": "OK"
+                    "statusCode": 200
                 }
             }
         ]

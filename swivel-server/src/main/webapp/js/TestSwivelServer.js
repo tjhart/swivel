@@ -9,7 +9,7 @@ define(['jQuery'], function ($) {
                     { id: 1,
                         description: 'simple stub',
                         when: {method: 'GET'},
-                        then: {statusCode: 200, reason: 'OK'} },
+                        then: {statusCode: 200} },
                     { id: 2,
                         description: 'complicated stub',
                         when: {
@@ -18,7 +18,6 @@ define(['jQuery'], function ($) {
                             contentType: 'application/json',
                             content: 'some data' },
                         then: { statusCode: 200,
-                            reason: 'OK',
                             contentType: 'application/json',
                             content: '{"key":"val"}'
                         } }
@@ -29,7 +28,7 @@ define(['jQuery'], function ($) {
                     { id: 3,
                         description: 'simple stub',
                         when: {method: 'PUT', script: '(function(){return true;})();'},
-                        then: {statusCode: 200, reason: 'OK'} },
+                        then: {statusCode: 200} },
                     { id: 4,
                         description: 'complicated stub',
                         when: {
@@ -40,8 +39,7 @@ define(['jQuery'], function ($) {
                         then: { method: 'GET',
                             script: '(function(){\n' +
                                 '    return responseFactory.createResponse({\n' +
-                                '        statusCode:200,\n' +
-                                '        reason:"OK"});\n' +
+                                '        statusCode:200});\n' +
                                 '})();'
                         } }
                 ] } }, stubCounter = 0;

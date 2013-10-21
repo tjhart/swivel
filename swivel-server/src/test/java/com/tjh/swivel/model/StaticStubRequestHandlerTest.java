@@ -20,10 +20,7 @@ public class StaticStubRequestHandlerTest {
                 AbstractStubRequestHandler.WHEN_KEY, Maps.asMap(WhenMatcher.METHOD_KEY, "GET"),
 
                 AbstractStubRequestHandler.THEN_KEY,
-                Maps.asMap(
-                        ResponseFactory.STATUS_CODE_KEY, 200,
-                        ResponseFactory.REASON_KEY, "OK"
-                )
+                Maps.asMap(ResponseFactory.STATUS_CODE_KEY, 200)
         ));
     }
 

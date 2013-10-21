@@ -9,7 +9,6 @@
             requestContentType: 'application/xml',
             thenType: 'static',
             statusCode: '200',
-            reason: 'OK',
             responseContentType: 'text/xml'
         },
         EXPECTED_EDITORS = {

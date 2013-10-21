@@ -19,13 +19,10 @@
         };
 
     var swivelUtils = require('../lib/swivelUtils');
-    casper.test.begin('Add Stub', function (test) {
-        casper.start(swivelUtils.HOME_URL, function () {
-            swivelUtils.reset();
-        });
+    swivelUtils.reset();
 
-        casper.then(function () {
-            casper.open(swivelUtils.EDIT_STUB_URL);
+    casper.test.begin('Add Stub', function (test) {
+        casper.start(swivelUtils.EDIT_STUB_URL, function () {
             casper.waitUntilVisible('.content');
         });
 

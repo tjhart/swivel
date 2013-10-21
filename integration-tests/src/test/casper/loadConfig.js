@@ -1,7 +1,6 @@
 (function () {
-    function getConfigEntries() {
-        return $('#configRoot').find('ul').length;
-    }
+
+    var swivelUtils = require('lib/swivelUtils');
 
     casper.test.comment('Load configuration');
 
@@ -10,8 +9,7 @@
             casper.click('#reset');
             casper.click('#resetOK');
             casper.waitUntilVisible('#configRoot', function () {
-                var entries = casper.evaluate(getConfigEntries);
-                casper.echo('Reset Swivel to ' + entries + ' entries');
+                casper.echo('Reset Swivel to ' + swivelUtils.getConfigEntries() + ' entries');
             });
         });
     });
@@ -22,10 +20,9 @@
             'swivelConfig': 'integration-tests/src/test/casper/testSwivelConfig.json'
         });
         casper.click('#loadConfigOK');
-        casper.waitWhileVisible('#loadConfigDialog', function(){
+        casper.waitWhileVisible('#loadConfigDialog', function () {
             casper.waitUntilVisible('#configRoot', function () {
-                var entries = casper.evaluate(getConfigEntries);
-                casper.test.assertTruthy(entries, 'Successfully loaded entries');
+                casper.test.assertTruthy(swivelUtils.getConfigEntries(), 'Successfully loaded entries');
             });
         });
     });

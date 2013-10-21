@@ -1,3 +1,3 @@
 exports.getConfigEntries = function getConfigEntries() {
-    return casper.evaluate(function () {return $('#configRoot').find('ul').length;});
+    return casper.evaluate(function () {return __utils__.findAll('#configRoot ul').length;});
 };

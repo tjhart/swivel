@@ -10,7 +10,11 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
                 "400", "401", "402", "403", "404", "405", "406", "407", "408", "409", "410", "411", "412", "413", "414",
                 "415", "416", "417",
                 "500", "501", "502", "503", "504", "505"],
-            ANTI_TYPE = {static: 'script', script: 'static'},
+            ANTI_TYPE = {
+                static: 'script',
+                script: 'static',
+                editor: 'file',
+                file: 'editor'},
             WHEN_HASH = {method: 'method',
                 query: 'query',
                 contentType: 'contentType',
@@ -23,6 +27,8 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
                 contentType2: 'contentType',
                 content: 'content2',
                 content2: 'content',
+                contentFile: 'file',
+                file: 'contentFile',
                 script: 'thenScript',
                 thenScript: 'script'},
             CODEMIRROR_OPTS = {
@@ -34,34 +40,20 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
         return function () {
             var view = this, $view = $(this), $path = $('#path'), $description = $('#description');
 
-            function loadStubPart(keyHash, source) {
-                $.each(source, function (sourceKey, sourceVal) {
-                    var viewKey = keyHash[sourceKey];
-                    if (view[viewKey]) {
-                        view[viewKey].setValue(sourceVal);
-                    } else {
-                        $(['#', viewKey].join(''))
-                            .val(sourceVal)
-                            .trigger('change');
-                    }
-                });
-            }
-
-            function getStubPart(keyHash, target) {
-                return function (index, item) {
-                    var itemId = item.id, val;
-                    if (view[itemId]) {
-                        val = view[itemId].getValue();
-                    } else {
-                        val = $(item).val();
-                    }
-                    if (val.length) {
-                        target[keyHash[itemId]] = val;
-                    }
-                }
-            }
-
             this.setStub = function (path, stub) {
+                function loadStubPart(keyHash, source) {
+                    $.each(source, function (sourceKey, sourceVal) {
+                        var viewKey = keyHash[sourceKey];
+                        if (view[viewKey]) {
+                            view[viewKey].setValue(sourceVal);
+                        } else {
+                            $(['#', viewKey].join(''))
+                                .val(sourceVal)
+                                .trigger('change');
+                        }
+                    });
+                }
+
                 this.id = stub.id;
                 $path.val(path)
                     .prop('readonly', true)
@@ -70,11 +62,21 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
                 if (stub.then.script) {
                     $('#scriptThen').click();
                 }
+                if (stub.then.file) {
+                    $('#fileContent').click();
+                }
                 loadStubPart(WHEN_HASH, stub.when);
                 loadStubPart(THEN_HASH, stub.then);
             };
 
             this.configure = function () {
+                function chooseElement(event, selectorPrefix) {
+                    var $target = $(event.target), visibleClass;
+                    visibleClass = $target.val();
+                    $([ selectorPrefix, visibleClass].join('')).removeClass('ui-helper-hidden');
+                    $([selectorPrefix, ANTI_TYPE[visibleClass]].join('')).addClass('ui-helper-hidden');
+                }
+
                 var editorElement = {
                     content: document.getElementById('content'),
                     content2: document.getElementById('content2'),
@@ -94,12 +96,17 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
                 $('.type')
                     .buttonset()
                     .find('[type="radio"]').click(function (e) {
-                        var $target = $(e.target), visibleClass;
-                        visibleClass = $target.val();
-                        $(['#then .', visibleClass].join('')).removeClass('ui-helper-hidden');
-                        $(['#then .', ANTI_TYPE[visibleClass]].join('')).addClass('ui-helper-hidden');
+                        var selectorPrefix = '#then .';
+                        chooseElement(e, selectorPrefix);
                         view.content2.refresh();
                         view.thenScript.refresh();
+                    });
+                $('.contentSource')
+                    .buttonset()
+                    .find('[type="radio"]').click(function (e) {
+                        var selectorPrefix = '.content-';
+                        chooseElement(e, selectorPrefix);
+                        view.content2.refresh();
                     });
                 $('#method').menu();
                 $('#contentType,#contentType2').
@@ -111,6 +118,8 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
                         view[viewName].setOption('mode', mimeType);
                     });
                 $('#statusCode').autocomplete({source: STATUS_CODES});
+                $('.content-file button')
+                    .button({icons: {primary: 'ui-icon-trash'}, text: false});
                 $('.content').removeClass('ui-helper-hidden');
                 //The script editors need to be initialized *after* the content is made visible. Otherwise,
                 //they don't render properly
@@ -126,6 +135,28 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
             };
 
             this.editStub = function () {
+                function shouldGetPart($item) {
+                    return !($item.attr('type') === 'radio' || $item.hasClass('ui-helper-hidden')
+                        || $item.closest('span').hasClass('ui-helper-hidden'));
+                }
+
+                function getStubPart(keyHash, target) {
+                    return function (index, item) {
+                        var $item = $(item), itemId = item.id, val, targetKey;
+                        targetKey = keyHash[itemId];
+                        if (shouldGetPart($item)) {
+                            if (view[itemId]) {
+                                val = view[itemId].getValue();
+                            } else {
+                                val = $item.val();
+                            }
+                            if (val.length) {
+                                target[targetKey] = val;
+                            }
+                        }
+                    }
+                }
+
                 var stubData = {
                     description: $description.val(),
                     path: $path.val(),

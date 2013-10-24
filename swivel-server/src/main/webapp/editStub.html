@@ -29,7 +29,7 @@
             </tbody>
         </table>
         <div class="stubDefinition">
-            <div id="when">
+            <span id="when">
                 <div class="name">When</div>
                 <div class="when">
                     <div>
@@ -67,8 +67,8 @@
                         <div id="whenScript" class="editor verticalAlignTop"></div>
                     </div>
                 </div>
-            </div>
-            <div id=then>
+            </span>
+            <span id=then>
                 <div class="name">Then</div>
                 <div class="then">
                     <div class="type">
@@ -87,17 +87,36 @@
                             <input id="contentType2" type="text" name="responseContentType" placeholder="(empty)"/>
                         </div>
                         <div>
+                            <label for="contentSource">Content source:</label>
+
+                            <span id="contentSource" class="contentSource">
+                                <label for="editorContent">Editor</label>
+                                <input id="editorContent" type="radio" name="contentSource" value="editor" checked/>
+                                <label for="fileContent">File</label>
+                                <input id="fileContent" type="radio" name="contentSource" value="file"/>
+                            </span>
+                        </div>
+                        <div>
                             <label for="content2">Content:</label>
 
-                            <div id="content2" class="editor verticalAlignTop"></div>
-
+                            <div id="content2" class="editor content-editor verticalAlignTop"></div>
+                            <span class="content-file ui-helper-hidden">
+                                <input id="contentFile" type="file" name="contentFile"/>
+                                <ul class="ui-helper-hidden">
+                                    <li><span class="ui-icon ui-icon-document"></span></li>
+                                    <li id="currentFileName"></li>
+                                    <li>
+                                        <button></button>
+                                    </li>
+                                </ul>
+                            </span>
                         </div>
                     </div>
                     <div class="script ui-helper-hidden">
                         <div id="thenScript" class="editor"></div>
                     </div>
                 </div>
-            </div>
+            </span>
         </div>
         <div class="action">
             <button id="submit" type="button">OK</button>

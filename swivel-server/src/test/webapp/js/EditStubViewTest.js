@@ -28,7 +28,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '    </table>' +
                                 '    <form>' +
                                 '        <div class="stubDefinition">' +
-                                '            <div id="when">' +
+                                '            <span id="when">' +
                                 '                <div class="name">When</div>' +
                                 '                <div class="when">' +
                                 '                    <div>' +
@@ -67,8 +67,8 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '                        <div id="whenScript" class="editor verticalAlignTop"></div>' +
                                 '                    </div>' +
                                 '                </div>' +
-                                '            </div>' +
-                                '            <div id=then>' +
+                                '            </span>' +
+                                '            <span id=then>' +
                                 '                <div class="name">Then</div>' +
                                 '                <div class="then">' +
                                 '                    <div class="type">' +
@@ -87,17 +87,36 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '                            <input id="contentType2" type="text" name="responseContentType" placeholder="(empty)"/>' +
                                 '                        </div>' +
                                 '                        <div>' +
-                                '                            <label for="content2">Content:</label>' +
+                                '                            <label for="contentSource">Content source:</label>' +
                                 '' +
-                                '                            <div id="content2" class="editor verticalAlignTop"></div>' +
+                                '                            <span id="contentSource" class="contentSource">' +
+                                '                                <label for="editorContent">Editor</label>' +
+                                '                                <input id="editorContent" type="radio" name="contentSource" value="editor" checked/>' +
+                                '                                <label for="fileContent">File</label>' +
+                                '                                <input id="fileContent" type="radio" name="contentSource" value="file"/>' +
+                                '                            </span>' +
+                                '                        </div>' +
+                                '                        <div>' +
+                                '                           <label for="content2">Content:</label>' +
                                 '' +
+                                '                           <div id="content2" class="editor content-editor verticalAlignTop"></div>' +
+                                '                           <span class="content-file ui-helper-hidden">' +
+                                '                               <input id="contentFile" type="file" name="contentFile"/>' +
+                                '                               <ul>' +
+                                '                                   <li><span class="ui-icon ui-icon-document"></span></li>' +
+                                '                                   <li id="currentFileName"></li>' +
+                                '                                   <li>' +
+                                '                                       <button></button>' +
+                                '                                   </li>' +
+                                '                               </ul>' +
+                                '                           </span>' +
                                 '                        </div>' +
                                 '                    </div>' +
                                 '                    <div class="script ui-helper-hidden">' +
                                 '                        <div id="thenScript" class="editor"></div>' +
                                 '                    </div>' +
                                 '                </div>' +
-                                '            </div>' +
+                                '            </span>' +
                                 '        </div>' +
                                 '        <div class="action">' +
                                 '            <button id="submit" type="button">OK</button>' +
@@ -171,7 +190,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 assertThat(this.view.content2.getOption('mode'), equalTo('application/json'));
             });
 
-            test('editStub triggers with expected map', function () {
+            test('editStub triggers with expected map (content editor)', function () {
                 var actualData;
                 $(this.view).on('edit-stub.swivelView', function (event, data) {
                     actualData = data;
@@ -208,6 +227,44 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                     }});
             });
 
+            test('editStub triggers with expected map (file)', function () {
+                var actualData;
+                $(this.view).on('edit-stub.swivelView', function (event, data) {
+                    actualData = data;
+                });
+                this.view.id = '1';
+                $('#path').val('some/path');
+                $('#description').val('description');
+                $('#method').val('GET');
+                $('#query').val('query');
+                $('#remoteAddress').val('remoteAddress');
+                $('#contentType').val('application/json');
+                this.view.content.setValue('{"application":"json"}');
+                this.view.whenScript.setValue('true;');
+                $('#statusCode').val(200);
+                $('#contentType2').val('application/xml');
+                $('#fileContent').click();
+
+                this.view.editStub();
+                deepEqual(actualData, {
+                    path: 'some/path',
+                    id: '1',
+                    description: 'description',
+                    when: {
+                        method: 'GET',
+                        query: 'query',
+                        remoteAddress: 'remoteAddress',
+                        contentType: 'application/json',
+                        content: '{"application":"json"}',
+                        script: 'true;'
+                    }, then: {
+                        statusCode: 200,
+                        contentType: 'application/xml'
+                        //can't set the file from qunit tests, so it will be empty. We'll have to
+                        //test this in functional (casper) tests
+                    }});
+            });
+
             test('editStub triggers with thenScript', function () {
                 var actualData;
                 $(this.view).on('add-stub.swivelView', function (event, data) {
@@ -230,7 +287,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                     }});
             });
 
-            test('setStub populates fields', function () {
+            test('setStub populates fields (content)', function () {
                 var stubData = {
                     id: 1,
                     description: 'description',
@@ -266,6 +323,49 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
 
                 assertThat(this.view.content.getOption('mode'), equalTo(stubData.when.contentType));
                 assertThat(this.view.content2.getOption('mode'), equalTo(stubData.then.contentType));
+                assertThat($('[name="contentSource"]:checked').val(), equalTo('editor'));
+                assertThat($('.content-file').hasClass('ui-helper-hidden'), is(true));
+                assertThat($('.content-editor').hasClass('ui-helper-hidden'), is(false));
+            });
+
+            test('setStub populates fields (file)', function () {
+                var stubData = {
+                    id: 1,
+                    description: 'description',
+                    when: {
+                        method: 'GET',
+                        query: 'query',
+                        remoteAddress: 'remoteAddress',
+                        contentType: 'application/json',
+                        content: '{"application":"json"}',
+                        script: 'true;'
+                    }, then: {
+                        statusCode: 200,
+                        contentType: 'application/xml',
+                        file:'myHappyFile.happy'
+                    }};
+
+                this.view.setStub('some/path', stubData);
+
+                assertThat($('#path').val(), equalTo('some/path'));
+                assertThat(this.view.id, equalTo(stubData.id));
+                assertThat($('#description').val(), equalTo(stubData.description));
+                assertThat($('#method').val(), equalTo(stubData.when.method));
+                assertThat($('#query').val(), equalTo(stubData.when.query));
+                assertThat($('#remoteAddress').val(), equalTo(stubData.when.remoteAddress));
+                assertThat($('#contentType').val(), equalTo(stubData.when.contentType));
+                assertThat(this.view.content.getValue(), equalTo(stubData.when.content));
+
+                assertThat($('#statusCode').val(), equalTo(stubData.then.statusCode));
+                assertThat($('#contentType2').val(), equalTo(stubData.then.contentType));
+
+                assertThat($('#staticThen').prop('checked'), is(true));
+
+                assertThat(this.view.content.getOption('mode'), equalTo(stubData.when.contentType));
+                assertThat($('[name="contentSource"]:checked').val(), equalTo('file'));
+
+                assertThat($('.content-editor').hasClass('ui-helper-hidden'), is(true));
+                assertThat($('.content-file').hasClass('ui-helper-hidden'), is(false));
             });
 
             test('setStub with then script populates fields', function () {
@@ -288,6 +388,26 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 assertThat(this.view.thenScript.getValue(), equalTo(stubData.then.script));
 
                 assertThat($('#scriptThen').prop('checked'), is(true));
+            });
+
+            test('clicking #editorContent chooses editor', function () {
+                var $contentEditor = $('.content-editor'), $fileEditor = $('.content-file');
+                this.view.content2.refresh = mockFunction();
+
+                $('#editorContent').click();
+                assertThat($contentEditor.hasClass('ui-helper-hidden'), is(false));
+                assertThat($fileEditor.hasClass('ui-helper-hidden'), is(true));
+                verify(this.view.content2.refresh)();
+            });
+
+            test('clicking #fileContent chooses file input', function () {
+                var $contentEditor = $('.content-editor'), $fileEditor = $('.content-file');
+                this.view.content2.refresh = mockFunction();
+
+                $('#fileContent').click();
+                assertThat($fileEditor.hasClass('ui-helper-hidden'), is(false));
+                assertThat($contentEditor.hasClass('ui-helper-hidden'), is(true));
+                verify(this.view.content2.refresh)();
             });
         });
 });

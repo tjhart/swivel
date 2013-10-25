@@ -15,7 +15,8 @@
     <div>Swivel Testing Proxy</div>
 </header>
 <div class="content ui-helper-hidden">
-    <form>
+    <form name="stubDescription">
+        <input type="hidden" name="id"/>
         <table class="stubHeader">
             <tbody>
             <tr>
@@ -28,66 +29,70 @@
             </tr>
             </tbody>
         </table>
-        <div class="stubDefinition">
+    </form>
+    <div class="stubDefinition">
             <span id="when">
                 <div class="name">When</div>
                 <div class="when">
-                    <div>
-                        <label for="method">Method:</label>
-                        <select id="method" name="method">
-                            <option value="">(not set)</option>
-                            <option>GET</option>
-                            <option>PUT</option>
-                            <option>POST</option>
-                            <option>DELETE</option>
-                        </select>
+                    <form name="when">
+                        <div>
+                            <label for="method">Method:</label>
+                            <select id="method" name="method">
+                                <option value="">(not set)</option>
+                                <option>GET</option>
+                                <option>PUT</option>
+                                <option>POST</option>
+                                <option>DELETE</option>
+                            </select>
 
-                    </div>
-                    <div>
-                        <label for="query">Query:</label>
-                        <input id="query" type="text" name="query" placeholder="(empty)"/>
+                        </div>
+                        <div>
+                            <label for="query">Query:</label>
+                            <input id="query" type="text" name="query" placeholder="(empty)"/>
 
-                    </div>
-                    <div>
-                        <label for="remoteAddress">Remote Address:</label>
-                        <input id="remoteAddress" type="text" name="remoteAddress" placeholder="(empty)"/>
-                    </div>
-                    <div>
-                        <label for="contentType">Content Type:</label>
-                        <input id="contentType" type="text" name="requestContentType" placeholder="(empty)"/>
-                    </div>
-                    <div>
-                        <label for="content">Content:</label>
+                        </div>
+                        <div>
+                            <label for="remoteAddress">Remote Address:</label>
+                            <input id="remoteAddress" type="text" name="remoteAddress" placeholder="(empty)"/>
+                        </div>
+                        <div>
+                            <label for="contentType">Content Type:</label>
+                            <input id="contentType" type="text" name="contentType" placeholder="(empty)"/>
+                        </div>
+                        <div>
+                            <label for="content">Content:</label>
 
-                        <div id="content" class="editor verticalAlignTop"></div>
-                    </div>
-                    <div>
-                        <label for="whenScript">Script:</label>
+                            <div id="content" class="editor verticalAlignTop"></div>
+                        </div>
+                        <div>
+                            <label for="whenScript">Script:</label>
 
-                        <div id="whenScript" class="editor verticalAlignTop"></div>
-                    </div>
+                            <div id="whenScript" class="editor verticalAlignTop"></div>
+                        </div>
+                    </form>
                 </div>
             </span>
             <span id=then>
                 <div class="name">Then</div>
                 <div class="then">
-                    <div class="type">
-                        <label for="staticThen">Static</label>
-                        <input id="staticThen" type="radio" name="thenType" value="static" checked/>
-                        <label for="scriptThen">Script</label>
-                        <input id="scriptThen" type="radio" name="thenType" value="script"/>
-                    </div>
-                    <div class="static">
-                        <div>
-                            <label for="statusCode">Status Code:</label>
-                            <input id="statusCode" type="text" name="statusCode" placeholder="(empty)"/>
+                    <form name="then">
+                        <div class="type">
+                            <label for="staticThen">Static</label>
+                            <input id="staticThen" type="radio" name="thenType" value="static" checked/>
+                            <label for="scriptThen">Script</label>
+                            <input id="scriptThen" type="radio" name="thenType" value="script"/>
                         </div>
-                        <div>
-                            <label for="contentType2">Content Type:</label>
-                            <input id="contentType2" type="text" name="responseContentType" placeholder="(empty)"/>
-                        </div>
-                        <div>
-                            <label for="contentSource">Content source:</label>
+                        <div class="static">
+                            <div>
+                                <label for="statusCode">Status Code:</label>
+                                <input id="statusCode" type="text" name="statusCode" placeholder="(empty)"/>
+                            </div>
+                            <div>
+                                <label for="contentType2">Content Type:</label>
+                                <input id="contentType2" type="text" name="contentType" placeholder="(empty)"/>
+                            </div>
+                            <div>
+                                <label for="contentSource">Content source:</label>
 
                             <span id="contentSource" class="contentSource">
                                 <label for="editorContent">Editor</label>
@@ -95,11 +100,11 @@
                                 <label for="fileContent">File</label>
                                 <input id="fileContent" type="radio" name="contentSource" value="file"/>
                             </span>
-                        </div>
-                        <div>
-                            <label for="content2">Content:</label>
+                            </div>
+                            <div>
+                                <label for="content2">Content:</label>
 
-                            <div id="content2" class="editor content-editor verticalAlignTop"></div>
+                                <div id="content2" class="editor content-editor verticalAlignTop"></div>
                             <span class="content-file ui-helper-hidden">
                                 <input id="contentFile" type="file" name="contentFile"/>
                                 <ul class="ui-helper-hidden">
@@ -110,18 +115,19 @@
                                     </li>
                                 </ul>
                             </span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="script ui-helper-hidden">
-                        <div id="thenScript" class="editor"></div>
-                    </div>
+                        <div class="script ui-helper-hidden">
+                            <div id="thenScript" class="editor"></div>
+                        </div>
+                    </form>
                 </div>
             </span>
-        </div>
-        <div class="action">
-            <button id="submit" type="button">OK</button>
-            <button id="cancel" type="button">Cancel</button>
-        </div>
+    </div>
+    <div class="action">
+        <button id="submit" type="button">OK</button>
+        <button id="cancel" type="button">Cancel</button>
+    </div>
     </form>
 </div>
 </body>

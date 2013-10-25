@@ -14,23 +14,26 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                     $('#qunit-fixture')
                         .append(
                             '<div class="content ui-helper-hidden">' +
-                                '    <table class="stubHeader">' +
-                                '        <tbody>' +
-                                '            <tr>' +
-                                '                <td><label for="path">Path:</label></td>' +
-                                '                <td><input id="path" type="text" name="path" placeholder="(empty)"/></td>' +
-                                '            </tr>' +
-                                '            <tr>' +
-                                '                <td><label for="description">Description:</label></td>' +
-                                '                <td><input id="description" type="text" name="description" placeholder="(empty)"/></td>' +
-                                '            </tr>' +
-                                '        </tbody>' +
-                                '    </table>' +
-                                '    <form>' +
-                                '        <div class="stubDefinition">' +
-                                '            <span id="when">' +
-                                '                <div class="name">When</div>' +
-                                '                <div class="when">' +
+                                '    <form name="stubDescription">' +
+                                '        <input type="hidden" name="id"/>' +
+                                '        <table class="stubHeader">' +
+                                '            <tbody>' +
+                                '                <tr>' +
+                                '                    <td><label for="path">Path:</label></td>' +
+                                '                    <td><input id="path" type="text" name="path" placeholder="(empty)"/></td>' +
+                                '                </tr>' +
+                                '                <tr>' +
+                                '                    <td><label for="description">Description:</label></td>' +
+                                '                    <td><input id="description" type="text" name="description" placeholder="(empty)"/></td>' +
+                                '                </tr>' +
+                                '            </tbody>' +
+                                '        </table>' +
+                                '    </form>' +
+                                '    <div class="stubDefinition">' +
+                                '        <span id="when">' +
+                                '            <div class="name">When</div>' +
+                                '            <div class="when">' +
+                                '                <form name="when">' +
                                 '                    <div>' +
                                 '                        <label for="method">Method:</label>' +
                                 '                        <select id="method" name="method">' +
@@ -48,13 +51,12 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '' +
                                 '                    </div>' +
                                 '                    <div>' +
-                                '                        <label for="contentType">Content Type:</label>' +
-                                '                        <input id="contentType" type="text" name="requestContentType" placeholder="(empty)"/>' +
-                                '' +
-                                '                    </div>' +
-                                '                    <div>' +
                                 '                        <label for="remoteAddress">Remote Address:</label>' +
                                 '                        <input id="remoteAddress" type="text" name="remoteAddress" placeholder="(empty)"/>' +
+                                '                    </div>' +
+                                '                    <div>' +
+                                '                        <label for="contentType">Content Type:</label>' +
+                                '                        <input id="contentType" type="text" name="contentType" placeholder="(empty)"/>' +
                                 '                    </div>' +
                                 '                    <div>' +
                                 '                        <label for="content">Content:</label>' +
@@ -66,11 +68,13 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '' +
                                 '                        <div id="whenScript" class="editor verticalAlignTop"></div>' +
                                 '                    </div>' +
-                                '                </div>' +
-                                '            </span>' +
-                                '            <span id=then>' +
-                                '                <div class="name">Then</div>' +
-                                '                <div class="then">' +
+                                '                </form>' +
+                                '            </div>' +
+                                '        </span>' +
+                                '        <span id=then>' +
+                                '            <div class="name">Then</div>' +
+                                '            <div class="then">' +
+                                '                <form name="then">' +
                                 '                    <div class="type">' +
                                 '                        <label for="staticThen">Static</label>' +
                                 '                        <input id="staticThen" type="radio" name="thenType" value="static" checked/>' +
@@ -84,7 +88,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '                        </div>' +
                                 '                        <div>' +
                                 '                            <label for="contentType2">Content Type:</label>' +
-                                '                            <input id="contentType2" type="text" name="responseContentType" placeholder="(empty)"/>' +
+                                '                            <input id="contentType2" type="text" name="contentType" placeholder="(empty)"/>' +
                                 '                        </div>' +
                                 '                        <div>' +
                                 '                            <label for="contentSource">Content source:</label>' +
@@ -97,32 +101,33 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '                            </span>' +
                                 '                        </div>' +
                                 '                        <div>' +
-                                '                           <label for="content2">Content:</label>' +
+                                '                            <label for="content2">Content:</label>' +
                                 '' +
-                                '                           <div id="content2" class="editor content-editor verticalAlignTop"></div>' +
-                                '                           <span class="content-file ui-helper-hidden">' +
-                                '                               <input id="contentFile" type="file" name="contentFile"/>' +
-                                '                               <ul>' +
-                                '                                   <li><span class="ui-icon ui-icon-document"></span></li>' +
-                                '                                   <li id="currentFileName"></li>' +
-                                '                                   <li>' +
-                                '                                       <button></button>' +
-                                '                                   </li>' +
-                                '                               </ul>' +
-                                '                           </span>' +
+                                '                            <div id="content2" class="editor content-editor verticalAlignTop"></div>' +
+                                '                            <span class="content-file ui-helper-hidden">' +
+                                '                                <input id="contentFile" type="file" name="contentFile"/>' +
+                                '                                <ul class="ui-helper-hidden">' +
+                                '                                    <li><span class="ui-icon ui-icon-document"></span></li>' +
+                                '                                    <li id="currentFileName"></li>' +
+                                '                                    <li>' +
+                                '                                        <button></button>' +
+                                '                                    </li>' +
+                                '                                </ul>' +
+                                '                            </span>' +
                                 '                        </div>' +
                                 '                    </div>' +
                                 '                    <div class="script ui-helper-hidden">' +
                                 '                        <div id="thenScript" class="editor"></div>' +
                                 '                    </div>' +
-                                '                </div>' +
-                                '            </span>' +
-                                '        </div>' +
-                                '        <div class="action">' +
-                                '            <button id="submit" type="button">OK</button>' +
-                                '            <button id="cancel" type="button">Cancel</button>' +
-                                '        </div>' +
-                                '    </form>' +
+                                '                </form>' +
+                                '            </div>' +
+                                '        </span>' +
+                                '    </div>' +
+                                '    <div class="action">' +
+                                '        <button id="submit" type="button">OK</button>' +
+                                '        <button id="cancel" type="button">Cancel</button>' +
+                                '    </div>' +
+                                '</form>' +
                                 '</div>'
                         );
 
@@ -195,7 +200,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 $(this.view).on('edit-stub.swivelView', function (event, data) {
                     actualData = data;
                 });
-                this.view.id = '1';
+                $('input[name="id"]').val('1');
                 $('#path').val('some/path');
                 $('#description').val('description');
                 $('#method').val('GET');
@@ -232,7 +237,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 $(this.view).on('edit-stub.swivelView', function (event, data) {
                     actualData = data;
                 });
-                this.view.id = '1';
+                $('input[name="id"]').val('1');
                 $('#path').val('some/path');
                 $('#description').val('description');
                 $('#method').val('GET');
@@ -307,7 +312,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 this.view.setStub('some/path', stubData);
 
                 assertThat($('#path').val(), equalTo('some/path'));
-                assertThat(this.view.id, equalTo(stubData.id));
+                assertThat($('input[name="id"]').val(), equalTo(stubData.id));
                 assertThat($('#description').val(), equalTo(stubData.description));
                 assertThat($('#method').val(), equalTo(stubData.when.method));
                 assertThat($('#query').val(), equalTo(stubData.when.query));
@@ -342,13 +347,13 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                     }, then: {
                         statusCode: 200,
                         contentType: 'application/xml',
-                        file:'myHappyFile.happy'
+                        file: 'myHappyFile.happy'
                     }};
 
                 this.view.setStub('some/path', stubData);
 
                 assertThat($('#path').val(), equalTo('some/path'));
-                assertThat(this.view.id, equalTo(stubData.id));
+                assertThat($('input[name="id"]').val(), equalTo(stubData.id));
                 assertThat($('#description').val(), equalTo(stubData.description));
                 assertThat($('#method').val(), equalTo(stubData.when.method));
                 assertThat($('#query').val(), equalTo(stubData.when.query));
@@ -381,7 +386,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 this.view.setStub('some/path', stubData);
 
                 assertThat($('#path').val(), equalTo('some/path'));
-                assertThat(this.view.id, equalTo(stubData.id));
+                assertThat($('input[name="id"]').val(), equalTo(stubData.id));
                 assertThat($('#description').val(), equalTo(stubData.description));
                 assertThat($('#method').val(), equalTo(stubData.when.method));
 

@@ -1,6 +1,7 @@
 "use strict";
 
-define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml', 'cm-matchbrackets', 'cm-closebrackets'],
+define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml', 'cm-matchbrackets', 'cm-closebrackets',
+    'lib/serializeJSON'],
     function ($, utils, CodeMirror) {
         var CONTENT_TYPES = ['application/json', 'text/javascript', 'application/xml', 'text/html', 'text/plain',
                 'text/css', 'application/x-www-form-urlencoded'],
@@ -15,22 +16,6 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
                 script: 'static',
                 editor: 'file',
                 file: 'editor'},
-            WHEN_HASH = {method: 'method',
-                query: 'query',
-                contentType: 'contentType',
-                remoteAddress: 'remoteAddress',
-                content: 'content',
-                script: 'whenScript',
-                whenScript: 'script'},
-            THEN_HASH = {statusCode: 'statusCode',
-                contentType: 'contentType2',
-                contentType2: 'contentType',
-                content: 'content2',
-                content2: 'content',
-                contentFile: 'file',
-                file: 'contentFile',
-                script: 'thenScript',
-                thenScript: 'script'},
             CODEMIRROR_OPTS = {
                 theme: 'default neat',
                 matchBrackets: true,
@@ -38,35 +23,32 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
                 lineNumbers: true};
 
         return function () {
-            var view = this, $view = $(this), $path = $('#path'), $description = $('#description');
+            var view = this, $view = $(this), $path = $('#path');
 
             this.setStub = function (path, stub) {
-                function loadStubPart(keyHash, source) {
-                    $.each(source, function (sourceKey, sourceVal) {
-                        var viewKey = keyHash[sourceKey];
-                        if (view[viewKey]) {
-                            view[viewKey].setValue(sourceVal);
-                        } else {
-                            $(['#', viewKey].join(''))
-                                .val(sourceVal)
-                                .trigger('change');
-                        }
+                function loadStubPart(form, source) {
+                    $.each(source, function (key, val) {
+                        $(form[key]).val(val).change();
                     });
                 }
 
-                this.id = stub.id;
+                var when = stub.when, then = stub.then;
                 $path.val(path)
                     .prop('readonly', true)
                     .addClass('ui-state-disabled');
-                $description.val(stub.description);
                 if (stub.then.script) {
                     $('#scriptThen').click();
                 }
                 if (stub.then.file) {
                     $('#fileContent').click();
                 }
-                loadStubPart(WHEN_HASH, stub.when);
-                loadStubPart(THEN_HASH, stub.then);
+                loadStubPart(document.stubDescription, stub);
+                loadStubPart(document.when, when);
+                loadStubPart(document.then, then);
+                view.content.setValue(when.content || '');
+                view.whenScript.setValue(when.script || '');
+                view.content2.setValue(then.content || '');
+                view.thenScript.setValue(then.script || '');
             };
 
             this.configure = function () {
@@ -135,50 +117,43 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
             };
 
             this.editStub = function () {
-                function shouldGetPart($item) {
-                    return !($item.attr('type') === 'radio' || $item.hasClass('ui-helper-hidden')
-                        || $item.closest('span').hasClass('ui-helper-hidden'));
+                function trimToUndefined(val) {
+                    return val && val.length ? val : undefined;
                 }
 
-                function getStubPart(keyHash, target) {
-                    return function (index, item) {
-                        var $item = $(item), itemId = item.id, val, targetKey;
-                        targetKey = keyHash[itemId];
-                        if (shouldGetPart($item)) {
-                            if (view[itemId]) {
-                                val = view[itemId].getValue();
-                            } else {
-                                val = $item.val();
-                            }
-                            if (val.length) {
-                                target[targetKey] = val;
-                            }
-                        }
-                    }
+                var stubData = $(document.stubDescription).serializeJSON(), event = 'add-stub.swivelView', when, then,
+                    thenScript = view.thenScript.getValue();
+
+                when = $(document.when).serializeJSON();
+                when.content = trimToUndefined(view.content.getValue());
+                when.script = trimToUndefined(view.whenScript.getValue());
+
+                stubData.when = when;
+
+                then = $(document.then).serializeJSON();
+                if (then.thenType === 'script') {
+                    then = {script: thenScript};
+                } else {
+                    then.content = trimToUndefined(view.content2.getValue());
+                    then.statusCode = parseInt(then.statusCode);
                 }
 
-                var stubData = {
-                    description: $description.val(),
-                    path: $path.val(),
-                    when: { },
-                    then: { } }, event = 'add-stub.swivelView';
-
-                if (this.id) {
-                    stubData.id = this.id;
+                stubData.then = then;
+                if (stubData.id) {
                     event = 'edit-stub.swivelView';
                 }
-                $('#when')
-                    .find('input, select, div.editor')
-                    .each(getStubPart(WHEN_HASH, stubData.when));
 
-                $('#then')
-                    .find(['.', $('[name="thenType"]:checked').val()].join(''))
-                    .find('input, div.editor')
-                    .each(getStubPart(THEN_HASH, stubData.then));
+                //cleanup
+                delete then.contentSource;
+                delete then.thenType;
+                $.each([when, then], function (i, item) {
+                    $.each(item, function (key, val) {
+                        if (typeof val === 'undefined') {
+                            delete item[key];
+                        }
+                    });
+                });
 
-                if (stubData.then.statusCode) {
-                    stubData.then.statusCode = parseInt(stubData.then.statusCode);
-                }
                 $view.trigger(event, stubData);
             };
 

@@ -122,8 +122,7 @@ define(['test/lib/Squire', 'jQuery', 'json2', 'jsHamcrest', 'jsMockito'],
                     allOf(
                         hasMember('url', equalTo(BASE_URL + '/rest/config/stub/some/path/1')),
                         hasMember('type', equalTo('PUT')),
-                        hasMember('processData', is(false)),
-                        hasMember('contentType', equalTo('application/x-www-form-urlencoded')),
+                        hasMember('contentType', equalTo('application/json')),
                         hasMember('data', equalTo(json2.stringify(stubData)))
                     )
                 );
@@ -137,8 +136,7 @@ define(['test/lib/Squire', 'jQuery', 'json2', 'jsHamcrest', 'jsMockito'],
                     allOf(
                         hasMember('url', equalTo(BASE_URL + '/rest/config/stub/some/path')),
                         hasMember('type', equalTo('POST')),
-                        hasMember('processData', is(false)),
-                        hasMember('contentType', equalTo('application/x-www-form-urlencoded')),
+                        hasMember('contentType', equalTo('application/json')),
                         hasMember('data', equalTo(json2.stringify(stubData)))
                     )
                 );

@@ -72,8 +72,7 @@ define(['jQuery', 'json2'], function ($, json2) {
             return $.ajax({
                 url: [baseUrl, CONFIG_PATH, 'stub', stubData.path, stubData.id].join('/'),
                 type: 'PUT',
-                processData:false,
-                contentType: 'application/x-www-form-urlencoded',
+                contentType: 'application/json',
                 data: json2.stringify(stubData)
             }).done(callback || defaultCallback);
         };
@@ -82,8 +81,7 @@ define(['jQuery', 'json2'], function ($, json2) {
             return $.ajax({
                 url: [baseUrl, CONFIG_PATH, 'stub', stubData.path].join('/'),
                 type: 'POST',
-                processData:false,
-                contentType: 'application/x-www-form-urlencoded',
+                contentType: 'application/json',
                 data: json2.stringify(stubData)
             }).done(callback || defaultCallback);
         };

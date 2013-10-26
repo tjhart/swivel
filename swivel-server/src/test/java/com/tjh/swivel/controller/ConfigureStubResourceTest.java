@@ -195,7 +195,6 @@ public class ConfigureStubResourceTest {
         configureStubResource.postStub(LOCAL_PATH, "{}", mockInputStream, mockBodyPart);
 
         verify(mockBodyPart).getContentDisposition();
-        verify(mockContentDisposition).getSize();
         verify(mockStorage).createFile(mockInputStream);
     }
 

@@ -85,7 +85,7 @@ public class ConfigureStubResourceTest {
                 .createStub(anyMap());
         doReturn(mockStubRequestHandler)
                 .when(configureStubResource)
-                .createStub(anyMap(), any(File.class), anyString());
+                .createStub(anyMap(), any(File.class));
 
         when(mockStubRequestHandler.getId())
                 .thenReturn(STUB_HANDLER_ID);
@@ -204,6 +204,13 @@ public class ConfigureStubResourceTest {
 
         verify(mockBodyPart).getContentDisposition();
         verify(mockContentDisposition).getFileName();
-        verify(configureStubResource).createStub(mockStubMap, mockFile, FILE_NAME_TXT);
+        verify(configureStubResource).createStub(mockStubMap, mockFile);
+    }
+
+    @Test
+    public void postStubWithFileStoresFilename() throws IOException, URISyntaxException {
+        configureStubResource.postStub(LOCAL_PATH, "{}", mockInputStream, mockBodyPart);
+
+        verify(mockThenMap).put(ResponseFactory.FILE_NAME_KEY, FILE_NAME_TXT);
     }
 }

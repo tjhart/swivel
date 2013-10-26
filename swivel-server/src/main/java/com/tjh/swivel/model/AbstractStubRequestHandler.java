@@ -40,8 +40,8 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
         return result;
     }
 
-    public static StubRequestHandler createStubFor(Map<String, Object> stubMap, File responseFile, String fileName) {
-        return null;
+    public static StubRequestHandler createStubFor(Map<String, Object> stubMap, File responseFile) {
+        return new StaticStubRequestHandler(stubMap, responseFile);
     }
 
     public AbstractStubRequestHandler(Map<String, Object> stubDescription) {

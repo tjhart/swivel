@@ -74,11 +74,12 @@ public class ConfigureStubResource {
             @FormDataParam("contentFile") FormDataBodyPart bodyPart) throws URISyntaxException, IOException {
 
         Map<String, Object> stubMap = objectMapper.readValue(stubDescriptionJSON, Map.class);
-        ((Map<String, Object>) stubMap.get(AbstractStubRequestHandler.THEN_KEY))
-                .put(ResponseFactory.CONTENT_KEY, bodyPart.getMediaType().toString());
+        Map<String, Object> thenMap = (Map<String, Object>) stubMap.get(AbstractStubRequestHandler.THEN_KEY);
         String fileName = bodyPart.getContentDisposition().getFileName();
+        thenMap.put(ResponseFactory.CONTENT_KEY, bodyPart.getMediaType().toString());
+        thenMap.put(ResponseFactory.FILE_NAME_KEY, fileName);
         LOGGER.debug("Creating file for " + fileName);
-        StubRequestHandler stub = createStub(stubMap, stubFileStorage.createFile(formFile), fileName);
+        StubRequestHandler stub = createStub(stubMap, stubFileStorage.createFile(formFile));
 
         return addStub(new URI(localPath), stub);
     }
@@ -121,8 +122,8 @@ public class ConfigureStubResource {
         return AbstractStubRequestHandler.createStubFor(stubDescription);
     }
 
-    public StubRequestHandler createStub(Map<String, Object> stubMap, File responseFile, String fileName) {
-        return AbstractStubRequestHandler.createStubFor(stubMap, responseFile, fileName);
+    public StubRequestHandler createStub(Map<String, Object> stubMap, File responseFile) {
+        return AbstractStubRequestHandler.createStubFor(stubMap, responseFile);
     }
 
     public void setConfiguration(Configuration configuration) {this.configuration = configuration;}

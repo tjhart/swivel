@@ -4,6 +4,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Map;
 
@@ -13,6 +14,11 @@ public class StaticStubRequestHandler extends AbstractStubRequestHandler {
     public StaticStubRequestHandler(Map<String, Object> stubDescription) {
         super(stubDescription);
         this.httpResponse = responseFactory.createResponse(then);
+    }
+
+    public StaticStubRequestHandler(Map<String, Object> stubMap, File responseFile) {
+        super(stubMap);
+        this.httpResponse = responseFactory.createResponse(then, responseFile);
     }
 
     @Override

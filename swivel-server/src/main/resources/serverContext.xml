@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
-
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
     <import resource="routerContext.xml"/>
+
+    <bean id="defaultProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <props>
+                <prop key="SWIVEL_STUBFILE_STORAGE_DIR">${java.io.tmpdir}</prop>
+                <prop key="SWIVEL_CONFIG_FILE">${java.io.tmpdir}/swivelConfig.json</prop>
+            </props>
+        </property>
+    </bean>
+
+    <context:property-placeholder system-properties-mode="OVERRIDE" properties-ref="defaultProperties"/>
 
     <bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper"/>
 
@@ -17,7 +29,8 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
           p:configuration-ref="configuration"/>
 
     <bean id="configureStubResource" class="com.tjh.swivel.controller.ConfigureStubResource"
-          p:configuration-ref="configuration"/>
+          p:configuration-ref="configuration"
+          p:stubFileDir="file:${SWIVEL_STUBFILE_STORAGE_DIR}"/>
 
     <bean id="requestFactory" class="com.tjh.swivel.controller.HttpUriRequestFactory"/>
 
@@ -28,8 +41,10 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
           p:responseFactory-ref="jerseyResponseFactory"/>
 
     <bean id="swivelClosedListener" class="com.tjh.swivel.controller.SwivelClosedListener"
-          p:configuration-ref="configuration" p:objectMapper-ref="objectMapper"/>
+          p:configuration-ref="configuration" p:objectMapper-ref="objectMapper"
+          p:saveFile="file:${SWIVEL_CONFIG_FILE}"/>
 
     <bean id="swivelRefreshedListener" class="com.tjh.swivel.controller.SwivelRefreshedListener"
-          p:configuration-ref="configuration" p:objectMapper-ref="objectMapper"/>
+          p:configuration-ref="configuration" p:objectMapper-ref="objectMapper"
+          p:saveFile="file:${SWIVEL_CONFIG_FILE}"/>
 </beans>

@@ -21,6 +21,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,9 +32,11 @@ import java.util.Map;
 @Path("config/stub/{localPath: .*}")
 public class ConfigureStubResource {
     public static final String STUB_ID_KEY = "id";
+
     protected static Logger LOGGER = Logger.getLogger(ConfigureStubResource.class);
 
     private Configuration configuration;
+    private volatile File stubFileDir;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -105,4 +108,6 @@ public class ConfigureStubResource {
     }
 
     public void setConfiguration(Configuration configuration) {this.configuration = configuration;}
+
+    public void setStubFileDir(File stubFileDir) { this.stubFileDir = stubFileDir; }
 }

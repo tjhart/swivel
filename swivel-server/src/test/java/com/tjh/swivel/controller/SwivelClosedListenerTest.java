@@ -11,9 +11,7 @@ import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 public class SwivelClosedListenerTest {
@@ -32,19 +30,14 @@ public class SwivelClosedListenerTest {
 
         swivelClosedListener.setObjectMapper(mockObjectMapper);
         swivelClosedListener.setConfiguration(mockConfiguration);
+        swivelClosedListener.setSaveFile(mockFile);
 
-        swivelClosedListener = spy(swivelClosedListener);
-
-        doReturn(mockFile)
-                .when(swivelClosedListener)
-                .getSaveFile();
     }
 
     @Test
     public void onApplicationEventWritesSaveFile() throws IOException {
         swivelClosedListener.onApplicationEvent(null);
 
-        verify(swivelClosedListener).getSaveFile();
         verify(mockConfiguration).toMap();
         verify(mockObjectMapper).writeValue(eq(mockFile), any(Map.class));
     }

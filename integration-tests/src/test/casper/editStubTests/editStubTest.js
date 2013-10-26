@@ -1,14 +1,20 @@
 (function () {
     const
-        EXPECTED_FORM = {
-            description: 'Edit Stub Test Description',
+        EXPECTED_STUB_FORM = {
+            description: 'Edit Stub Test Description'
+        },
+        EXPECTED_WHEN_FORM = {
             method: 'PUT',
             query: '',
             remoteAddress: '',
-            requestContentType: 'application/xml',
+            contentType: 'application/xml'
+        },
+        EXPECTED_THEN_FORM = {
             thenType: 'script',
+            contentSource: 'editor',
+            contentFile: '',
             statusCode: '',
-            responseContentType: ''
+            contentType: ''
         },
         WHEN_CONTENT =
             '<?xml version="1.0" encoding="UTF-8"?>\n' +
@@ -34,11 +40,10 @@
 
         casper.then(function () {
             casper.waitUntilVisible('.content', function () {
-                var origForm = casper.getFormValues('form');
-                EXPECTED_FORM.path = origForm.path;//can't truly edit the path,
-                //but capturing the existing path makes testing much more convenient later
                 casper.click('#scriptThen');
-                casper.fill('form', EXPECTED_FORM);
+                casper.fill('form[name="stubDescription"]', EXPECTED_STUB_FORM);
+                casper.fill('form[name="when"]', EXPECTED_WHEN_FORM);
+                casper.fill('form[name="then"]', EXPECTED_THEN_FORM);
 
                 swivelUtils.setEditorText('#content', WHEN_CONTENT);
                 swivelUtils.setEditorText('#thenScript', THEN_SCRIPT);
@@ -48,18 +53,21 @@
 
         casper.then(function () {
             swivelUtils.waitForConfigToLoad(function () {
-                test.assertSelectorHasText('.stub', EXPECTED_FORM.description);
+                test.assertSelectorHasText('.stub', EXPECTED_STUB_FORM.description);
                 casper.click('.stub button.edit');
             });
         });
 
         casper.then(function () {
             casper.waitUntilVisible('.content', function () {
-                var form = casper.getFormValues('form');
-
+                var stubForm = casper.getFormValues('form[name="stubDescription"]');
                 test.assertVisible('#thenScript', 'then script editor is visible');
 
-                test.assertEquals(form, EXPECTED_FORM, 'form is populated as expected');
+                test.assertEquals(stubForm.description, EXPECTED_STUB_FORM.description);
+                test.assertEquals(casper.getFormValues('form[name="when"]'),
+                    EXPECTED_WHEN_FORM, 'form is populated as expected');
+                test.assertEquals(casper.getFormValues('form[name="then"]'),
+                    EXPECTED_THEN_FORM, 'form is populated as expected');
 
                 test.assertEquals(swivelUtils.getEditorText('#content'), WHEN_CONTENT,
                     'when content editor is populated as expected');

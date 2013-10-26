@@ -4,8 +4,10 @@ import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
 import com.tjh.swivel.model.AbstractStubRequestHandler;
 import com.tjh.swivel.model.Configuration;
+import com.tjh.swivel.model.ResponseFactory;
 import com.tjh.swivel.model.StubRequestHandler;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import vanderbilt.util.Block;
 import vanderbilt.util.Lists;
 import vanderbilt.util.Maps;
@@ -22,6 +24,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -36,7 +39,8 @@ public class ConfigureStubResource {
     protected static Logger LOGGER = Logger.getLogger(ConfigureStubResource.class);
 
     private Configuration configuration;
-    private volatile File stubFileDir;
+    private ObjectMapper objectMapper;
+    private StubFileStorage stubFileStorage;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -56,23 +60,27 @@ public class ConfigureStubResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Object> postStub(@PathParam("localPath") String localPath, Map<String, Object> stubDescription)
             throws URISyntaxException, ScriptException {
-        URI localUri = new URI(localPath);
-        StubRequestHandler stubRequestHandler = createStub(stubDescription);
 
-        LOGGER.debug(String.format("Adding stub for %1$s", localUri));
-        configuration.addStub(localUri, stubRequestHandler);
-        return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());
+        return addStub(new URI(localPath), createStub(stubDescription));
     }
 
+    @SuppressWarnings("unchecked")
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String, Object> postStub(@PathParam("localPath") String localPath,
-            @FormDataParam("stubDescription") String stubDescription,
+            @FormDataParam("stubDescription") String stubDescriptionJSON,
             @FormDataParam("contentFile") InputStream formFile,
-            @FormDataParam("contentFile") FormDataBodyPart bodyPart) {
+            @FormDataParam("contentFile") FormDataBodyPart bodyPart) throws URISyntaxException, IOException {
 
-        return null;
+        Map<String, Object> stubMap = objectMapper.readValue(stubDescriptionJSON, Map.class);
+        ((Map<String, Object>) stubMap.get(AbstractStubRequestHandler.THEN_KEY))
+                .put(ResponseFactory.CONTENT_KEY, bodyPart.getMediaType().toString());
+        String fileName = bodyPart.getContentDisposition().getFileName();
+        LOGGER.debug("Creating file for " + fileName);
+        StubRequestHandler stub = createStub(stubMap, stubFileStorage.createFile(formFile), fileName);
+
+        return addStub(new URI(localPath), stub);
     }
 
     @PUT
@@ -103,11 +111,23 @@ public class ConfigureStubResource {
         return configuration.toMap();
     }
 
+    private Map<String, Object> addStub(URI localUri, StubRequestHandler stubRequestHandler) {
+        LOGGER.debug(String.format("Adding stub for %1$s", localUri));
+        configuration.addStub(localUri, stubRequestHandler);
+        return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());
+    }
+
     protected StubRequestHandler createStub(Map<String, Object> stubDescription) throws ScriptException {
         return AbstractStubRequestHandler.createStubFor(stubDescription);
     }
 
+    public StubRequestHandler createStub(Map<String, Object> stubMap, File responseFile, String fileName) {
+        return AbstractStubRequestHandler.createStubFor(stubMap, responseFile, fileName);
+    }
+
     public void setConfiguration(Configuration configuration) {this.configuration = configuration;}
 
-    public void setStubFileDir(File stubFileDir) { this.stubFileDir = stubFileDir; }
+    public void setObjectMapper(ObjectMapper objectMapper) {this.objectMapper = objectMapper;}
+
+    public void setStubFileStorage(StubFileStorage stubFileStorage) {this.stubFileStorage = stubFileStorage;}
 }

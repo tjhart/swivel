@@ -28,9 +28,12 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     <bean id="configureShuntResource" class="com.tjh.swivel.controller.ConfigureShuntResource"
           p:configuration-ref="configuration"/>
 
+    <bean id="stubFileStorage" class="com.tjh.swivel.controller.StubFileStorage"
+          p:stubFileDir="file:${SWIVEL_STUBFILE_STORAGE_DIR}/swivelStorage"/>
+
     <bean id="configureStubResource" class="com.tjh.swivel.controller.ConfigureStubResource"
-          p:configuration-ref="configuration"
-          p:stubFileDir="file:${SWIVEL_STUBFILE_STORAGE_DIR}"/>
+          p:configuration-ref="configuration" p:objectMapper-ref="objectMapper"
+          p:stubFileStorage-ref="stubFileStorage"/>
 
     <bean id="requestFactory" class="com.tjh.swivel.controller.HttpUriRequestFactory"/>
 

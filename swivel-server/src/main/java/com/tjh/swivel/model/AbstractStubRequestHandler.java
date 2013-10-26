@@ -9,6 +9,7 @@ import org.hamcrest.StringDescription;
 import vanderbilt.util.Maps;
 
 import javax.script.ScriptException;
+import java.io.File;
 import java.net.URI;
 import java.util.Map;
 
@@ -37,6 +38,10 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
             result = new StaticStubRequestHandler(stubDescription);
         }
         return result;
+    }
+
+    public static StubRequestHandler createStubFor(Map<String, Object> stubMap, File responseFile, String fileName) {
+        return null;
     }
 
     public AbstractStubRequestHandler(Map<String, Object> stubDescription) {

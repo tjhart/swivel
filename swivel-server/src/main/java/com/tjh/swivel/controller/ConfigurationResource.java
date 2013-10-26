@@ -21,7 +21,7 @@ import java.util.Map;
 @Path("config")
 public class ConfigurationResource {
     protected static Logger LOGGER = Logger.getLogger(ConfigurationResource.class);
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper;
     private Configuration configuration;
 
     @GET

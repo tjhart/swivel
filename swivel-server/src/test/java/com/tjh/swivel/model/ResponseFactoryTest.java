@@ -69,7 +69,7 @@ public class ResponseFactoryTest {
         HttpResponse response = responseFactory.createResponse(
                 Maps.<String, Object>asMap(
                         ResponseFactory.STATUS_CODE_KEY, 200,
-                        ResponseFactory.CONTENT_TYPE_KEY, "application/pdf",
+                        ResponseFactory.FILE_CONTENT_TYPE_KEY, "application/pdf",
                         ResponseFactory.FILE_NAME_KEY, "fileName.pdf"),
                 mockFile);
 

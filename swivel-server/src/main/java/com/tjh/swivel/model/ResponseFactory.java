@@ -18,6 +18,7 @@ public class ResponseFactory {
     public static final String STATUS_CODE_KEY = "statusCode";
     public static final String CONTENT_KEY = "content";
     public static final String CONTENT_TYPE_KEY = "contentType";
+    public static final String FILE_CONTENT_TYPE_KEY = "fileContentType";
     public static final String FILE_NAME_KEY = "fileName";
 
     public HttpResponse createResponse(int code, String stringEntity, String contentType) {
@@ -32,7 +33,8 @@ public class ResponseFactory {
     //TODO:TJH - content disposition should be defined on the stub
     public HttpResponse createResponse(Map<String, Object> then, File responseFile) {
         HttpResponse result = createResponse(getStatusCode(then));
-        FileEntity fileEntity = new FileEntity(responseFile, ContentType.create((String) then.get(CONTENT_TYPE_KEY)));
+        FileEntity fileEntity =
+                new FileEntity(responseFile, ContentType.create((String) then.get(FILE_CONTENT_TYPE_KEY)));
         result.setEntity(fileEntity);
         result.setHeader("Content-Disposition", "attachment; filename=\"" + then.get(FILE_NAME_KEY) + "\"");
         return result;

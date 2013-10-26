@@ -64,10 +64,10 @@ public class ConfigureStubResource {
         return addStub(new URI(localPath), createStub(stubDescription));
     }
 
-    @SuppressWarnings("unchecked")
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
+    @SuppressWarnings("unchecked")
     public Map<String, Object> postStub(@PathParam("localPath") String localPath,
             @FormDataParam("stubDescription") String stubDescriptionJSON,
             @FormDataParam("contentFile") InputStream formFile,
@@ -76,7 +76,7 @@ public class ConfigureStubResource {
         Map<String, Object> stubMap = objectMapper.readValue(stubDescriptionJSON, Map.class);
         Map<String, Object> thenMap = (Map<String, Object>) stubMap.get(AbstractStubRequestHandler.THEN_KEY);
         String fileName = bodyPart.getContentDisposition().getFileName();
-        thenMap.put(ResponseFactory.CONTENT_TYPE_KEY, bodyPart.getMediaType().toString());
+        thenMap.put(ResponseFactory.FILE_CONTENT_TYPE_KEY, bodyPart.getMediaType().toString());
         thenMap.put(ResponseFactory.FILE_NAME_KEY, fileName);
         LOGGER.debug("Creating file for " + fileName);
         StubRequestHandler stub = createStub(stubMap, stubFileStorage.createFile(formFile));

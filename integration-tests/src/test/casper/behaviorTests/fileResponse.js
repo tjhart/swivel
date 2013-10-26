@@ -7,7 +7,7 @@
         casper.test.begin('File stub works', function (test) {
             casper.start(swivelUtils.EDIT_STUB_URL, function () {
                 casper.waitUntilVisible('.content', function () {
-                    //can't send multi-part through phantomjs API (as of 1.9.2
+                    //can't send multi-part through phantomjs API (as of 1.9.2)
                     casper.fill('form[name="stubDescription"]', {
                         path: 'some/path',
                         description: 'Test: file response'

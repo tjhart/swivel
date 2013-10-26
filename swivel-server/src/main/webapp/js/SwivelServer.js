@@ -68,22 +68,35 @@ define(['jQuery', 'json2'], function ($, json2) {
             }).done(callback || defaultCallback);
         };
 
+        function configureOpts(stubData, opts) {
+            if (stubData instanceof FormData) {
+                opts.processData = false;
+                opts.contentType = false;
+                opts.data = stubData;
+            } else {
+                opts.contentType = 'application/json';
+                opts.data = json2.stringify(stubData);
+            }
+        }
+
         this.editStub = function (stubData, callback) {
-            return $.ajax({
+            var opts = {
                 url: [baseUrl, CONFIG_PATH, 'stub', stubData.path, stubData.id].join('/'),
-                type: 'PUT',
-                contentType: 'application/json',
-                data: json2.stringify(stubData)
-            }).done(callback || defaultCallback);
+                type: 'PUT'
+            };
+            configureOpts(stubData.formData || stubData, opts);
+            return $.ajax(opts)
+                .done(callback || defaultCallback);
         };
 
         this.addStub = function (stubData, callback) {
-            return $.ajax({
+            var opts = {
                 url: [baseUrl, CONFIG_PATH, 'stub', stubData.path].join('/'),
-                type: 'POST',
-                contentType: 'application/json',
-                data: json2.stringify(stubData)
-            }).done(callback || defaultCallback);
+                type: 'POST'
+            };
+            configureOpts(stubData.formData || stubData, opts);
+            return $.ajax(opts)
+                .done(callback || defaultCallback);
         };
 
         this.loadConfiguration = function (config, callback) {

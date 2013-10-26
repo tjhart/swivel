@@ -188,5 +188,27 @@ define(['test/lib/Squire', 'jQuery', 'json2', 'jsHamcrest', 'jsMockito'],
                     }
                 });
             });
+
+            test('editStub configures ajax call for multipart when formData is present', 0, function () {
+                var formData = new FormData();
+                this.swivelServer.editStub({id: 1, path: 'some/path', formData: formData});
+
+                verify(mockJQuery.ajax)(allOf(
+                    hasMember('processData', is(false)),
+                    hasMember('contentType', is(false)),
+                    hasMember('data', equalTo(formData))
+                ));
+            });
+
+            test('addStub configures ajax call for multipart when formData is present', 0, function () {
+                var formData = new FormData();
+                this.swivelServer.addStub({path: 'some/path', formData: formData});
+
+                verify(mockJQuery.ajax)(allOf(
+                    hasMember('processData', is(false)),
+                    hasMember('contentType', is(false)),
+                    hasMember('data', equalTo(formData))
+                ));
+            });
         });
     });

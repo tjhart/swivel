@@ -1,8 +1,8 @@
 "use strict";
 
-define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml', 'cm-matchbrackets', 'cm-closebrackets',
+define(['jQuery', 'utils', 'codemirror', 'json2', 'jQuery-ui', 'cm-javascript', 'cm-xml', 'cm-matchbrackets', 'cm-closebrackets',
     'lib/serializeJSON'],
-    function ($, utils, CodeMirror) {
+    function ($, utils, CodeMirror, json2) {
         var CONTENT_TYPES = ['application/json', 'text/javascript', 'application/xml', 'text/html', 'text/plain',
                 'text/css', 'application/x-www-form-urlencoded'],
             STATUS_CODES = ["100", "101",
@@ -122,7 +122,7 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
                 }
 
                 var stubData = $(document.stubDescription).serializeJSON(), event = 'add-stub.swivelView', when, then,
-                    thenScript = view.thenScript.getValue();
+                    formData;
 
                 when = $(document.when).serializeJSON();
                 when.content = trimToUndefined(view.content.getValue());
@@ -132,10 +132,18 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
 
                 then = $(document.then).serializeJSON();
                 if (then.thenType === 'script') {
-                    then = {script: thenScript};
+                    then = {script: view.thenScript.getValue()};
                 } else {
-                    then.content = trimToUndefined(view.content2.getValue());
+                    delete then.thenType;
                     then.statusCode = parseInt(then.statusCode);
+                    if (then.contentSource === 'file') {
+                        formData = new FormData();
+                        formData.append('contentFile', document.then.contentFile.files[0]);
+                        delete then.contentType;
+                    } else {
+                        then.content = trimToUndefined(view.content2.getValue());
+                    }
+                    delete then.contentSource;
                 }
 
                 stubData.then = then;
@@ -144,8 +152,6 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
                 }
 
                 //cleanup
-                delete then.contentSource;
-                delete then.thenType;
                 $.each([when, then], function (i, item) {
                     $.each(item, function (key, val) {
                         if (typeof val === 'undefined') {
@@ -154,6 +160,10 @@ define(['jQuery', 'utils', 'codemirror', 'jQuery-ui', 'cm-javascript', 'cm-xml',
                     });
                 });
 
+                if (formData) {
+                    formData.append('stubDescription', json2.stringify(stubData));
+                    stubData = {id: stubData.id, path: stubData.path, formData: formData};
+                }
                 $view.trigger(event, stubData);
             };
 

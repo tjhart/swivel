@@ -87,10 +87,6 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '                            <input id="statusCode" type="text" name="statusCode" placeholder="(empty)"/>' +
                                 '                        </div>' +
                                 '                        <div>' +
-                                '                            <label for="contentType2">Content Type:</label>' +
-                                '                            <input id="contentType2" type="text" name="contentType" placeholder="(empty)"/>' +
-                                '                        </div>' +
-                                '                        <div>' +
                                 '                            <label for="contentSource">Content source:</label>' +
                                 '' +
                                 '                            <span id="contentSource" class="contentSource">' +
@@ -100,20 +96,25 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '                                <input id="fileContent" type="radio" name="contentSource" value="file"/>' +
                                 '                            </span>' +
                                 '                        </div>' +
-                                '                        <div>' +
+                                '                        <div class="content-editor">' +
+                                '                            <div>' +
+                                '                                <label for="contentType2">Content Type:</label>' +
+                                '                                <input id="contentType2" type="text" name="contentType" placeholder="(empty)"/>' +
+                                '                            </div>' +
                                 '                            <label for="content2">Content:</label>' +
                                 '' +
-                                '                            <div id="content2" class="editor content-editor verticalAlignTop"></div>' +
-                                '                            <span class="content-file ui-helper-hidden">' +
-                                '                                <input id="contentFile" type="file" name="contentFile"/>' +
-                                '                                <ul class="ui-helper-hidden">' +
-                                '                                    <li><span class="ui-icon ui-icon-document"></span></li>' +
-                                '                                    <li id="currentFileName"></li>' +
-                                '                                    <li>' +
-                                '                                        <button></button>' +
-                                '                                    </li>' +
-                                '                                </ul>' +
-                                '                            </span>' +
+                                '                            <div id="content2" class="editor verticalAlignTop"></div>' +
+                                '                        </div>' +
+                                '                        <div class="content-file ui-helper-hidden">' +
+                                '                            <label for="contentFile">File:</label>' +
+                                '                            <input id="contentFile" type="file" name="contentFile"/>' +
+                                '                            <ul class="ui-helper-hidden">' +
+                                '                                <li><span class="ui-icon ui-icon-document"></span></li>' +
+                                '                                <li id="currentFileName"></li>' +
+                                '                                <li>' +
+                                '                                    <button></button>' +
+                                '                                </li>' +
+                                '                            </ul>' +
                                 '                        </div>' +
                                 '                    </div>' +
                                 '                    <div class="script ui-helper-hidden">' +
@@ -251,23 +252,11 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 $('#fileContent').click();
 
                 this.view.editStub();
-                deepEqual(actualData, {
-                    path: 'some/path',
-                    id: '1',
-                    description: 'description',
-                    when: {
-                        method: 'GET',
-                        query: 'query',
-                        remoteAddress: 'remoteAddress',
-                        contentType: 'application/json',
-                        content: '{"application":"json"}',
-                        script: 'true;'
-                    }, then: {
-                        statusCode: 200,
-                        contentType: 'application/xml'
-                        //can't set the file from qunit tests, so it will be empty. We'll have to
-                        //test this in functional (casper) tests
-                    }});
+                assertThat(actualData, allOf(
+                    hasMember('id', equalTo(1)),
+                    hasMember('path', equalTo('some/path')),
+                    hasMember('formData', instanceOf(FormData))
+                ));
             });
 
             test('editStub triggers with thenScript', function () {

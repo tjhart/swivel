@@ -1,5 +1,7 @@
 package com.tjh.swivel.controller;
 
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.FormDataParam;
 import com.tjh.swivel.model.AbstractStubRequestHandler;
 import com.tjh.swivel.model.Configuration;
 import com.tjh.swivel.model.StubRequestHandler;
@@ -19,6 +21,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -56,6 +59,17 @@ public class ConfigureStubResource {
         LOGGER.debug(String.format("Adding stub for %1$s", localUri));
         configuration.addStub(localUri, stubRequestHandler);
         return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());
+    }
+
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Object> postStub(@PathParam("localPath") String localPath,
+            @FormDataParam("stubDescription") String stubDescription,
+            @FormDataParam("contentFile") InputStream formFile,
+            @FormDataParam("contentFile") FormDataBodyPart bodyPart) {
+
+        return null;
     }
 
     @PUT

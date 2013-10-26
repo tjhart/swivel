@@ -88,10 +88,6 @@
                                 <input id="statusCode" type="text" name="statusCode" placeholder="(empty)"/>
                             </div>
                             <div>
-                                <label for="contentType2">Content Type:</label>
-                                <input id="contentType2" type="text" name="contentType" placeholder="(empty)"/>
-                            </div>
-                            <div>
                                 <label for="contentSource">Content source:</label>
 
                             <span id="contentSource" class="contentSource">
@@ -101,11 +97,17 @@
                                 <input id="fileContent" type="radio" name="contentSource" value="file"/>
                             </span>
                             </div>
-                            <div>
+                            <div class="content-editor">
+                                <div>
+                                    <label for="contentType2">Content Type:</label>
+                                    <input id="contentType2" type="text" name="contentType" placeholder="(empty)"/>
+                                </div>
                                 <label for="content2">Content:</label>
 
-                                <div id="content2" class="editor content-editor verticalAlignTop"></div>
-                            <span class="content-file ui-helper-hidden">
+                                <div id="content2" class="editor verticalAlignTop"></div>
+                            </div>
+                            <div class="content-file ui-helper-hidden">
+                                <label for="contentFile">File:</label>
                                 <input id="contentFile" type="file" name="contentFile"/>
                                 <ul class="ui-helper-hidden">
                                     <li><span class="ui-icon ui-icon-document"></span></li>
@@ -114,7 +116,6 @@
                                         <button></button>
                                     </li>
                                 </ul>
-                            </span>
                             </div>
                         </div>
                         <div class="script ui-helper-hidden">

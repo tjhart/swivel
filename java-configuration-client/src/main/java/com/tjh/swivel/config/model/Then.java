@@ -4,6 +4,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import vanderbilt.util.Maps;
 
+import java.io.File;
 import java.util.Map;
 
 import static vanderbilt.util.Validators.notNull;
@@ -17,10 +18,14 @@ public class Then {
     public static final String STATUS_CODE_KEY = "statusCode";
     public static final String CONTENT_KEY = "content";
     public static final String CONTENT_TYPE_KEY = "contentType";
+    public static final String FILENAME_KEY = "fileName";
+
     private final HttpResponseCode responseCode;
     private final String script;
     private String content;
     private String contentType;
+    private File file;
+    private String contentDisposition;
 
     /**
      * Construct a Then component with the response code
@@ -58,7 +63,8 @@ public class Then {
                 Map<String, Object> optionalValues = Maps.<String, Object>asMap(
                         STATUS_CODE_KEY, responseCode.getCode(),
                         CONTENT_KEY, content,
-                        CONTENT_TYPE_KEY, contentType);
+                        CONTENT_TYPE_KEY, contentType,
+                        FILENAME_KEY, file == null ? null : file.getName());
                 for (Map.Entry<String, Object> entry : optionalValues.entrySet()) {
                     jsonObject.putOpt(entry.getKey(), entry.getValue());
                 }
@@ -94,10 +100,22 @@ public class Then {
         setContentType(contentType);
         return this;
     }
+
+    public Then withFile(File file) {
+        setFile(file);
+        return this;
+    }
+
+    public Then withContentDisposition(String contentDisposition) {
+        setContentDisposition(contentDisposition);
+        return this;
+    }
     //</editor-fold>
 
     //<editor-fold desc="bean">
     public HttpResponseCode getResponseCode() { return responseCode; }
+
+    public String getScript() { return script; }
 
     public String getContent() { return content; }
 
@@ -107,6 +125,12 @@ public class Then {
 
     public void setContentType(String contentType) { this.contentType = contentType; }
 
-    public String getScript() { return script; }
+    public File getFile() { return file; }
+
+    public void setFile(File file) { this.file = file; }
+
+    public String getContentDisposition() { return contentDisposition; }
+
+    public void setContentDisposition(String contentDisposition) { this.contentDisposition = contentDisposition; }
     //</editor-fold>
 }

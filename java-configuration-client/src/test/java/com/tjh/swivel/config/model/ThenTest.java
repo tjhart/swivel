@@ -5,8 +5,12 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ThenTest {
 
@@ -82,5 +86,33 @@ public class ThenTest {
                 .toJSON()
                 .getString(Then.CONTENT_TYPE_KEY),
                 equalTo(CONTENT_TYPE));
+    }
+
+    @Test
+    public void withFileSetsFile() {
+        File mockFile = mock(File.class);
+        assertThat(then.withFile(mockFile).getFile(), equalTo(mockFile));
+    }
+
+    @Test
+    public void withContentDispositionSetsContentDisposition() {
+        String contentDisposition = "contentDisposition";
+
+        assertThat(then.withContentDisposition(contentDisposition).getContentDisposition(),
+                equalTo(contentDisposition));
+    }
+
+    @Test
+    public void toJSONIncludesFilename() throws JSONException {
+        File mockFile = mock(File.class);
+        String filename = "filename.txt";
+
+        when(mockFile.getName()).thenReturn(filename);
+
+        assertThat(then
+                .withFile(mockFile)
+                .toJSON()
+                .getString(Then.FILENAME_KEY),
+                equalTo(filename));
     }
 }

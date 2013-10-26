@@ -57,8 +57,12 @@ public class Stub implements Behavior {
     public HttpUriRequest toRequest(URL baseURL) {
         HttpPost request =
                 new HttpPost(String.format("%1$s/rest/config/stub/%2$s", baseURL.toExternalForm(), when.getUri()));
-        request.setEntity(new StringEntity(toJSON().toString(), ContentType.APPLICATION_JSON));
+        request.setEntity(createEntity());
         return request;
+    }
+
+    protected StringEntity createEntity() {
+        return new StringEntity(toJSON().toString(), ContentType.APPLICATION_JSON);
     }
 
     //<editor-fold desc="Object">

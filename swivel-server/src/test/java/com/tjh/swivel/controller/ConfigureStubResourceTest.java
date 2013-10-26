@@ -187,7 +187,7 @@ public class ConfigureStubResourceTest {
         configureStubResource.postStub(LOCAL_PATH, "{}", mockInputStream, mockBodyPart);
 
         verify(mockStubMap).get(AbstractStubRequestHandler.THEN_KEY);
-        verify(mockThenMap).put(ResponseFactory.CONTENT_KEY, APPLICATION_PDF);
+        verify(mockThenMap).put(ResponseFactory.CONTENT_TYPE_KEY, APPLICATION_PDF);
     }
 
     @Test

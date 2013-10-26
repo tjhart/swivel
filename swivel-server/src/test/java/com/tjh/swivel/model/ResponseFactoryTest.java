@@ -1,5 +1,6 @@
 package com.tjh.swivel.model;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.util.EntityUtils;
@@ -43,7 +44,9 @@ public class ResponseFactoryTest {
     public void createResponseWithStringContentCreatesEntity() throws IOException {
         HttpResponse response = responseFactory.createResponse(200, "entity", "text/plain");
 
-        assertThat(EntityUtils.toString(response.getEntity()), equalTo("entity"));
+        HttpEntity entity = response.getEntity();
+        assertThat(EntityUtils.toString(entity), equalTo("entity"));
+        assertThat(entity.getContentType().getValue(), equalTo("text/plain"));
     }
 
     @Test

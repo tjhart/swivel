@@ -1,18 +1,20 @@
 //TODO:TJH - refactor into 2 modules - one specific for casper tests, one generic for Node environment
 
 (function () {
+    "use strict";
+
     //YELLOWTAG:TJH - this should probably be part of the config.
-    const BASE_URL = 'http://localhost:8080/swivel_server_war_exploded/';
+    var BASE_URL = 'http://localhost:8080/swivel_server_war_exploded/',
+        TEST_CONFIG_FILE_PATH = 'integration-tests/src/test/casper/testSwivelConfig.json',
+        CONFIG_URL = BASE_URL + 'rest/config',
+        APPLICATION_JSON_HEADER = {'Content-Type': 'application/json'},
+        webpage = require('webpage'), fs = require('fs');
+
     exports.BASE_URL = BASE_URL;
     exports.HOME_URL = BASE_URL + 'index.html';
     exports.EDIT_STUB_URL = BASE_URL + 'editStub.html';
     exports.PROXY_URL = BASE_URL + 'rest/proxy';
-
-    const CONFIG_URL = BASE_URL + 'rest/config';
-    const APPLICATION_JSON_HEADER = {'Content-Type': 'application/json'};
-
-    var webpage = require('webpage');
-    var fs = require('fs');
+    exports.TEST_CONFIG_FILE_PATH = TEST_CONFIG_FILE_PATH;
 
     function getConfigEntries() {
         return casper.evaluate(function () {return __utils__.findAll('.stub,.shunt').length;});
@@ -27,7 +29,7 @@
     exports.waitForConfigToLoad = waitForConfigToLoad;
 
     function loadTestConfig(callback) {
-        var config = fs.read('integration-tests/src/test/casper/testSwivelConfig.json'),
+        var config = fs.read(TEST_CONFIG_FILE_PATH),
             page = webpage.create();
 
         page.customHeaders = APPLICATION_JSON_HEADER;

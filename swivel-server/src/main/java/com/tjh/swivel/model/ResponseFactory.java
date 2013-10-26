@@ -32,7 +32,7 @@ public class ResponseFactory {
     //TODO:TJH - content disposition should be defined on the stub
     public HttpResponse createResponse(Map<String, Object> then, File responseFile) {
         HttpResponse result = createResponse(getStatusCode(then));
-        FileEntity fileEntity = new FileEntity(responseFile, ContentType.create((String) then.get(CONTENT_KEY)));
+        FileEntity fileEntity = new FileEntity(responseFile, ContentType.create((String) then.get(CONTENT_TYPE_KEY)));
         result.setEntity(fileEntity);
         result.setHeader("Content-Disposition", "attachment; filename=\"" + then.get(FILE_NAME_KEY) + "\"");
         return result;

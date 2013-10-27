@@ -30,11 +30,11 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
                     id: 'addShuntOK',
                     text: 'OK',
                     click: function (e) {
-                        var dialog = $(this);
-                        dialog.dialog('close');
+                        var $dialog = $(this);
+                        $dialog.dialog('close');
                         $view.trigger([mode, '-shunt.swivelView'].join(''), {
-                            remoteURL: dialog.find('#remoteURL').val(),
-                            path: dialog.find('#shuntPath').val()
+                            remoteURL: $dialog.find('#remoteURL').val(),
+                            path: $dialog.find('#shuntPath').val()
                         });
 
                         e.preventDefault();
@@ -160,8 +160,8 @@ define(['jQuery', 'jsTree', 'jQuery-ui'], function ($) {
             if (dialog) {
                 dialog.dialog($.extend({
                     buttons: [
-                        DIALOG_BUTTONS[dialog.attr('data-action')],
-                        CANCEL_BUTTON]
+                        CANCEL_BUTTON, DIALOG_BUTTONS[dialog.attr('data-action')]
+                    ]
                 }, DEFAULT_DIALOG_OPTS));
             }
         });

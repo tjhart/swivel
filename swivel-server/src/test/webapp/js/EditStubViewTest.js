@@ -30,7 +30,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '        </table>' +
                                 '    </form>' +
                                 '    <div class="stubDefinition">' +
-                                '        <span id="when">' +
+                                '        <div id="when">' +
                                 '            <div class="name">When</div>' +
                                 '            <div class="when">' +
                                 '                <form name="when">' +
@@ -70,33 +70,25 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '                    </div>' +
                                 '                </form>' +
                                 '            </div>' +
-                                '        </span>' +
-                                '        <span id=then>' +
+                                '        </div>' +
+                                '        <div id=then>' +
                                 '            <div class="name">Then</div>' +
                                 '            <div class="then">' +
                                 '                <form name="then">' +
                                 '                    <div class="type">' +
                                 '                        <label for="staticThen">Static</label>' +
                                 '                        <input id="staticThen" type="radio" name="thenType" value="static" checked/>' +
+                                '                        <label for="fileThen">File</label>' +
+                                '                        <input id="fileThen" type="radio" name="thenType" value="file"/>' +
                                 '                        <label for="scriptThen">Script</label>' +
                                 '                        <input id="scriptThen" type="radio" name="thenType" value="script"/>' +
                                 '                    </div>' +
-                                '                    <div class="static">' +
-                                '                        <div>' +
+                                '                    <div>' +
+                                '                        <div class="static file">' +
                                 '                            <label for="statusCode">Status Code:</label>' +
                                 '                            <input id="statusCode" type="text" name="statusCode" placeholder="(empty)"/>' +
                                 '                        </div>' +
-                                '                        <div>' +
-                                '                            <label for="contentSource">Content source:</label>' +
-                                '' +
-                                '                            <span id="contentSource" class="contentSource">' +
-                                '                                <label for="editorContent">Editor</label>' +
-                                '                                <input id="editorContent" type="radio" name="contentSource" value="editor" checked/>' +
-                                '                                <label for="fileContent">File</label>' +
-                                '                                <input id="fileContent" type="radio" name="contentSource" value="file"/>' +
-                                '                            </span>' +
-                                '                        </div>' +
-                                '                        <div class="content-editor">' +
+                                '                        <div class="static">' +
                                 '                            <div>' +
                                 '                                <label for="contentType2">Content Type:</label>' +
                                 '                                <input id="contentType2" type="text" name="contentType" placeholder="(empty)"/>' +
@@ -105,7 +97,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '' +
                                 '                            <div id="content2" class="editor verticalAlignTop"></div>' +
                                 '                        </div>' +
-                                '                        <div class="content-file ui-helper-hidden">' +
+                                '                        <div class="file ui-helper-hidden">' +
                                 '                            <label for="contentFile">File:</label>' +
                                 '                            <input id="contentFile" type="file" name="contentFile"/>' +
                                 '                            <ul class="ui-helper-hidden">' +
@@ -122,13 +114,12 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                                 '                    </div>' +
                                 '                </form>' +
                                 '            </div>' +
-                                '        </span>' +
+                                '        </div>' +
                                 '    </div>' +
                                 '    <div class="action">' +
                                 '        <button id="submit" type="button">OK</button>' +
                                 '        <button id="cancel" type="button">Cancel</button>' +
                                 '    </div>' +
-                                '</form>' +
                                 '</div>'
                         );
 
@@ -172,7 +163,6 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 $('#staticThen').click();
 
                 verify(this.view.content2.refresh)();
-                verify(this.view.thenScript.refresh)();
             });
 
             test('clicking scriptThen refreshes codemirror', 0, function () {
@@ -180,7 +170,6 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 this.view.thenScript.refresh = mockFunction();
                 $('#scriptThen').click();
 
-                verify(this.view.content2.refresh)();
                 verify(this.view.thenScript.refresh)();
             });
 
@@ -249,7 +238,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 this.view.whenScript.setValue('true;');
                 $('#statusCode').val(200);
                 $('#contentType2').val('application/xml');
-                $('#fileContent').click();
+                $('#fileThen').click();
 
                 this.view.editStub();
                 assertThat(actualData, allOf(
@@ -317,9 +306,8 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
 
                 assertThat(this.view.content.getOption('mode'), equalTo(stubData.when.contentType));
                 assertThat(this.view.content2.getOption('mode'), equalTo(stubData.then.contentType));
-                assertThat($('[name="contentSource"]:checked').val(), equalTo('editor'));
-                assertThat($('.content-file').hasClass('ui-helper-hidden'), is(true));
-                assertThat($('.content-editor').hasClass('ui-helper-hidden'), is(false));
+                assertThat($('.file').hasClass('ui-helper-hidden'), is(true));
+                assertThat($('.static').hasClass('ui-helper-hidden'), is(false));
             });
 
             test('setStub populates fields (file)', function () {
@@ -335,7 +323,6 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                         script: 'true;'
                     }, then: {
                         statusCode: 200,
-                        contentType: 'application/xml',
                         file: 'myHappyFile.happy'
                     }};
 
@@ -351,15 +338,11 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 assertThat(this.view.content.getValue(), equalTo(stubData.when.content));
 
                 assertThat($('#statusCode').val(), equalTo(stubData.then.statusCode));
-                assertThat($('#contentType2').val(), equalTo(stubData.then.contentType));
 
-                assertThat($('#staticThen').prop('checked'), is(true));
+                assertThat($('#fileThen').prop('checked'), is(true));
 
-                assertThat(this.view.content.getOption('mode'), equalTo(stubData.when.contentType));
-                assertThat($('[name="contentSource"]:checked').val(), equalTo('file'));
-
-                assertThat($('.content-editor').hasClass('ui-helper-hidden'), is(true));
-                assertThat($('.content-file').hasClass('ui-helper-hidden'), is(false));
+                assertThat($('.static').hasClass('ui-helper-hidden'), is(true));
+                assertThat($('.file').hasClass('ui-helper-hidden'), is(false));
             });
 
             test('setStub with then script populates fields', function () {
@@ -384,24 +367,22 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 assertThat($('#scriptThen').prop('checked'), is(true));
             });
 
-            test('clicking #editorContent chooses editor', function () {
-                var $contentEditor = $('.content-editor'), $fileEditor = $('.content-file');
+            test('clicking #staticThen chooses editor', function () {
+                var $staticElements = $('.static'), $fileElements = $('.file');
                 this.view.content2.refresh = mockFunction();
 
-                $('#editorContent').click();
-                assertThat($contentEditor.hasClass('ui-helper-hidden'), is(false));
-                assertThat($fileEditor.hasClass('ui-helper-hidden'), is(true));
+                $('#staticThen').click();
+                assertThat($staticElements.hasClass('ui-helper-hidden'), is(false));
+                assertThat($fileElements.hasClass('ui-helper-hidden'), is(true));
                 verify(this.view.content2.refresh)();
             });
 
-            test('clicking #fileContent chooses file input', function () {
-                var $contentEditor = $('.content-editor'), $fileEditor = $('.content-file');
-                this.view.content2.refresh = mockFunction();
+            test('clicking #fileThen chooses file input', function () {
+                var $staticElements = $('.static').not('.file'), $fileElements = $('.file');
 
-                $('#fileContent').click();
-                assertThat($fileEditor.hasClass('ui-helper-hidden'), is(false));
-                assertThat($contentEditor.hasClass('ui-helper-hidden'), is(true));
-                verify(this.view.content2.refresh)();
+                $('#fileThen').click();
+                assertThat($staticElements.hasClass('ui-helper-hidden'), is(true));
+                assertThat($fileElements.hasClass('ui-helper-hidden'), is(false));
             });
         });
 });

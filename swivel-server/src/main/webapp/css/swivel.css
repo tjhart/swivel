@@ -88,6 +88,10 @@ body > footer {
     display: inline;
 }
 
+.type label {
+    text-align: center;
+}
+
 form {
     margin: 5px 5px 5px 5px;
 }
@@ -193,7 +197,7 @@ input {
 
 .then .CodeMirror {
     width: 405px;
-    height: 314px;
+    height: 352px;
 }
 
 #thenScript {

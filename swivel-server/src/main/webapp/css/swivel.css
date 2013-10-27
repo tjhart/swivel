@@ -180,6 +180,10 @@ input {
     vertical-align: middle;
 }
 
+.file ul.ui-helper-hidden {
+    display: none;
+}
+
 .file li {
     list-style: none;
     float: left;

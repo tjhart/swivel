@@ -387,5 +387,30 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 assertThat($staticElements.hasClass('ui-helper-hidden'), is(true));
                 assertThat($fileElements.hasClass('ui-helper-hidden'), is(false));
             });
+
+            test('trashing existing file hides file ul', function () {
+                var stubData = {
+                    id: 1,
+                    description: 'description',
+                    when: {
+                        method: 'GET',
+                        query: 'query',
+                        remoteAddress: 'remoteAddress',
+                        contentType: 'application/json',
+                        content: '{"application":"json"}',
+                        script: 'true;'
+                    }, then: {
+                        statusCode: 200,
+                        fileName: 'myHappyFile.happy',
+                        fileContentType: 'application/happy'
+                    }};
+
+                this.view.setStub('some/path', stubData);
+
+                $('.file button').click();
+
+                assertThat($('.file ul').hasClass('ui-helper-hidden'), is(true));
+                assertThat($('.file').not('.static').find('intpu').hasClass('ui-helper-hidden'), is(false));
+            });
         });
 });

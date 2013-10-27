@@ -90,7 +90,14 @@ define(['jQuery', 'utils', 'codemirror', 'json2', 'jQuery-ui', 'cm-javascript', 
                 });
             $('#statusCode').autocomplete({source: STATUS_CODES});
             $('.file button')
-                .button({icons: {primary: 'ui-icon-trash'}, text: false});
+                .button({icons: {primary: 'ui-icon-trash'}, text: false})
+                .click(function () {
+                    $('.file ul').addClass('ui-helper-hidden');
+                    $('.file')
+                        .not('.static')
+                        .find('input')
+                        .removeClass('ui-helper-hidden');
+                });
             $('.content').removeClass('ui-helper-hidden');
             //The script editors need to be initialized *after* the content is made visible. Otherwise,
             //they don't render properly

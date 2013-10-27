@@ -173,20 +173,23 @@ input {
     margin: 2px 5px 2px 0;
 }
 
-.content-file button {
-}
-
-.content-file ul {
-    margin: 0 0 0 140px;
+.file ul {
+    display: inline-block;
+    margin: 2px 0 0 10px;
     padding: 0;
+    vertical-align: middle;
 }
 
-.content-file li {
+.file li {
     list-style: none;
     float: left;
 }
 
-#currentFileName{
+.file li:first-child {
+    margin-top: 3px;
+}
+
+#currentFileName {
     margin: 0 5px 0 5px;
 }
 

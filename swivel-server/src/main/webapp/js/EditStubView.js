@@ -33,8 +33,11 @@ define(['jQuery', 'utils', 'codemirror', 'json2', 'jQuery-ui', 'cm-javascript', 
             if (stub.then.script) {
                 $('#scriptThen').click();
             }
-            else if (stub.then.file) {
+            else if (stub.then.fileName) {
                 $('#fileThen').click();
+                $('#currentFileName').html(stub.then.fileName);
+                $('.file ul').removeClass('ui-helper-hidden');
+                $('.file').not('.static').find(' input').addClass('ui-helper-hidden');
             }
             loadStubPart(document.stubDescription, stub);
             loadStubPart(document.when, when);
@@ -86,7 +89,7 @@ define(['jQuery', 'utils', 'codemirror', 'json2', 'jQuery-ui', 'cm-javascript', 
                     view[viewName].setOption('mode', mimeType);
                 });
             $('#statusCode').autocomplete({source: STATUS_CODES});
-            $('.content-file button')
+            $('.file button')
                 .button({icons: {primary: 'ui-icon-trash'}, text: false});
             $('.content').removeClass('ui-helper-hidden');
             //The script editors need to be initialized *after* the content is made visible. Otherwise,

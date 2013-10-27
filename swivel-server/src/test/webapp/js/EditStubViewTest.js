@@ -323,7 +323,8 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                         script: 'true;'
                     }, then: {
                         statusCode: 200,
-                        file: 'myHappyFile.happy'
+                        fileName: 'myHappyFile.happy',
+                        fileContentType: 'application/happy'
                     }};
 
                 this.view.setStub('some/path', stubData);
@@ -338,8 +339,10 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                 assertThat(this.view.content.getValue(), equalTo(stubData.when.content));
 
                 assertThat($('#statusCode').val(), equalTo(stubData.then.statusCode));
-
                 assertThat($('#fileThen').prop('checked'), is(true));
+                assertThat($('.file ul').hasClass('ui-helper-hidden'), is(false));
+                assertThat($('.file input').hasClass('ui-helper-hidden'), is(true));
+                assertThat($('#currentFileName').html(), equalTo(stubData.then.fileName));
 
                 assertThat($('.static').hasClass('ui-helper-hidden'), is(true));
                 assertThat($('.file').hasClass('ui-helper-hidden'), is(false));

@@ -28,7 +28,7 @@ define(['jQuery'], function ($) {
                     { id: 3,
                         description: 'simple stub',
                         when: {method: 'PUT', script: '(function(){return true;})();'},
-                        then: {statusCode: 200} },
+                        then: {statusCode: 200, fileName: 'myHappyFile.happy', fileContentType: 'application/happy'} },
                     { id: 4,
                         description: 'complicated stub',
                         when: {

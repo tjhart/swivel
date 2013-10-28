@@ -4,11 +4,9 @@ import com.tjh.swivel.config.model.When;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.BasicClientConnectionManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -31,8 +29,7 @@ public class SwivelConfigurer {
 
     protected final URL swivelURL;
 
-    protected ClientConnectionManager clientConnectionManager = new BasicClientConnectionManager();
-    protected HttpParams httpParams = new BasicHttpParams();
+    protected HttpClientConnectionManager clientConnectionManager = new BasicHttpClientConnectionManager();
 
     /**
      * Create a SwivelConfigurer with the URL of the target Swivel Server
@@ -52,13 +49,15 @@ public class SwivelConfigurer {
      * @throws IOException
      */
     public int configure(Behavior behavior) throws IOException {
+        String response = "";
         try {
             HttpEntity responseEntity = getClient()
                     .execute(behavior.toRequest(swivelURL))
                     .getEntity();
-            return new JSONObject(EntityUtils.toString(responseEntity))
+            response = EntityUtils.toString(responseEntity);
+            return new JSONObject(response)
                     .getInt(ID_KEY);
-        } catch (JSONException e) { throw new RuntimeException(e); }
+        } catch (JSONException e) { throw new RuntimeException("Could not parse response: " + response, e); }
     }
 
     /**
@@ -116,7 +115,11 @@ public class SwivelConfigurer {
     }
 
     //useful for testing
-    HttpClient getClient() { return new DefaultHttpClient(clientConnectionManager, httpParams);}
+    HttpClient getClient() {
+        return HttpClientBuilder.create()
+                .setConnectionManager(clientConnectionManager)
+                .build();
+    }
 
     //<editor-fold desc="Object">
     @Override
@@ -142,10 +145,8 @@ public class SwivelConfigurer {
     //</editor-fold>
 
     //<editor-fold desc="bean">
-    public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
+    public void setClientConnectionManager(HttpClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
     }
-
-    public void setHttpParams(HttpParams httpParams) { this.httpParams = httpParams; }
     //</editor-fold>
 }

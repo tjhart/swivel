@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -129,17 +130,21 @@ public class Configuration {
     }
 
     public void removePath(URI localUri) {
-        for (StubRequestHandler stub : getStubRequestHandlers(uriHandlers.remove(localUri.toString()))) {
+        removePath(uriHandlers, localUri.toString());
+    }
+
+    private void removePath(Map<String, Map<String, Object>> uriHandlers, String key) {
+        for (StubRequestHandler stub : getStubRequestHandlers(uriHandlers.remove(key))) {
             stub.releaseResources();
         }
     }
 
-    protected List<StubRequestHandler> getStubRequestHandlers(Map<String, Object> node) {
-        return (List<StubRequestHandler>) node.get(STUB_NODE);
-    }
-
     public void reset() {
+        HashMap<String, Map<String, Object>> oldMap = new HashMap<String, Map<String, Object>>(uriHandlers);
         uriHandlers.clear();
+        for (String path : new HashSet<String>(oldMap.keySet())) {
+            removePath(oldMap, path);
+        }
     }
     //</editor-fold>
 
@@ -189,6 +194,10 @@ public class Configuration {
         return result;
     }
     //</editor-fold>
+
+    protected List<StubRequestHandler> getStubRequestHandlers(Map<String, Object> node) {
+        return (List<StubRequestHandler>) node.get(STUB_NODE);
+    }
 
     protected List<StubRequestHandler> getStubRequestHandlers(String path) {
         return getStubRequestHandlers(uriHandlers.get(path));

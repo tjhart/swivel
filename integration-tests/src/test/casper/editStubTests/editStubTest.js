@@ -11,7 +11,6 @@
         },
         EXPECTED_THEN_FORM = {
             thenType: 'script',
-            contentSource: 'editor',
             contentFile: '',
             statusCode: '',
             contentType: ''

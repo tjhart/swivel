@@ -36,6 +36,7 @@ public class StaticStubRequestHandler extends AbstractStubRequestHandler {
     @Override
     public void releaseResources() {
         if (responseFile != null) {
+            LOGGER.debug("removing storage file for " + toString());
             if (!responseFile.delete()) {
                 LOGGER.warn("Could not delete storage for responseFile: " + responseFile.getPath());
             }

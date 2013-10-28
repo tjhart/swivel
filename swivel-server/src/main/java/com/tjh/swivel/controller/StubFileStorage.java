@@ -14,7 +14,10 @@ public class StubFileStorage {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     protected File createFile(InputStream formFile) throws IOException {
-        File result = new File(stubFileDir, UUID.randomUUID().toString());
+        File result;
+        do {
+            result = new File(stubFileDir, UUID.randomUUID().toString());
+        } while (result.exists());
         result.setWritable(true);
         result.createNewFile();
         LOGGER.debug("Creating stub storage file " + result.getPath());

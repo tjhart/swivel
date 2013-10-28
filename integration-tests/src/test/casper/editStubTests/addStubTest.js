@@ -13,8 +13,7 @@
             thenType: 'static',
             statusCode: '200',
             contentType: 'text/xml',
-            contentFile:'',
-            contentSource:'editor'
+            contentFile:''
         },
         EXPECTED_EDITORS = {
             content: '<node></node>',

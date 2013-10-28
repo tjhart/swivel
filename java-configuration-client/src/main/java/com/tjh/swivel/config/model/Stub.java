@@ -1,13 +1,16 @@
 package com.tjh.swivel.config.model;
 
 import com.tjh.swivel.config.Behavior;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.codehaus.jettison.json.JSONObject;
 import vanderbilt.util.Maps;
 
+import java.io.File;
 import java.net.URL;
 
 import static vanderbilt.util.Validators.notNull;
@@ -61,8 +64,22 @@ public class Stub implements Behavior {
         return request;
     }
 
-    protected StringEntity createEntity() {
-        return new StringEntity(toJSON().toString(), ContentType.APPLICATION_JSON);
+    protected HttpEntity createEntity() {
+        HttpEntity result;
+        String json = toJSON().toString();
+        File file = then.getFile();
+        if (file != null) {
+            if (then.getContentType() == null) {
+                throw new IllegalStateException("contentType is required for file stubs: " + json);
+            }
+            result = MultipartEntityBuilder.create()
+                    .addTextBody("stubDescription", json, ContentType.APPLICATION_JSON)
+                    .addBinaryBody("contentFile", file, ContentType.create(then.getContentType()), file.getName())
+                    .build();
+        } else {
+            result = new StringEntity(json, ContentType.APPLICATION_JSON);
+        }
+        return result;
     }
 
     //<editor-fold desc="Object">

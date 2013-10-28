@@ -15,7 +15,7 @@
                     casper.fill('form[name="when"]', {
                         method: 'GET'
                     });
-                    casper.click('#fileContent');
+                    casper.click('#fileThen');
                     casper.fill('form[name="then"]', {
                         statusCode: 200, contentFile: swivelUtils.TEST_CONFIG_FILE_PATH
                     });

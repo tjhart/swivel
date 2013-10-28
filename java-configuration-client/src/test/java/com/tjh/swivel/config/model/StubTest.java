@@ -2,23 +2,26 @@ package com.tjh.swivel.config.model;
 
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import static com.tjh.swivel.config.Swivel.get;
-import static com.tjh.swivel.config.Swivel.ok;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class StubTest {
 
@@ -35,10 +38,20 @@ public class StubTest {
     public static final String DESCRIPTION = "description";
 
     private Stub stub;
+    private When mockWhen;
+    private Then mockThen;
+    private JSONObject mockJSONObject;
 
     @Before
     public void setUp() throws URISyntaxException {
-        stub = new Stub(DESCRIPTION, get(URI.create("some/uri")), ok());
+        mockWhen = mock(When.class);
+        mockThen = mock(Then.class);
+        mockJSONObject = mock(JSONObject.class);
+
+        stub = new Stub(DESCRIPTION, mockWhen, mockThen);
+
+        when(mockWhen.toJSON()).thenReturn(mockJSONObject);
+        when(mockThen.toJSON()).thenReturn(mockJSONObject);
     }
 
     @Test
@@ -52,7 +65,7 @@ public class StubTest {
     }
 
     @Test
-    public void toJSONIncludesdescription() throws JSONException {
+    public void toJSONIncludesDescription() throws JSONException {
         assertThat(stub.toJSON().getString(Stub.DESCRIPTION_KEY), equalTo(DESCRIPTION));
     }
 
@@ -76,5 +89,15 @@ public class StubTest {
                 .getContentType()
                 .getValue(),
                 equalTo(ContentType.APPLICATION_JSON.toString()));
+    }
+
+    @Test
+    public void createEntityCreatesMultiPartIfThenIsFileBased(){
+        File mockFile = mock(File.class);
+
+        when(mockThen.getFile()).thenReturn(mockFile);
+
+        //MultipartFormEntity isn't accessible
+        assertThat(stub.createEntity(), not(instanceOf(StringEntity.class)));
     }
 }

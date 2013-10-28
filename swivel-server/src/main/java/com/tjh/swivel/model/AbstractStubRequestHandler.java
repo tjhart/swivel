@@ -9,7 +9,6 @@ import org.hamcrest.StringDescription;
 import vanderbilt.util.Maps;
 
 import javax.script.ScriptException;
-import java.io.File;
 import java.net.URI;
 import java.util.Map;
 
@@ -22,6 +21,7 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     public static final String SCRIPT_KEY = "script";
     public static final String DESCRIPTION_KEY = "description";
     public static final String ID_KEY = "id";
+    public static final String STORAGE_PATH_KEY = "_storagePath";
 
     private static Logger logger = Logger.getLogger(AbstractStubRequestHandler.class);
     protected static ResponseFactory responseFactory = new ResponseFactory();
@@ -38,10 +38,6 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
             result = new StaticStubRequestHandler(stubDescription);
         }
         return result;
-    }
-
-    public static StubRequestHandler createStubFor(Map<String, Object> stubMap, File responseFile) {
-        return new StaticStubRequestHandler(stubMap, responseFile);
     }
 
     public AbstractStubRequestHandler(Map<String, Object> stubDescription) {
@@ -73,6 +69,9 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
 
     @Override
     public int getId() { return System.identityHashCode(this); }
+
+    @Override
+    public void releaseResources() { }
     //</editor-fold>
 
     //<editor-fold desc="RequestHandler">

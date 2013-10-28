@@ -6,7 +6,7 @@
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
 
-    <bean id="clientConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
+    <bean id="clientConnectionManager" class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager"/>
 
     <bean id="responseFactory" class="com.tjh.swivel.model.ResponseFactory"/>
 

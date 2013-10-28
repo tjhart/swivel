@@ -7,4 +7,6 @@ public interface StubRequestHandler extends RequestHandler<HttpUriRequest> {
     boolean matches(HttpUriRequest request);
 
     int getId();
+
+    void releaseResources();
 }

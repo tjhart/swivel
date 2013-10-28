@@ -79,9 +79,8 @@ public class Configuration {
     //<editor-fold desc="modify">
     public void removeStub(URI localUri, final int stubHandlerId) {
         String path = localUri.getPath();
-        Map<String, Object> handlerMap = uriHandlers.get(path);
-        List<StubRequestHandler> handlers = (List<StubRequestHandler>) handlerMap
-                .get(Configuration.STUB_NODE);
+        List<StubRequestHandler> handlers = getStubRequestHandlers(path);
+        System.out.println("handlers = " + handlers);
         StubRequestHandler target = Lists.find(handlers, new Block<StubRequestHandler, Boolean>() {
             @Override
             public Boolean invoke(StubRequestHandler stubRequestHandler) {
@@ -90,9 +89,10 @@ public class Configuration {
         });
         LOGGER.debug(String.format("Removing <%1$s> from path <%2$s>", target, localUri));
         handlers.remove(target);
+        target.releaseResources();
 
         if (handlers.isEmpty()) {
-            clean(path, handlerMap, Configuration.STUB_NODE);
+            clean(path, uriHandlers.get(path), Configuration.STUB_NODE);
         }
     }
 
@@ -103,8 +103,7 @@ public class Configuration {
 
     public void addStub(URI localUri, StubRequestHandler stubRequestHandler) {
         LOGGER.debug(String.format("Adding stub <%1$s> to <%2$s>", stubRequestHandler, localUri));
-        ((List) uriHandlers.get(localUri.getPath())
-                .get(Configuration.STUB_NODE))
+        getStubRequestHandlers(localUri.getPath())
                 .add(0, stubRequestHandler);
     }
 
@@ -124,12 +123,24 @@ public class Configuration {
             }
         }
 
-        stubRequestHandlers.set(stubIndex, stubRequestHandler);
+        stubRequestHandlers
+                .set(stubIndex, stubRequestHandler)
+                .releaseResources();
     }
 
-    public void removePath(URI localUri) { uriHandlers.remove(localUri.toString()); }
+    public void removePath(URI localUri) {
+        for (StubRequestHandler stub : getStubRequestHandlers(uriHandlers.remove(localUri.toString()))) {
+            stub.releaseResources();
+        }
+    }
 
-    public void reset() { uriHandlers.clear(); }
+    protected List<StubRequestHandler> getStubRequestHandlers(Map<String, Object> node) {
+        return (List<StubRequestHandler>) node.get(STUB_NODE);
+    }
+
+    public void reset() {
+        uriHandlers.clear();
+    }
     //</editor-fold>
 
     //<editor-fold desc="marshalling">
@@ -159,8 +170,8 @@ public class Configuration {
             @Override
             public Object invoke(String path, Map<String, Object> handlerMap) {
                 Map<String, Object> stubsAndShunt = new HashMap<String, Object>();
-                if (!((List) handlerMap.get(STUB_NODE)).isEmpty()) {
-                    stubsAndShunt.put(STUBS_MAP_KEY, Lists.collect((List<StubRequestHandler>) handlerMap.get(STUB_NODE),
+                if (!getStubRequestHandlers(handlerMap).isEmpty()) {
+                    stubsAndShunt.put(STUBS_MAP_KEY, Lists.collect(getStubRequestHandlers(handlerMap),
                             new Block<StubRequestHandler, Map<String, Object>>() {
                                 @Override
                                 public Map<String, Object> invoke(StubRequestHandler stubRequestHandler) {
@@ -179,14 +190,14 @@ public class Configuration {
     }
     //</editor-fold>
 
-    private List<StubRequestHandler> getStubRequestHandlers(String path) {
-        return (List<StubRequestHandler>) uriHandlers.get(path).get(Configuration.STUB_NODE);
+    protected List<StubRequestHandler> getStubRequestHandlers(String path) {
+        return getStubRequestHandlers(uriHandlers.get(path));
     }
 
     void clean(String path, Map<String, Object> handlerMap, String nodeType) {
         Object shuntRequestHandler = handlerMap.remove(nodeType);
         if (handlerMap.containsKey(STUB_NODE)) {
-            List stubs = (List) handlerMap.get(STUB_NODE);
+            List stubs = getStubRequestHandlers(handlerMap);
             if (stubs.isEmpty()) {
                 handlerMap.remove(STUB_NODE);
             }
@@ -200,8 +211,7 @@ public class Configuration {
 
     private void loadStubs(List<Map<String, Object>> stubDescriptions, Map<String, Object> nodeMap) {
         if (stubDescriptions != null && !stubDescriptions.isEmpty()) {
-            ((List<StubRequestHandler>) nodeMap
-                    .get(Configuration.STUB_NODE))
+            getStubRequestHandlers(nodeMap)
                     .addAll(Lists.collect(stubDescriptions, new Block<Map<String, Object>, StubRequestHandler>() {
                         @Override
                         public StubRequestHandler invoke(Map<String, Object> stubDescription) {

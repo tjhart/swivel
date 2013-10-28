@@ -61,7 +61,7 @@ public class ConfigureStubResource {
     public Map<String, Object> postStub(@PathParam("localPath") String localPath, Map<String, Object> stubDescription)
             throws URISyntaxException, ScriptException {
 
-        return addStub(new URI(localPath), createStub(stubDescription));
+        return addStub(new URI(localPath), createStubRequestHandler(stubDescription));
     }
 
     @POST
@@ -71,17 +71,12 @@ public class ConfigureStubResource {
     public Map<String, Object> postStub(@PathParam("localPath") String localPath,
             @FormDataParam("stubDescription") String stubDescriptionJSON,
             @FormDataParam("contentFile") InputStream formFile,
-            @FormDataParam("contentFile") FormDataBodyPart bodyPart) throws URISyntaxException, IOException {
+            @FormDataParam("contentFile") FormDataBodyPart bodyPart)
+            throws URISyntaxException, IOException, ScriptException {
 
-        Map<String, Object> stubMap = objectMapper.readValue(stubDescriptionJSON, Map.class);
-        Map<String, Object> thenMap = (Map<String, Object>) stubMap.get(AbstractStubRequestHandler.THEN_KEY);
-        String fileName = bodyPart.getContentDisposition().getFileName();
-        thenMap.put(ResponseFactory.FILE_CONTENT_TYPE_KEY, bodyPart.getMediaType().toString());
-        thenMap.put(ResponseFactory.FILE_NAME_KEY, fileName);
-        LOGGER.debug("Creating file for " + fileName);
-        StubRequestHandler stub = createStub(stubMap, stubFileStorage.createFile(formFile));
+        LOGGER.debug("Creating file for " + bodyPart.getContentDisposition().getFileName());
 
-        return addStub(new URI(localPath), stub);
+        return addStub(new URI(localPath), createStubRequestHandler(stubDescriptionJSON, formFile, bodyPart));
     }
 
     @PUT
@@ -90,16 +85,19 @@ public class ConfigureStubResource {
     public Map<String, Object> editStub(@PathParam("localPath") String localPath, Map<String, Object> stubDescription)
             throws URISyntaxException, ScriptException {
 
-        int lastElementIndex = localPath.lastIndexOf('/');
-        int stubId = Integer.valueOf(localPath.substring(lastElementIndex + 1));
-        localPath = localPath.substring(0, lastElementIndex);
+        return editStub(localPath, createStubRequestHandler(stubDescription));
+    }
 
-        LOGGER.debug(String.format("Replacing stub %1$s:%2$d with %3$s", localPath, stubId, stubDescription));
-        URI localURI = new URI(localPath);
-        StubRequestHandler stubRequestHandler = createStub(stubDescription);
+    @PUT
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Object> editStub(@PathParam("localPath") String localPath,
+            @FormDataParam("stubDescription") String stubDescriptionJSON,
+            @FormDataParam("contentFile") InputStream formFile,
+            @FormDataParam("contentFile") FormDataBodyPart bodyPart)
+            throws URISyntaxException, IOException, ScriptException {
 
-        configuration.replaceStub(localURI, stubId, stubRequestHandler);
-        return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());
+        return editStub(localPath, createStubRequestHandler(stubDescriptionJSON, formFile, bodyPart));
     }
 
     @DELETE
@@ -112,18 +110,38 @@ public class ConfigureStubResource {
         return configuration.toMap();
     }
 
-    private Map<String, Object> addStub(URI localUri, StubRequestHandler stubRequestHandler) {
+    @SuppressWarnings("unchecked")
+    protected StubRequestHandler createStubRequestHandler(String stubDescriptionJSON, InputStream formFile,
+            FormDataBodyPart bodyPart) throws IOException, ScriptException {
+
+        Map<String, Object> stubMap = objectMapper.readValue(stubDescriptionJSON, Map.class);
+        Map<String, Object> thenMap = (Map<String, Object>) stubMap.get(AbstractStubRequestHandler.THEN_KEY);
+        thenMap.put(ResponseFactory.FILE_CONTENT_TYPE_KEY, bodyPart.getMediaType().toString());
+        thenMap.put(ResponseFactory.FILE_NAME_KEY, bodyPart.getContentDisposition().getFileName());
+        File storage = stubFileStorage.createFile(formFile);
+
+        thenMap.put(AbstractStubRequestHandler.STORAGE_PATH_KEY, storage.getPath());
+
+        return createStubRequestHandler(stubMap);
+    }
+
+    protected Map<String, Object> addStub(URI localUri, StubRequestHandler stubRequestHandler) {
         LOGGER.debug(String.format("Adding stub for %1$s", localUri));
         configuration.addStub(localUri, stubRequestHandler);
         return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());
     }
 
-    protected StubRequestHandler createStub(Map<String, Object> stubDescription) throws ScriptException {
-        return AbstractStubRequestHandler.createStubFor(stubDescription);
+    protected Map<String, Object> editStub(String localPath, StubRequestHandler stub) throws URISyntaxException {
+        int lastElementIndex = localPath.lastIndexOf('/');
+        int stubId = Integer.valueOf(localPath.substring(lastElementIndex + 1));
+        localPath = localPath.substring(0, lastElementIndex);
+        LOGGER.debug(String.format("Replacing stub %1$s:%2$d with %3$s", localPath, stubId, stub.toMap()));
+        configuration.replaceStub(new URI(localPath), stubId, stub);
+        return Maps.<String, Object>asMap(STUB_ID_KEY, stub.getId());
     }
 
-    public StubRequestHandler createStub(Map<String, Object> stubMap, File responseFile) {
-        return AbstractStubRequestHandler.createStubFor(stubMap, responseFile);
+    protected StubRequestHandler createStubRequestHandler(Map<String, Object> stubDescription) throws ScriptException {
+        return AbstractStubRequestHandler.createStubFor(stubDescription);
     }
 
     public void setConfiguration(Configuration configuration) {this.configuration = configuration;}

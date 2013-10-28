@@ -69,10 +69,11 @@ define(['jQuery', 'json2'], function ($, json2) {
         };
 
         function configureOpts(stubData, opts) {
-            if (stubData instanceof FormData) {
+            var formData = stubData.formData;
+            if (formData && formData instanceof FormData) {
                 opts.processData = false;
                 opts.contentType = false;
-                opts.data = stubData;
+                opts.data = formData;
             } else {
                 opts.contentType = 'application/json';
                 opts.data = json2.stringify(stubData);
@@ -84,7 +85,7 @@ define(['jQuery', 'json2'], function ($, json2) {
                 url: [baseUrl, CONFIG_PATH, 'stub', stubData.path, stubData.id].join('/'),
                 type: 'PUT'
             };
-            configureOpts(stubData.formData || stubData, opts);
+            configureOpts(stubData, opts);
             return $.ajax(opts)
                 .done(callback || defaultCallback);
         };
@@ -94,7 +95,7 @@ define(['jQuery', 'json2'], function ($, json2) {
                 url: [baseUrl, CONFIG_PATH, 'stub', stubData.path].join('/'),
                 type: 'POST'
             };
-            configureOpts(stubData.formData || stubData, opts);
+            configureOpts(stubData, opts);
             return $.ajax(opts)
                 .done(callback || defaultCallback);
         };

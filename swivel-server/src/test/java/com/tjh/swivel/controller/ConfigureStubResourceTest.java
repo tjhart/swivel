@@ -33,6 +33,7 @@ import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -46,6 +47,7 @@ public class ConfigureStubResourceTest {
     public static final String APPLICATION_PDF = "application/pdf";
     public static final String FILE_NAME_TXT = "fileName.txt";
     public static final long FILE_SIZE = 42L;
+    public static final String MOCK_JSON_STRING = "{}";
     private ConfigureStubResource configureStubResource;
     private Configuration mockConfiguration;
     private Map<String, Object> mockStubMap;
@@ -82,10 +84,7 @@ public class ConfigureStubResourceTest {
 
         doReturn(mockStubRequestHandler)
                 .when(configureStubResource)
-                .createStub(anyMap());
-        doReturn(mockStubRequestHandler)
-                .when(configureStubResource)
-                .createStub(anyMap(), any(File.class));
+                .createStubRequestHandler(anyMap());
 
         when(mockStubRequestHandler.getId())
                 .thenReturn(STUB_HANDLER_ID);
@@ -109,7 +108,7 @@ public class ConfigureStubResourceTest {
     public void postStubDefersToFactory() throws ScriptException, URISyntaxException {
         configureStubResource.postStub(LOCAL_PATH, mockStubMap);
 
-        verify(configureStubResource).createStub(mockStubMap);
+        verify(configureStubResource).createStubRequestHandler(mockStubMap);
     }
 
     @Test
@@ -158,7 +157,7 @@ public class ConfigureStubResourceTest {
     public void editStubDefersToCreateStub() throws ScriptException, URISyntaxException {
         configureStubResource.editStub(LOCAL_PATH + "/12345", mockStubMap);
 
-        verify(configureStubResource).createStub(mockStubMap);
+        verify(configureStubResource).createStubRequestHandler(mockStubMap);
     }
 
     @Test
@@ -176,41 +175,68 @@ public class ConfigureStubResourceTest {
     }
 
     @Test
-    public void postStubWithFileDefersToObjectMapper() throws IOException, URISyntaxException {
-        configureStubResource.postStub(LOCAL_PATH, "{}", mockInputStream, mockBodyPart);
+    public void postStubWithFileDefersToObjectMapper() throws IOException, URISyntaxException, ScriptException {
+        configureStubResource.postStub(LOCAL_PATH, MOCK_JSON_STRING, mockInputStream, mockBodyPart);
 
-        verify(mockObjectMapper).readValue("{}", Map.class);
+        verify(mockObjectMapper).readValue(MOCK_JSON_STRING, Map.class);
     }
 
     @Test
-    public void postStubWithFileUpdatesStubDescriptionWithContentType() throws IOException, URISyntaxException {
-        configureStubResource.postStub(LOCAL_PATH, "{}", mockInputStream, mockBodyPart);
+    public void postStubWithFileUpdatesStubDescriptionWithContentType()
+            throws IOException, URISyntaxException, ScriptException {
+        configureStubResource.postStub(LOCAL_PATH, MOCK_JSON_STRING, mockInputStream, mockBodyPart);
 
         verify(mockStubMap).get(AbstractStubRequestHandler.THEN_KEY);
         verify(mockThenMap).put(ResponseFactory.FILE_CONTENT_TYPE_KEY, APPLICATION_PDF);
     }
 
     @Test
-    public void postStubWithFileStoresFile() throws IOException, URISyntaxException {
-        configureStubResource.postStub(LOCAL_PATH, "{}", mockInputStream, mockBodyPart);
+    public void postStubWithFileStoresFile() throws IOException, URISyntaxException, ScriptException {
+        configureStubResource.postStub(LOCAL_PATH, MOCK_JSON_STRING, mockInputStream, mockBodyPart);
 
-        verify(mockBodyPart).getContentDisposition();
+        verify(mockBodyPart, atLeastOnce()).getContentDisposition();
         verify(mockStorage).createFile(mockInputStream);
     }
 
     @Test
-    public void postStubWithFileDefersToCreateStub() throws IOException, URISyntaxException {
-        configureStubResource.postStub(LOCAL_PATH, "{}", mockInputStream, mockBodyPart);
+    public void postStubWithFileDefersToCreateStub() throws IOException, URISyntaxException, ScriptException {
+        configureStubResource.postStub(LOCAL_PATH, MOCK_JSON_STRING, mockInputStream, mockBodyPart);
 
-        verify(mockBodyPart).getContentDisposition();
-        verify(mockContentDisposition).getFileName();
-        verify(configureStubResource).createStub(mockStubMap, mockFile);
+        verify(mockBodyPart, atLeastOnce()).getContentDisposition();
+        verify(mockContentDisposition, atLeastOnce()).getFileName();
+        verify(configureStubResource).createStubRequestHandler(mockStubMap);
     }
 
     @Test
-    public void postStubWithFileStoresFilename() throws IOException, URISyntaxException {
-        configureStubResource.postStub(LOCAL_PATH, "{}", mockInputStream, mockBodyPart);
+    public void postStubWithFileStoresFilename() throws IOException, URISyntaxException, ScriptException {
+        configureStubResource.postStub(LOCAL_PATH, MOCK_JSON_STRING, mockInputStream, mockBodyPart);
 
         verify(mockThenMap).put(ResponseFactory.FILE_NAME_KEY, FILE_NAME_TXT);
+    }
+
+    @Test
+    public void editStubWithInputStreamDefersToCreateStubRequestHandlerWithInputStream()
+            throws IOException, URISyntaxException, ScriptException {
+
+        doReturn(mockStubRequestHandler)
+                .when(configureStubResource)
+                .createStubRequestHandler(MOCK_JSON_STRING, mockInputStream, mockBodyPart);
+
+        configureStubResource.editStub(LOCAL_PATH + "/234", MOCK_JSON_STRING, mockInputStream, mockBodyPart);
+
+        verify(configureStubResource).createStubRequestHandler(MOCK_JSON_STRING, mockInputStream, mockBodyPart);
+    }
+
+    @Test
+    public void editStubWithInputStreamDefersToEditStub()
+            throws IOException, URISyntaxException, ScriptException {
+
+        doReturn(mockStubRequestHandler)
+                .when(configureStubResource)
+                .createStubRequestHandler(MOCK_JSON_STRING, mockInputStream, mockBodyPart);
+
+        configureStubResource.editStub(LOCAL_PATH + "/234", MOCK_JSON_STRING, mockInputStream, mockBodyPart);
+
+        verify(configureStubResource).editStub(LOCAL_PATH + "/234", mockStubRequestHandler);
     }
 }

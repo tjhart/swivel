@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,7 +21,10 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -34,7 +38,7 @@ public class ConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
-        configuration = new Configuration();
+        configuration = spy(new Configuration());
 
         mockShuntHandler = mock(ShuntRequestHandler.class);
         mockStubHandler = mock(StubRequestHandler.class);
@@ -164,5 +168,37 @@ public class ConfigurationTest {
 
         configuration.clean("some/path", mockMap, Configuration.SHUNT_NODE);
         verify(mockMap).remove(Configuration.STUB_NODE);
+    }
+
+    @Test
+    public void remoteStubReleasesResources(){
+        List<StubRequestHandler> mockHandlers = new ArrayList(Arrays.asList(mockStubHandler));
+        doReturn(mockHandlers)
+                .when(configuration)
+                .getStubRequestHandlers(anyString());
+        configuration.removeStub(LOCAL_URI, STUB_HANDLER_ID);
+
+        verify(mockStubHandler).releaseResources();
+    }
+
+    @Test
+    public void replacStubReleasesResources(){
+        StubRequestHandler mockNewStubRequestHandler = mock(StubRequestHandler.class);
+
+        doReturn(new ArrayList(Arrays.asList(mockStubHandler)))
+                .when(configuration)
+                .getStubRequestHandlers(anyString());
+        configuration.replaceStub(LOCAL_URI, STUB_HANDLER_ID, mockNewStubRequestHandler);
+
+        verify(mockStubHandler).releaseResources();
+    }
+
+    @Test
+    public void removePlaceReleasesResources(){
+        configuration.addStub(LOCAL_URI, mockStubHandler);
+
+        configuration.removePath(LOCAL_URI);
+
+        verify(mockStubHandler).releaseResources();
     }
 }

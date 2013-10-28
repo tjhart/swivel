@@ -6,10 +6,8 @@ import com.tjh.swivel.model.ResponseFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
 import vanderbilt.util.Strings;
 
@@ -23,8 +21,7 @@ public class RequestRouter {
     private static Logger LOGGER = Logger.getLogger(RequestRouter.class);
 
     private Configuration configuration;
-    private ClientConnectionManager clientConnectionManager;
-    private HttpParams httpParams = new BasicHttpParams();
+    private HttpClientConnectionManager clientConnectionManager;
     private ResponseFactory responseFactory;
 
     public HttpResponse route(HttpRequestBase request) {
@@ -58,19 +55,21 @@ public class RequestRouter {
         return response;
     }
 
-    protected HttpClient createClient() { return new DefaultHttpClient(clientConnectionManager, httpParams); }
+    protected HttpClient createClient() {
+        return HttpClientBuilder.create()
+                .setConnectionManager(clientConnectionManager)
+                .build();
+    }
 
     private String[] toKeys(URI localURI) {return localURI.getPath().split("/");}
 
     //<editor-fold desc="bean">
-    public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
+    public void setClientConnectionManager(HttpClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
     }
 
     public void setResponseFactory(ResponseFactory responseFactory) { this.responseFactory = responseFactory; }
 
     public void setConfiguration(Configuration configuration) { this.configuration = configuration; }
-
-    public void setHttpParams(HttpParams httpParams) { this.httpParams = httpParams; }
     //</editor-fold>
 }

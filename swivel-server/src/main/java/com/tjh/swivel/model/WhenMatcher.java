@@ -6,6 +6,7 @@ import org.hamcrest.Matcher;
 
 import javax.script.ScriptException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class WhenMatcher implements Matcher<HttpUriRequest> {
     private final Map<String, String> when;
 
     public WhenMatcher(Map<String, String> when) {
-        this.when = notNull("when", when);
+        this.when = notNull("when", Collections.unmodifiableMap(when));
         this.matcher = createMatcher();
     }
 
@@ -45,7 +46,7 @@ public class WhenMatcher implements Matcher<HttpUriRequest> {
     private Matcher<? extends HttpUriRequest> createMatcher() {
         try {
             List<Matcher<HttpUriRequest>> result = new ArrayList<Matcher<HttpUriRequest>>(OPTIONAL_MATCHER_COUNT);
-            if(when.containsKey(METHOD_KEY)){
+            if (when.containsKey(METHOD_KEY)) {
                 result.add(hasMethod(equalTo(when.get(METHOD_KEY))));
             }
 

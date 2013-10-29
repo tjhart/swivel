@@ -44,6 +44,9 @@ public class StaticStubRequestHandler extends AbstractStubRequestHandler {
     }
 
     @Override
+    public String getResourcePath() { return responseFile == null ? null : responseFile.getPath(); }
+
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("StaticStubRequestHandler{");
         sb.append("super=").append(super.toString());

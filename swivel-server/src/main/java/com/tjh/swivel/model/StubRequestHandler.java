@@ -9,4 +9,6 @@ public interface StubRequestHandler extends RequestHandler<HttpUriRequest> {
     int getId();
 
     void releaseResources();
+
+    String getResourcePath();
 }

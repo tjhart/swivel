@@ -10,6 +10,7 @@ import vanderbilt.util.Maps;
 
 import javax.script.ScriptException;
 import java.net.URI;
+import java.util.Collections;
 import java.util.Map;
 
 import static vanderbilt.util.Validators.notNull;
@@ -22,6 +23,11 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     public static final String DESCRIPTION_KEY = "description";
     public static final String ID_KEY = "id";
     public static final String STORAGE_PATH_KEY = "_storagePath";
+    public static final String CONTENT_KEY = "content";
+    public static final String STATUS_CODE_KEY = "statusCode";
+    public static final String CONTENT_TYPE_KEY = "contentType";
+    public static final String FILE_CONTENT_TYPE_KEY = "fileContentType";
+    public static final String FILE_NAME_KEY = "fileName";
 
     private static Logger logger = Logger.getLogger(AbstractStubRequestHandler.class);
     protected static ResponseFactory responseFactory = new ResponseFactory();
@@ -43,7 +49,7 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     public AbstractStubRequestHandler(Map<String, Object> stubDescription) {
         this.description = notNull(DESCRIPTION_KEY, (String) stubDescription.get(DESCRIPTION_KEY));
         this.matcher = new WhenMatcher((Map<String, String>) stubDescription.get(WHEN_KEY));
-        this.then = notNull(THEN_KEY, (Map<String, Object>) stubDescription.get(THEN_KEY));
+        this.then = notNull(THEN_KEY, Collections.unmodifiableMap((Map<String, Object>) stubDescription.get(THEN_KEY)));
     }
 
     static void setResponseFactory(ResponseFactory responseFactory) {
@@ -72,6 +78,10 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
 
     @Override
     public void releaseResources() { }
+
+    @Override
+    public String getResourcePath() { throw new UnsupportedOperationException("This stub doesn't support resources"); }
+
     //</editor-fold>
 
     //<editor-fold desc="RequestHandler">

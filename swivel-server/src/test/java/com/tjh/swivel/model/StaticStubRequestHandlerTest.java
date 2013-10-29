@@ -30,7 +30,7 @@ public class StaticStubRequestHandlerTest {
                 AbstractStubRequestHandler.WHEN_KEY, WHEN_MAP,
 
                 AbstractStubRequestHandler.THEN_KEY,
-                Maps.asMap(ResponseFactory.STATUS_CODE_KEY, 200)
+                Maps.asMap(AbstractStubRequestHandler.STATUS_CODE_KEY, 200)
         ));
 
         storageFile = new File(System.getProperty("java.io.tmpdir") + "/testFile.tmp");
@@ -51,7 +51,7 @@ public class StaticStubRequestHandlerTest {
     public void constructionThrowsIfResponseFileNotFound() {
         new StaticStubRequestHandler(Maps.<String, Object>asMap(AbstractStubRequestHandler.DESCRIPTION_KEY, DESCRIPTION,
                 AbstractStubRequestHandler.WHEN_KEY, WHEN_MAP,
-                AbstractStubRequestHandler.THEN_KEY, Maps.asMap(ResponseFactory.STATUS_CODE_KEY, 200,
+                AbstractStubRequestHandler.THEN_KEY, Maps.asMap(AbstractStubRequestHandler.STATUS_CODE_KEY, 200,
                 AbstractStubRequestHandler.STORAGE_PATH_KEY, "foo/bar")));
     }
 
@@ -60,7 +60,7 @@ public class StaticStubRequestHandlerTest {
         StaticStubRequestHandler staticStubRequestHandler = new StaticStubRequestHandler(
                 Maps.<String, Object>asMap(AbstractStubRequestHandler.DESCRIPTION_KEY, DESCRIPTION,
                         AbstractStubRequestHandler.WHEN_KEY, WHEN_MAP,
-                        AbstractStubRequestHandler.THEN_KEY, Maps.asMap(ResponseFactory.STATUS_CODE_KEY, 200,
+                        AbstractStubRequestHandler.THEN_KEY, Maps.asMap(AbstractStubRequestHandler.STATUS_CODE_KEY, 200,
                         AbstractStubRequestHandler.STORAGE_PATH_KEY, storageFile.getPath())));
 
         assertThat(staticStubRequestHandler.responseFile, equalTo(storageFile));

@@ -118,7 +118,7 @@ define(['jQuery', 'utils', 'codemirror', 'json2', 'jQuery-ui', 'cm-javascript', 
             }
 
             var stubData = $(document.stubDescription).serializeJSON(), event = 'add-stub.swivelView', when, then,
-                formData;
+                formData, contentFile;
 
             when = $(document.when).serializeJSON();
             when.content = trimToUndefined(view.content.getValue());
@@ -132,8 +132,11 @@ define(['jQuery', 'utils', 'codemirror', 'json2', 'jQuery-ui', 'cm-javascript', 
             } else {
                 then.statusCode = parseInt(then.statusCode);
                 if (then.thenType === 'file') {
-                    formData = new FormData();
-                    formData.append('contentFile', document.then.contentFile.files[0]);
+                    contentFile = document.then.contentFile.files[0];
+                    if (contentFile) {
+                        formData = new FormData();
+                        formData.append('contentFile', contentFile);
+                    }
                 } else {
                     then.content = trimToUndefined(view.content2.getValue());
                 }

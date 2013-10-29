@@ -15,12 +15,6 @@ import java.util.Map;
 public class ResponseFactory {
     private static Logger LOGGER = Logger.getLogger(ResponseFactory.class);
 
-    public static final String STATUS_CODE_KEY = "statusCode";
-    public static final String CONTENT_KEY = "content";
-    public static final String CONTENT_TYPE_KEY = "contentType";
-    public static final String FILE_CONTENT_TYPE_KEY = "fileContentType";
-    public static final String FILE_NAME_KEY = "fileName";
-
     public HttpResponse createResponse(int code, String stringEntity, String contentType) {
         BasicHttpResponse result = new BasicHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, code, null));
         if (stringEntity != null) {
@@ -34,19 +28,22 @@ public class ResponseFactory {
     public HttpResponse createResponse(Map<String, Object> then, File responseFile) {
         HttpResponse result = createResponse(getStatusCode(then));
         FileEntity fileEntity =
-                new FileEntity(responseFile, ContentType.create((String) then.get(FILE_CONTENT_TYPE_KEY)));
+                new FileEntity(responseFile, ContentType.create((String) then.get(
+                        AbstractStubRequestHandler.FILE_CONTENT_TYPE_KEY)));
         result.setEntity(fileEntity);
-        result.setHeader("Content-Disposition", "attachment; filename=\"" + then.get(FILE_NAME_KEY) + "\"");
+        result.setHeader("Content-Disposition", "attachment; filename=\"" + then.get(
+                AbstractStubRequestHandler.FILE_NAME_KEY) + "\"");
         return result;
     }
 
     public HttpResponse createResponse(Map<String, Object> map) {
         return createResponse(getStatusCode(map),
-                (String) map.get(CONTENT_KEY),
-                (String) map.get(CONTENT_TYPE_KEY));
+                (String) map.get(AbstractStubRequestHandler.CONTENT_KEY),
+                (String) map.get(AbstractStubRequestHandler.CONTENT_TYPE_KEY));
     }
 
     public HttpResponse createResponse(int code) { return createResponse(code, null, null); }
 
-    private int getStatusCode(Map<String, Object> map) {return ((Number) map.get(STATUS_CODE_KEY)).intValue();}
+    private int getStatusCode(Map<String, Object> map) {return ((Number) map.get(
+            AbstractStubRequestHandler.STATUS_CODE_KEY)).intValue();}
 }

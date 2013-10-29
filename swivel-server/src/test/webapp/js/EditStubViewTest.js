@@ -222,33 +222,7 @@ define(['test/lib/Squire', 'jsHamcrest', 'jsMockito'], function (Squire, jsHamcr
                     }});
             });
 
-            test('editStub triggers with expected map (file)', function () {
-                var actualData;
-                $(this.view).on('edit-stub.swivelView', function (event, data) {
-                    actualData = data;
-                });
-                $('input[name="id"]').val('1');
-                $('#path').val('some/path');
-                $('#description').val('description');
-                $('#method').val('GET');
-                $('#query').val('query');
-                $('#remoteAddress').val('remoteAddress');
-                $('#contentType').val('application/json');
-                this.view.content.setValue('{"application":"json"}');
-                this.view.whenScript.setValue('true;');
-                $('#statusCode').val(200);
-                $('#contentType2').val('application/xml');
-                $('#fileThen').click();
-
-                this.view.editStub();
-                assertThat(actualData, allOf(
-                    hasMember('id', equalTo(1)),
-                    hasMember('path', equalTo('some/path')),
-                    hasMember('formData', instanceOf(FormData))
-                ));
-            });
-
-            test('editStub triggers with thenScript', function () {
+            test('editStub triggers with script', function () {
                 var actualData;
                 $(this.view).on('add-stub.swivelView', function (event, data) {
                     actualData = data;

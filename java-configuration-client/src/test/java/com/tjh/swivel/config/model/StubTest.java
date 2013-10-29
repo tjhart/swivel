@@ -96,6 +96,7 @@ public class StubTest {
         File mockFile = mock(File.class);
 
         when(mockThen.getFile()).thenReturn(mockFile);
+        when(mockThen.getContentType()).thenReturn("text/plain");
 
         //MultipartFormEntity isn't accessible
         assertThat(stub.createEntity(), not(instanceOf(StringEntity.class)));

@@ -68,9 +68,9 @@ public class ResponseFactoryTest {
         File mockFile = mock(File.class);
         HttpResponse response = responseFactory.createResponse(
                 Maps.<String, Object>asMap(
-                        ResponseFactory.STATUS_CODE_KEY, 200,
-                        ResponseFactory.FILE_CONTENT_TYPE_KEY, "application/pdf",
-                        ResponseFactory.FILE_NAME_KEY, "fileName.pdf"),
+                        AbstractStubRequestHandler.STATUS_CODE_KEY, 200,
+                        AbstractStubRequestHandler.FILE_CONTENT_TYPE_KEY, "application/pdf",
+                        AbstractStubRequestHandler.FILE_NAME_KEY, "fileName.pdf"),
                 mockFile);
 
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));

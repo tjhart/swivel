@@ -12,8 +12,8 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     <bean id="defaultProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="properties">
             <props>
-                <prop key="SWIVEL_STUBFILE_STORAGE_DIR">${java.io.tmpdir}</prop>
-                <prop key="SWIVEL_CONFIG_FILE">${java.io.tmpdir}/swivelConfig.json</prop>
+                <prop key="com.tjh.swivel.storage.path">${java.io.tmpdir}</prop>
+                <prop key="com.tjh.swivel.config.file">${java.io.tmpdir}/swivelConfig.json</prop>
             </props>
         </property>
     </bean>
@@ -29,7 +29,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
           p:configuration-ref="configuration"/>
 
     <bean id="stubFileStorage" class="com.tjh.swivel.controller.StubFileStorage"
-          p:stubFileDir="file:${SWIVEL_STUBFILE_STORAGE_DIR}/swivelStorage"/>
+          p:stubFileDir="file:${com.tjh.swivel.storage.path}/swivelStorage"/>
 
     <bean id="configureStubResource" class="com.tjh.swivel.controller.ConfigureStubResource"
           p:configuration-ref="configuration" p:objectMapper-ref="objectMapper"
@@ -45,9 +45,9 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
     <bean id="swivelClosedListener" class="com.tjh.swivel.controller.SwivelClosedListener"
           p:configuration-ref="configuration" p:objectMapper-ref="objectMapper"
-          p:saveFile="file:${SWIVEL_CONFIG_FILE}"/>
+          p:saveFile="file:${com.tjh.swivel.config.file}"/>
 
     <bean id="swivelRefreshedListener" class="com.tjh.swivel.controller.SwivelRefreshedListener"
           p:configuration-ref="configuration" p:objectMapper-ref="objectMapper"
-          p:saveFile="file:${SWIVEL_CONFIG_FILE}"/>
+          p:saveFile="file:${com.tjh.swivel.config.file}"/>
 </beans>

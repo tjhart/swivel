@@ -56,7 +56,7 @@ define(['test/lib/Squire', 'jQuery', 'json2', 'jsHamcrest', 'jsMockito'],
 
                 verify(mockJQuery.ajax)(
                     allOf(
-                        hasMember('url', equalTo(BASE_URL + '/rest/config/stub/some/path?id=1')),
+                        hasMember('url', equalTo(BASE_URL + '/rest/config/stub/some/path/1')),
                         hasMember('type', equalTo('DELETE')),
                         hasMember('accept', equalTo('application/json'))
                     )

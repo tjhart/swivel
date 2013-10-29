@@ -23,8 +23,7 @@ define(['jQuery', 'json2'], function ($, json2) {
         };
 
         this.deleteStub = function (stubData, callback) {
-            var path = [baseUrl, CONFIG_PATH, 'stub', stubData.path].join('/'), url;
-            url = [path, $.param({id: stubData.id})].join('?');
+            var url = [baseUrl, CONFIG_PATH, 'stub', stubData.path, stubData.id].join('/');
             return $.ajax({
                 url: url,
                 type: 'DELETE',

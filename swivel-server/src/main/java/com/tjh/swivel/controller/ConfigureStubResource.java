@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+//YELLOWTAG:TJH - class has grown. Needs review
 @Path("config/stub/{localPath: .*}")
 public class ConfigureStubResource {
     public static final String STUB_ID_KEY = "id";
@@ -113,13 +114,13 @@ public class ConfigureStubResource {
         );
     }
 
-    //REDTAG:TJH - FIX THIS - should be some/path/<stubId>
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Map<String, Object>> deleteStub(@PathParam("localPath") URI localUri,
-            @QueryParam(STUB_ID_KEY) int stubId) {
-        LOGGER.debug(String.format("Deleting stub with id %1$d at path %2$s", stubId, localUri));
-        configuration.removeStub(localUri, stubId);
+    public Map<String, Map<String, Object>> deleteStub(@PathParam("localPath") String localPath) {
+        RequestPathParser requestPathParser = new RequestPathParser(localPath);
+        LOGGER.debug(String.format("Deleting stub with id %1$d at path %2$s", requestPathParser.getStubId(),
+                requestPathParser.getLocalPath()));
+        configuration.removeStub(URI.create(requestPathParser.getLocalPath()), requestPathParser.getStubId());
 
         return configuration.toMap();
     }

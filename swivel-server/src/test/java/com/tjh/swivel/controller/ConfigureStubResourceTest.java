@@ -130,7 +130,7 @@ public class ConfigureStubResourceTest {
     public void deleteStubRemovesStubAtURI() throws ScriptException, URISyntaxException {
         configureStubResource.postStub(LOCAL_PATH, mockStubMap);
 
-        configureStubResource.deleteStub(LOCAL_URI, STUB_HANDLER_ID);
+        configureStubResource.deleteStub(LOCAL_PATH + "/" + STUB_HANDLER_ID);
 
         verify(mockConfiguration).removeStub(LOCAL_URI, STUB_HANDLER_ID);
     }

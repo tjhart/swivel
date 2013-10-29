@@ -69,7 +69,7 @@ public class SwivelConfigurer {
      */
     public void deleteStub(URI path, int stubID) throws IOException {
         getClient()
-                .execute(new HttpDelete(getConfigURL(path, STUB_PATH) + "?id=" + stubID));
+                .execute(new HttpDelete(getConfigURL(path, STUB_PATH) + "/" + stubID));
     }
 
     /**

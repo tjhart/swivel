@@ -34,7 +34,9 @@
 
             casper.then(function () {
                 casper.waitForUrl(swivelUtils.HOME_URL, function () {
-                    casper.click('.stub button.edit');
+                    swivelUtils.waitForConfigToLoad(function(){
+                        casper.click('.stub button.edit');
+                    });
                 });
             });
 

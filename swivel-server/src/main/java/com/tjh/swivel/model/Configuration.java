@@ -50,7 +50,8 @@ public class Configuration {
     }
 
     RequestHandler findStub(Map<String, Object> stringObjectMap, final HttpUriRequest request) {
-        return ((Collection<StubRequestHandler>) stringObjectMap.get(Configuration.STUB_NODE))
+        return ((Collection<StubRequestHandler>) stringObjectMap.computeIfAbsent(Configuration.STUB_NODE,
+                i -> new CopyOnWriteArrayList<>()))
                 .stream()
                 .filter(requestHandler -> {
                     if (Level.DEBUG.equals(LOGGER.getEffectiveLevel())) {
@@ -76,13 +77,14 @@ public class Configuration {
         List<StubRequestHandler> handlers = getStubRequestHandlers(path);
         System.out.println("handlers = " + handlers);
 
-        StubRequestHandler target = handlers.stream()
+        handlers.stream()
                 .filter(stubRequestHandler -> stubRequestHandler.getId() == stubHandlerId)
                 .findFirst()
-                .orElse(null);
-        LOGGER.debug(String.format("Removing <%1$s> from path <%2$s>", target, localUri));
-        handlers.remove(target);
-        target.releaseResources();
+                .ifPresent(target -> {
+                    LOGGER.debug(String.format("Removing <%1$s> from path <%2$s>", target, localUri));
+                    handlers.remove(target);
+                    target.releaseResources();
+                });
 
         if (handlers.isEmpty()) {
             clean(path, uriHandlers.computeIfAbsent(path, this::newConcurrentHashMap), Configuration.STUB_NODE);
@@ -176,12 +178,13 @@ public class Configuration {
     }
     //</editor-fold>
 
-    protected Map<String, Object> newConcurrentHashMap(Object ignored) {
+    protected Map<String, Object> newConcurrentHashMap(@SuppressWarnings("unused") Object ignored) {
         return new ConcurrentHashMap<>();
     }
 
     protected List<StubRequestHandler> getStubRequestHandlers(Map<String, Object> node) {
-        return (List<StubRequestHandler>) node.computeIfAbsent(STUB_NODE, i -> new CopyOnWriteArrayList<StubRequestHandler>());
+        return (List<StubRequestHandler>) node.computeIfAbsent(STUB_NODE,
+                i -> new CopyOnWriteArrayList<StubRequestHandler>());
     }
 
     protected List<StubRequestHandler> getStubRequestHandlers(String path) {

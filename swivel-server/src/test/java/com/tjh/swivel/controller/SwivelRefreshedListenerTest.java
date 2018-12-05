@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,19 +19,23 @@ public class SwivelRefreshedListenerTest {
     private Configuration mockConfiguration;
     private ObjectMapper mockObjectMapper;
     private File mockFile;
+    private Map mockMap;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws IOException {
         swivelRefreshedListener = new SwivelRefreshedListener();
         mockConfiguration = mock(Configuration.class);
         mockObjectMapper = mock(ObjectMapper.class);
         mockFile = mock(File.class);
+        mockMap = mock(Map.class);
 
         swivelRefreshedListener.setConfiguration(mockConfiguration);
         swivelRefreshedListener.setObjectMapper(mockObjectMapper);
         swivelRefreshedListener.setSaveFile(mockFile);
 
         when(mockFile.exists()).thenReturn(true);
+        when(mockObjectMapper.readValue(mockFile, Map.class))
+                .thenReturn(mockMap);
     }
 
     @Test
@@ -40,7 +43,7 @@ public class SwivelRefreshedListenerTest {
         swivelRefreshedListener.onApplicationEvent(null);
 
         verify(mockObjectMapper).readValue(mockFile, Map.class);
-        verify(mockConfiguration).load(anyMap());
+        verify(mockConfiguration).load(mockMap);
     }
 
 }

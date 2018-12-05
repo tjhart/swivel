@@ -7,28 +7,27 @@ import org.junit.Test;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ConfigurationTest {
+@SuppressWarnings("unchecked") public class ConfigurationTest {
     public static final URI LOCAL_URI = URI.create("some/path");
     public static final int STUB_HANDLER_ID = 456;
     private ShuntRequestHandler mockShuntHandler;
@@ -37,7 +36,7 @@ public class ConfigurationTest {
     private HttpRequestBase mockRequest;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         configuration = spy(new Configuration());
 
         mockShuntHandler = mock(ShuntRequestHandler.class);
@@ -52,9 +51,9 @@ public class ConfigurationTest {
     public void setShuntPutsRequestHandlerAtExpectedPath() {
         configuration.setShunt(LOCAL_URI, mockShuntHandler);
 
-        assertThat((ShuntRequestHandler) configuration.uriHandlers
-                .get(LOCAL_URI.getPath())
-                .get(Configuration.SHUNT_NODE),
+        assertThat(configuration.uriHandlers
+                        .get(LOCAL_URI.getPath())
+                        .get(Configuration.SHUNT_NODE),
                 equalTo(mockShuntHandler));
     }
 
@@ -64,8 +63,8 @@ public class ConfigurationTest {
 
         configuration.deleteShunt(LOCAL_URI);
 
-        assertThat(configuration.uriHandlers.get(LOCAL_URI.toString()).containsKey(Configuration.SHUNT_NODE),
-                is(false));
+        assertThat(configuration.uriHandlers.get(LOCAL_URI.toString()),
+                nullValue());
     }
 
     @SuppressWarnings("unchecked")
@@ -74,22 +73,19 @@ public class ConfigurationTest {
         configuration.addStub(LOCAL_URI, mockStubHandler);
 
         assertThat(((List<StubRequestHandler>) configuration.uriHandlers
-                .get(LOCAL_URI.getPath())
-                .get(Configuration.STUB_NODE)).get(0),
+                        .get(LOCAL_URI.getPath())
+                        .get(Configuration.STUB_NODE)).get(0),
                 sameInstance(mockStubHandler));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void removeStubRemovesStubInListAtPath() {
         configuration.addStub(LOCAL_URI, mockStubHandler);
 
         configuration.removeStub(LOCAL_URI, STUB_HANDLER_ID);
 
-        assertThat((List<StubRequestHandler>) configuration.uriHandlers
-                .get(LOCAL_URI.getPath())
-                .get(Configuration.STUB_NODE),
-                not(hasItem(mockStubHandler)));
+        assertThat(configuration.uriHandlers
+                .get(LOCAL_URI.getPath()), nullValue());
     }
 
     @Test
@@ -97,7 +93,7 @@ public class ConfigurationTest {
         configuration.addStub(LOCAL_URI, mockStubHandler);
 
         assertThat(configuration.findRequestHandler(mockRequest, LOCAL_URI.getPath()),
-                equalTo((RequestHandler) mockStubHandler));
+                equalTo(mockStubHandler));
     }
 
     @Test
@@ -105,7 +101,7 @@ public class ConfigurationTest {
         configuration.setShunt(LOCAL_URI, mockShuntHandler);
 
         assertThat(configuration.findRequestHandler(mockRequest, LOCAL_URI.getPath()),
-                equalTo((RequestHandler) mockShuntHandler));
+                equalTo(mockShuntHandler));
     }
 
     @Test
@@ -114,7 +110,7 @@ public class ConfigurationTest {
         configuration.setShunt(LOCAL_URI, mockShuntHandler);
 
         assertThat(configuration.findRequestHandler(mockRequest, LOCAL_URI.getPath()),
-                equalTo((RequestHandler) mockStubHandler));
+                equalTo(mockStubHandler));
     }
 
     @Test
@@ -126,7 +122,7 @@ public class ConfigurationTest {
     public void getStubsReturnsAllIfStubIdsIsEmpty() {
         configuration.addStub(LOCAL_URI, mockStubHandler);
 
-        assertThat(configuration.getStubs(LOCAL_URI.getPath(), Collections.<Integer>emptyList()),
+        assertThat(configuration.getStubs(LOCAL_URI.getPath(), Collections.emptyList()),
                 hasItem(mockStubHandler));
     }
 
@@ -136,8 +132,8 @@ public class ConfigurationTest {
         configuration.addStub(LOCAL_URI, mockStubHandler);
         configuration.addStub(LOCAL_URI, mockNonMatchingHandler);
 
-        assertThat(configuration.getStubs(LOCAL_URI.getPath(), Arrays.asList(STUB_HANDLER_ID)),
-                equalTo((Collection) Arrays.asList(mockStubHandler)));
+        assertThat(configuration.getStubs(LOCAL_URI.getPath(), Collections.singletonList(STUB_HANDLER_ID)),
+                equalTo((Collection) Collections.singletonList(mockStubHandler)));
     }
 
     @Test
@@ -146,8 +142,8 @@ public class ConfigurationTest {
         configuration.addStub(LOCAL_URI, mockStubHandler);
         configuration.replaceStub(LOCAL_URI, STUB_HANDLER_ID, mockNewStub);
 
-        assertThat(configuration.getStubs(LOCAL_URI.getPath(), Collections.<Integer>emptyList()),
-                equalTo((Collection) Arrays.asList(mockNewStub)));
+        assertThat(configuration.getStubs(LOCAL_URI.getPath(), Collections.emptyList()),
+                equalTo((Collection) Collections.singletonList(mockNewStub)));
     }
 
     @Test
@@ -163,7 +159,7 @@ public class ConfigurationTest {
         Map<String, Object> mockMap = mock(Map.class);
         when(mockMap.containsKey(Configuration.STUB_NODE))
                 .thenReturn(true);
-        when(mockMap.get(Configuration.STUB_NODE))
+        when(mockMap.computeIfAbsent(eq(Configuration.STUB_NODE), any(Function.class)))
                 .thenReturn(Collections.emptyList());
 
         configuration.clean("some/path", mockMap, Configuration.SHUNT_NODE);
@@ -171,8 +167,8 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void remoteStubReleasesResources(){
-        List<StubRequestHandler> mockHandlers = new ArrayList(Arrays.asList(mockStubHandler));
+    public void remoteStubReleasesResources() {
+        List<StubRequestHandler> mockHandlers = new ArrayList(Collections.singletonList(mockStubHandler));
         doReturn(mockHandlers)
                 .when(configuration)
                 .getStubRequestHandlers(anyString());
@@ -182,10 +178,10 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void replacStubReleasesResources(){
+    public void replacStubReleasesResources() {
         StubRequestHandler mockNewStubRequestHandler = mock(StubRequestHandler.class);
 
-        doReturn(new ArrayList(Arrays.asList(mockStubHandler)))
+        doReturn(new ArrayList(Collections.singletonList(mockStubHandler)))
                 .when(configuration)
                 .getStubRequestHandlers(anyString());
         configuration.replaceStub(LOCAL_URI, STUB_HANDLER_ID, mockNewStubRequestHandler);
@@ -194,7 +190,7 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void removePlaceReleasesResources(){
+    public void removePlaceReleasesResources() {
         configuration.addStub(LOCAL_URI, mockStubHandler);
 
         configuration.removePath(LOCAL_URI);

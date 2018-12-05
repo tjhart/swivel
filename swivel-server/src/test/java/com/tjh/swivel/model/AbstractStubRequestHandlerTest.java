@@ -67,7 +67,7 @@ public class AbstractStubRequestHandlerTest {
         assertThat(stubRequestHandler, instanceOf(DynamicStubRequestHandler.class));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void constructorRequiresDescription() {
         new TestSubRequestHandler(Map.of(
                 AbstractStubRequestHandler.WHEN_KEY, WHEN_MAP,

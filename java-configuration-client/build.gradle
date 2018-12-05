@@ -1,7 +1,9 @@
+apply plugin: 'java-library'
+
 dependencies {
-    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.6'
-    compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.6'
-    compile group: 'org.codehaus.jettison', name: 'jettison', version: '1.4.0'
+    api group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.6'
+    api group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.6'
+    api group: 'org.codehaus.jettison', name: 'jettison', version: '1.4.0'
 }
 
 uploadArchives {

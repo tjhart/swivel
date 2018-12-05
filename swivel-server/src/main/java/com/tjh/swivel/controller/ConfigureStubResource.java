@@ -7,9 +7,6 @@ import com.tjh.swivel.model.Configuration;
 import com.tjh.swivel.model.StubRequestHandler;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
-import vanderbilt.util.Block;
-import vanderbilt.util.Lists;
-import vanderbilt.util.Maps;
 
 import javax.script.ScriptException;
 import javax.ws.rs.Consumes;
@@ -24,15 +21,15 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 //YELLOWTAG:TJH - class has grown. Needs review
 @Path("config/stub/{localPath: .*}")
@@ -49,13 +46,10 @@ public class ConfigureStubResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Collection<Map<String, Object>> getStub(@PathParam("localPath") String localPath,
             @QueryParam("ids[]") List<Integer> stubIds) {
-        return Lists.collect(configuration.getStubs(localPath, stubIds),
-                new Block<StubRequestHandler, Map<String, Object>>() {
-                    @Override
-                    public Map<String, Object> invoke(StubRequestHandler stubRequestHandler) {
-                        return stubRequestHandler.toMap();
-                    }
-                });
+        return configuration.getStubs(localPath, stubIds)
+                .stream()
+                .map(StubRequestHandler::toMap)
+                .collect(Collectors.toList());
     }
 
     @POST
@@ -92,7 +86,8 @@ public class ConfigureStubResource {
         RequestPathParser requestPathParser = new RequestPathParser(localPath);
 
         Collection<StubRequestHandler> stubs =
-                configuration.getStubs(requestPathParser.getLocalPath(), Arrays.asList(requestPathParser.getStubId()));
+                configuration.getStubs(requestPathParser.getLocalPath(),
+                        Collections.singletonList(requestPathParser.getStubId()));
         return editStub(requestPathParser.getLocalPath(), requestPathParser.getStubId(),
                 editStubRequestHandler(stubDescription, stubs.iterator().next()));
     }
@@ -161,8 +156,6 @@ public class ConfigureStubResource {
             }
 
             return result;
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
@@ -175,14 +168,14 @@ public class ConfigureStubResource {
     protected Map<String, Object> addStub(URI localUri, StubRequestHandler stubRequestHandler) {
         LOGGER.debug(String.format("Adding stub for %1$s", localUri));
         configuration.addStub(localUri, stubRequestHandler);
-        return Maps.<String, Object>asMap(STUB_ID_KEY, stubRequestHandler.getId());
+        return Map.of(STUB_ID_KEY, stubRequestHandler.getId());
     }
 
     protected Map<String, Object> editStub(String localPath, int stubId, StubRequestHandler stub)
             throws URISyntaxException {
         LOGGER.debug(String.format("Replacing stub %1$s:%2$d with %3$s", localPath, stubId, stub.toMap()));
         configuration.replaceStub(new URI(localPath), stubId, stub);
-        return Maps.<String, Object>asMap(STUB_ID_KEY, stub.getId());
+        return Map.of(STUB_ID_KEY, stub.getId());
     }
 
     protected StubRequestHandler createStubRequestHandler(Map<String, Object> stubDescription) throws ScriptException {

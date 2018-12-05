@@ -5,8 +5,7 @@ import com.tjh.swivel.config.model.Then;
 import com.tjh.swivel.config.model.When;
 
 import java.io.IOException;
-
-import static vanderbilt.util.Validators.notNull;
+import java.util.Objects;
 
 /**
  * Builder to help configure a Stub. Generally returned by SwivelConfigurer#when
@@ -23,7 +22,7 @@ public class StubConfigurer implements ConfigurationElement {
      * @param swivelConfigurer SwivelConfigurer
      */
     public StubConfigurer(SwivelConfigurer swivelConfigurer) {
-        this.swivelConfigurer = notNull("swivelConfigurer", swivelConfigurer);
+        this.swivelConfigurer = Objects.requireNonNull(swivelConfigurer);
     }
 
     /**
@@ -66,9 +65,8 @@ public class StubConfigurer implements ConfigurationElement {
      *
      * @param then - the Then component of the stub being constructed
      * @return <code>this</code>
-     * @throws IOException
      */
-    public StubConfigurer then(Then then) throws IOException {
+    public StubConfigurer then(Then then)  {
         setThen(then);
         return this;
     }
@@ -119,14 +117,14 @@ public class StubConfigurer implements ConfigurationElement {
 
     public When getWhen() { return when; }
 
-    public void setWhen(When when) { this.when = notNull("when", when); }
+    public void setWhen(When when) { this.when = Objects.requireNonNull(when); }
 
     public Then getThen() { return then; }
 
-    public void setThen(Then then) { this.then = notNull("then", then); }
+    public void setThen(Then then) { this.then = Objects.requireNonNull(then); }
 
     public String getDescription() { return description; }
 
-    public void setDescription(String description) { this.description = notNull("description", description); }
+    public void setDescription(String description) { this.description = Objects.requireNonNull(description); }
     //</editor-fold>
 }

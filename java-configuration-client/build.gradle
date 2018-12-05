@@ -7,13 +7,5 @@ dependencies {
 uploadArchives {
     repositories {
         mavenLocal()
-        mavenDeployer {
-            repository(url: 'http://repo.mc.vanderbilt.edu/nexus/content/repositories/releases') {
-                authentication(userName: 'deployment', password: 'mvn123')
-            }
-            snapshotRepository(url: 'http://repo.mc.vanderbilt.edu/nexus/content/repositories/snapshots/') {
-                authentication(userName: 'deployment', password: 'mvn123')
-            }
-        }
     }
 }

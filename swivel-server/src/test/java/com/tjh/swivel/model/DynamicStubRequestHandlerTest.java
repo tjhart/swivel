@@ -6,11 +6,11 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import vanderbilt.util.Maps;
 
 import javax.script.Bindings;
 import javax.script.ScriptException;
 import java.net.URI;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -30,12 +30,12 @@ public class DynamicStubRequestHandlerTest {
 
     @Before
     public void setUp() throws ScriptException {
-        dynamicResponseHandler = new DynamicStubRequestHandler(Maps.<String, Object>asMap(
+        dynamicResponseHandler = new DynamicStubRequestHandler(Map.of(
                 AbstractStubRequestHandler.DESCRIPTION_KEY, DESCRIPTION,
-                AbstractStubRequestHandler.WHEN_KEY, Maps.asMap(WhenMatcher.METHOD_KEY, "GET"),
+                AbstractStubRequestHandler.WHEN_KEY, Map.of(WhenMatcher.METHOD_KEY, "GET"),
 
                 AbstractStubRequestHandler.THEN_KEY,
-                Maps.asMap(
+                Map.of(
                         AbstractStubRequestHandler.SCRIPT_KEY, SOURCE_SCRIPT
                 )
         ));
@@ -52,7 +52,7 @@ public class DynamicStubRequestHandlerTest {
 
         verify(dynamicResponseHandler.scriptWrapper).evalWith(bindingsCaptor.capture());
         Bindings value = bindingsCaptor.getValue();
-        assertThat((HttpUriRequest) value.get("request"), equalTo(mockRequest));
+        assertThat(value.get("request"), equalTo(mockRequest));
         assertThat(value.get("responseFactory"), instanceOf(ResponseFactory.class));
     }
 }

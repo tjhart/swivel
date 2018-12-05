@@ -6,12 +6,12 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
 import org.junit.Test;
-import vanderbilt.util.Maps;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -51,7 +51,7 @@ public class ShuntRequestHandlerTest {
         when(mockRequest.getURI()).thenReturn(RELATIVE_URI);
         when(mockClient.execute(any(HttpUriRequest.class))).thenReturn(mockResponse);
 
-        shuntRequestHandler = new ShuntRequestHandler(Maps.asMap(ShuntRequestHandler.REMOTE_URL_KEY, REMOTE_URL));
+        shuntRequestHandler = new ShuntRequestHandler(Map.of(ShuntRequestHandler.REMOTE_URL_KEY, REMOTE_URL));
     }
 
     @Test

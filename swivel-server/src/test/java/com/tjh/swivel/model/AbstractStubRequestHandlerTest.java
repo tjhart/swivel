@@ -6,11 +6,11 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
-import vanderbilt.util.Maps;
 
 import javax.script.ScriptException;
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -21,9 +21,9 @@ import static org.mockito.Mockito.verify;
 
 public class AbstractStubRequestHandlerTest {
     public static final String DESCRIPTION = "description";
-    public static final Map<String, String> WHEN_MAP = Maps.asConstantMap(WhenMatcher.METHOD_KEY, "GET");
+    public static final Map<String, String> WHEN_MAP = Map.of(WhenMatcher.METHOD_KEY, "GET");
     private static final Map<String, Object> THEN_MAP = Collections.emptyMap();
-    public static final Map<String, Object> STATIC_DESCRIPTION = Maps.<String, Object>asConstantMap(
+    public static final Map<String, Object> STATIC_DESCRIPTION = Map.of(
             AbstractStubRequestHandler.DESCRIPTION_KEY, DESCRIPTION,
             AbstractStubRequestHandler.WHEN_KEY, WHEN_MAP,
             AbstractStubRequestHandler.THEN_KEY, THEN_MAP);
@@ -57,11 +57,11 @@ public class AbstractStubRequestHandlerTest {
 
     @Test
     public void createStubForCreatesDynamicStubResponseHandlerForDynamicDescriptions() throws ScriptException {
-        StubRequestHandler stubRequestHandler = AbstractStubRequestHandler.createStubFor(Maps.<String, Object>asMap(
+        StubRequestHandler stubRequestHandler = AbstractStubRequestHandler.createStubFor(Map.of(
                 AbstractStubRequestHandler.DESCRIPTION_KEY, DESCRIPTION,
                 AbstractStubRequestHandler.WHEN_KEY, WHEN_MAP,
                 AbstractStubRequestHandler.THEN_KEY,
-                Maps.asMap(AbstractStubRequestHandler.SCRIPT_KEY, "(function(){})();")
+                Map.of(AbstractStubRequestHandler.SCRIPT_KEY, "(function(){})();")
         ));
 
         assertThat(stubRequestHandler, instanceOf(DynamicStubRequestHandler.class));
@@ -69,7 +69,7 @@ public class AbstractStubRequestHandlerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorRequiresDescription() {
-        new TestSubRequestHandler(Maps.<String, Object>asMap(
+        new TestSubRequestHandler(Map.of(
                 AbstractStubRequestHandler.WHEN_KEY, WHEN_MAP,
                 AbstractStubRequestHandler.THEN_KEY, Collections.emptyMap())
         );
@@ -88,8 +88,9 @@ public class AbstractStubRequestHandlerTest {
 
     @Test
     public void toMapReturnsExpected() {
-        assertThat(testSubRequestHandler.toMap(), equalTo(Maps.merge(STATIC_DESCRIPTION,
-                Maps.asMap(AbstractStubRequestHandler.ID_KEY, testSubRequestHandler.getId()))));
+        Map<String, Object> expected = new HashMap<>(STATIC_DESCRIPTION);
+        expected.putAll(Map.of(AbstractStubRequestHandler.ID_KEY, testSubRequestHandler.getId()));
+        assertThat(testSubRequestHandler.toMap(), equalTo(expected));
     }
 
     class TestSubRequestHandler extends AbstractStubRequestHandler {

@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Objects;
 
-import static vanderbilt.util.Validators.notNull;
 
 /**
  * Builder to help construct a shunt. Generally returned by SwivelConfigurer#shunt
@@ -23,7 +23,7 @@ public class ShuntConfigurer implements ConfigurationElement {
      * @param swivelConfigurer SwivelConfigurer
      */
     public ShuntConfigurer(SwivelConfigurer swivelConfigurer) {
-        this.swivelConfigurer = notNull("swivelConfigurer", swivelConfigurer);
+        this.swivelConfigurer = Objects.requireNonNull(swivelConfigurer);
     }
 
     /**
@@ -34,7 +34,7 @@ public class ShuntConfigurer implements ConfigurationElement {
      */
     public ShuntConfigurer(SwivelConfigurer swivelConfigurer, String localURI) throws URISyntaxException {
         this(swivelConfigurer);
-        this.localURI = notNull("localURI", new URI(localURI));
+        this.localURI = new URI(Objects.requireNonNull(localURI));
     }
 
     //<editor-fold desc="builder">
@@ -55,9 +55,8 @@ public class ShuntConfigurer implements ConfigurationElement {
      *
      * @param remoteURL - remoteURL for the request
      * @return <code>this</code>
-     * @throws IOException
      */
-    public ShuntConfigurer to(URL remoteURL) throws IOException {
+    public ShuntConfigurer to(URL remoteURL)  {
         setRemoteURL(remoteURL);
         return this;
     }
@@ -102,13 +101,13 @@ public class ShuntConfigurer implements ConfigurationElement {
     public URI getLocalURI() { return localURI; }
 
     public void setLocalURI(URI localURI) {
-        this.localURI = notNull("localURI", localURI);
+        this.localURI = Objects.requireNonNull(localURI);
     }
 
     public URL getRemoteURL() { return remoteURL; }
 
     public void setRemoteURL(URL remoteURL) {
-        this.remoteURL = notNull("remoteURL", remoteURL);
+        this.remoteURL = Objects.requireNonNull(remoteURL);
     }
     //</editor-fold>
 }

@@ -6,10 +6,10 @@ import org.apache.http.entity.FileEntity;
 import org.apache.http.util.EntityUtils;
 import org.junit.Before;
 import org.junit.Test;
-import vanderbilt.util.Maps;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -67,7 +67,7 @@ public class ResponseFactoryTest {
     public void createResponseWithFileWorks() {
         File mockFile = mock(File.class);
         HttpResponse response = responseFactory.createResponse(
-                Maps.<String, Object>asMap(
+                Map.of(
                         AbstractStubRequestHandler.STATUS_CODE_KEY, 200,
                         AbstractStubRequestHandler.FILE_CONTENT_TYPE_KEY, "application/pdf",
                         AbstractStubRequestHandler.FILE_NAME_KEY, "fileName.pdf"),

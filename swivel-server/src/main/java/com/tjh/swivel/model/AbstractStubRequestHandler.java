@@ -6,14 +6,12 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hamcrest.StringDescription;
-import vanderbilt.util.Maps;
 
 import javax.script.ScriptException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
-
-import static vanderbilt.util.Validators.notNull;
+import java.util.Objects;
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractStubRequestHandler implements StubRequestHandler {
@@ -47,9 +45,10 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     }
 
     public AbstractStubRequestHandler(Map<String, Object> stubDescription) {
-        this.description = notNull(DESCRIPTION_KEY, (String) stubDescription.get(DESCRIPTION_KEY));
+        this.description = Objects.requireNonNull((String) stubDescription.get(DESCRIPTION_KEY));
         this.matcher = new WhenMatcher((Map<String, String>) stubDescription.get(WHEN_KEY));
-        this.then = notNull(THEN_KEY, Collections.unmodifiableMap((Map<String, Object>) stubDescription.get(THEN_KEY)));
+        this.then = Collections.unmodifiableMap(
+                Objects.requireNonNull((Map<String, Object>) stubDescription.get(THEN_KEY)));
     }
 
     static void setResponseFactory(ResponseFactory responseFactory) {
@@ -92,7 +91,7 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
 
     @Override
     public Map<String, Object> toMap() {
-        return Maps.<String, Object>asMap(
+        return Map.<String, Object>of(
                 DESCRIPTION_KEY, description,
                 ID_KEY, getId(),
                 WHEN_KEY, matcher.toMap(),

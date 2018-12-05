@@ -12,11 +12,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import vanderbilt.util.Maps;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -33,12 +32,12 @@ public class RequestRouterTest {
     @Before
     public void before() throws MalformedURLException {
         ShuntRequestHandler requestHandler =
-                new ShuntRequestHandler(Maps.asMap(ShuntRequestHandler.REMOTE_URL_KEY, "http://localhost:5984"));
+                new ShuntRequestHandler(Map.of(ShuntRequestHandler.REMOTE_URL_KEY, "http://localhost:5984"));
         configuration.setShunt(URI.create("couch"), requestHandler);
     }
 
     @Test
-    public void workRedirectsRequest() throws IOException {
+    public void workRedirectsRequest() {
         HttpRequestBase request = new HttpGet("couch");
         HttpResponse httpResponse = requestRouter.route(request);
 

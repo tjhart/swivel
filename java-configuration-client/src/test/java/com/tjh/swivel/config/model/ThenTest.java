@@ -9,8 +9,6 @@ import java.io.File;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ThenTest {
 
@@ -30,7 +28,7 @@ public class ThenTest {
         assertThat(then.getResponseCode(), equalTo(RESPONSE_CODE));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void constructionThrowsOnNull() {
         new Then((HttpResponseCode) null);
     }
@@ -50,7 +48,7 @@ public class ThenTest {
         assertThat(new Then(SCRIPT).getScript(), equalTo(SCRIPT));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void constructionWithScriptThrowsOnNull() {
         new Then((String) null);
     }
@@ -90,8 +88,8 @@ public class ThenTest {
 
     @Test
     public void withFileSetsFile() {
-        File mockFile = mock(File.class);
-        assertThat(then.withFile(mockFile).getFile(), equalTo(mockFile));
+        File file = new File("tmpFile");
+        assertThat(then.withFile(file).getFile(), equalTo(file));
     }
 
     @Test
@@ -104,13 +102,11 @@ public class ThenTest {
 
     @Test
     public void toJSONIncludesFilename() throws JSONException {
-        File mockFile = mock(File.class);
         String filename = "filename.txt";
-
-        when(mockFile.getName()).thenReturn(filename);
+        File file = new File(filename);
 
         assertThat(then
-                .withFile(mockFile)
+                .withFile(file)
                 .toJSON()
                 .getString(Then.FILENAME_KEY),
                 equalTo(filename));

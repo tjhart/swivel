@@ -6,7 +6,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.log4j.Logger;
-import vanderbilt.util.Maps;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -54,7 +53,7 @@ public class ShuntRequestHandler implements RequestHandler<HttpRequestBase> {
 
     @Override
     public Map<String, Object> toMap() {
-        return Maps.<String, Object>asMap(REMOTE_URL_KEY, remoteURL.toString());
+        return Map.of(REMOTE_URL_KEY, remoteURL.toString());
     }
 
     //<editor-fold desc="Object">

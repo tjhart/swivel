@@ -5,7 +5,6 @@ import com.tjh.swivel.config.model.When;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -40,13 +39,13 @@ public class StubConfigurerTest {
         assertThat(stubConfigurer.getWhen(), equalTo(mockWhen));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void setWhenVerifiesWhen(){
         stubConfigurer.setWhen(null);
     }
 
     @Test
-    public void thenCapturesThen() throws IOException {
+    public void thenCapturesThen() {
         stubConfigurer.then(mockThen);
 
         assertThat(stubConfigurer.getThen(), equalTo(mockThen));

@@ -2,12 +2,12 @@ package com.tjh.swivel.config.model;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import vanderbilt.util.Maps;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 
-import static vanderbilt.util.Validators.notNull;
 
 /**
  * A class representing the 'When' component of a stub
@@ -19,6 +19,13 @@ public class When {
     public static final String CONTENT_TYPE_KEY = "contentType";
     public static final String REMOTE_ADDRESS_KEY = "remoteAddress";
     public static final String QUERY_KEY = "query";
+
+    private static final Map<String, Function<When, Object>> OPTIONAL_VALUES = Map.of(
+            QUERY_KEY, w -> w.query,
+            CONTENT_KEY, w -> w.content,
+            SCRIPT_KEY, w -> w.script,
+            CONTENT_TYPE_KEY, w -> w.contentType,
+            REMOTE_ADDRESS_KEY, w -> w.remoteAddress);
 
     private final HttpMethod method;
     private final URI uri;
@@ -35,8 +42,8 @@ public class When {
      * @param uri    - the Swivel URI path where the stub will reside
      */
     public When(HttpMethod method, URI uri) {
-        this.method = notNull("method", method);
-        this.uri = notNull("uri", URI.create(uri.getPath()));
+        this.method = Objects.requireNonNull(method);
+        this.uri = Objects.requireNonNull(URI.create(uri.getPath()));
         this.query = uri.getQuery();
     }
 
@@ -47,16 +54,10 @@ public class When {
      */
     public JSONObject toJSON() {
         try {
-            JSONObject jsonObject = new JSONObject(Maps.asMap(METHOD_KEY, method.getMethodName()));
+            JSONObject jsonObject = new JSONObject(Map.of(METHOD_KEY, method.getMethodName()));
 
-            Map<String, Object> optionalValues = Maps.<String, Object>asMap(
-                    QUERY_KEY, query,
-                    CONTENT_KEY, content,
-                    SCRIPT_KEY, script,
-                    CONTENT_TYPE_KEY, contentType,
-                    REMOTE_ADDRESS_KEY, remoteAddress);
-            for (Map.Entry<String, Object> entry : optionalValues.entrySet()) {
-                jsonObject.putOpt(entry.getKey(), entry.getValue());
+            for (Map.Entry<String, Function<When, Object>> entry : OPTIONAL_VALUES.entrySet()) {
+                jsonObject.putOpt(entry.getKey(), entry.getValue().apply(this));
             }
             return jsonObject;
         } catch (JSONException e) {

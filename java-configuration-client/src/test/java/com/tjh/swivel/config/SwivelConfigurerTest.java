@@ -11,13 +11,13 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import vanderbilt.util.Maps;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -34,7 +34,7 @@ public class SwivelConfigurerTest {
     public static final String SWIVEL_URL = "http://localhost:8080/swivel-server";
     public static final URI SOME_URI = URI.create("some/path");
     public static final int STUB_ID = 12345;
-    public static final String EXPECTED_RESPONSE = new JSONObject(Maps.asMap("id", STUB_ID)).toString();
+    public static final String EXPECTED_RESPONSE = new JSONObject(Map.of("id", STUB_ID)).toString();
     public static final String SOME_PATH = "some/path";
     private SwivelConfigurer swivelConfigurer;
     private When mockWhen;

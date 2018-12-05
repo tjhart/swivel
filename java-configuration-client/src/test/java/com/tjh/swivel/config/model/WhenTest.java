@@ -55,7 +55,7 @@ public class WhenTest {
         new When(HttpMethod.GET, SOME_URI).setContent(CONTENT);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void contructionThrowsOnNullMethod() {
         new When(null, SOME_URI);
     }

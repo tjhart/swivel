@@ -9,10 +9,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import vanderbilt.util.Maps;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 @ContextConfiguration(locations = {"classpath:serverContext.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -27,7 +27,7 @@ public class ConfigureShuntResourceTest {
     @Before
     public void before() throws URISyntaxException {
         configurationResource.putShunt(LOCAL_URI,
-                Maps.asMap(ConfigureShuntResource.REMOTE_URL_KEY, "http://localhost:5984"));
+                Map.of(ConfigureShuntResource.REMOTE_URL_KEY, "http://localhost:5984"));
     }
 
     @Test
@@ -37,7 +37,7 @@ public class ConfigureShuntResourceTest {
     }
 
     @Test
-    public void shuntThrowsOnUnknownURL() throws URISyntaxException {
+    public void shuntThrowsOnUnknownURL() {
         configurationResource.deleteShunt(LOCAL_URI);
         //would throw if failed
     }

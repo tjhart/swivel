@@ -9,7 +9,6 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
-import vanderbilt.util.Strings;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -30,7 +29,7 @@ public class RequestRouter {
         Deque<String> pathElements = new LinkedList<String>(Arrays.asList(toKeys(request.getURI())));
         String matchedPath;
         do {
-            matchedPath = Strings.join(pathElements.toArray(new String[pathElements.size()]), "/");
+            matchedPath = String.join("/", pathElements);
             requestHandler = configuration.findRequestHandler(request, matchedPath);
             pathElements.removeLast();
         }

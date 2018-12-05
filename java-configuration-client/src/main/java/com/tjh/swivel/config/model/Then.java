@@ -2,12 +2,12 @@ package com.tjh.swivel.config.model;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import vanderbilt.util.Maps;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 
-import static vanderbilt.util.Validators.notNull;
 
 /**
  * Represents the Then component of a stub
@@ -19,6 +19,12 @@ public class Then {
     public static final String CONTENT_KEY = "content";
     public static final String CONTENT_TYPE_KEY = "contentType";
     public static final String FILENAME_KEY = "fileName";
+
+    private static final Map<String, Function<Then, Object>> OPTIONAL_VALUES = Map.of(
+            STATUS_CODE_KEY, t -> t.responseCode.getCode(),
+            CONTENT_KEY, t -> t.content,
+            CONTENT_TYPE_KEY, t -> t.contentType,
+            FILENAME_KEY, t -> t.file == null ? null : t.file.getName());
 
     private final HttpResponseCode responseCode;
     private final String script;
@@ -33,7 +39,7 @@ public class Then {
      * @param responseCode - the response code the stub will return
      */
     public Then(HttpResponseCode responseCode) {
-        this.responseCode = notNull("responseCode", responseCode);
+        this.responseCode = Objects.requireNonNull(responseCode);
         this.script = null;
     }
 
@@ -44,7 +50,7 @@ public class Then {
      * @param script - The script to execute to generate the stub response
      */
     public Then(String script) {
-        this.script = notNull("script", script);
+        this.script = Objects.requireNonNull(script);
         this.responseCode = null;
     }
 
@@ -60,13 +66,8 @@ public class Then {
             if (script != null) {
                 jsonObject.put(SCRIPT_KEY, script);
             } else {
-                Map<String, Object> optionalValues = Maps.<String, Object>asMap(
-                        STATUS_CODE_KEY, responseCode.getCode(),
-                        CONTENT_KEY, content,
-                        CONTENT_TYPE_KEY, contentType,
-                        FILENAME_KEY, file == null ? null : file.getName());
-                for (Map.Entry<String, Object> entry : optionalValues.entrySet()) {
-                    jsonObject.putOpt(entry.getKey(), entry.getValue());
+                for (Map.Entry<String, Function<Then, Object>> entry : OPTIONAL_VALUES.entrySet()) {
+                    jsonObject.putOpt(entry.getKey(), entry.getValue().apply(this));
                 }
             }
             return jsonObject;

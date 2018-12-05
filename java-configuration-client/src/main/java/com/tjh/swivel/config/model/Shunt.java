@@ -6,12 +6,12 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.codehaus.jettison.json.JSONObject;
-import vanderbilt.util.Maps;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.Map;
+import java.util.Objects;
 
-import static vanderbilt.util.Validators.notNull;
 
 /**
  * Represents a Swivel Shunt
@@ -29,8 +29,8 @@ public class Shunt implements Behavior {
      * @param remoteURL - the URL to which the shunt will forward requests
      */
     public Shunt(URI localURI, URL remoteURL) {
-        this.localURI = notNull("localURI", localURI);
-        this.remoteURL = notNull(REMOTE_URL_KEY, remoteURL);
+        this.localURI = Objects.requireNonNull(localURI);
+        this.remoteURL = Objects.requireNonNull(remoteURL);
     }
 
     /**
@@ -38,7 +38,7 @@ public class Shunt implements Behavior {
      *
      * @return JSON expected by <code>rest/config/shunt</code>
      */
-    public JSONObject toJSON() { return new JSONObject(Maps.asMap(REMOTE_URL_KEY, remoteURL)); }
+    public JSONObject toJSON() { return new JSONObject(Map.of(REMOTE_URL_KEY, remoteURL)); }
 
     /**
      * Creates an Apache Http Components <code>HttpUriRequest</code> that will submit this shunt to the Swivel server

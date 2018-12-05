@@ -5,10 +5,10 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.hamcrest.Factory;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
-import vanderbilt.util.Block;
-import vanderbilt.util.Lists;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RequestHeaderMatcher extends FeatureMatcher<HttpUriRequest, Collection<String>> {
     private final String headerName;
@@ -20,10 +20,9 @@ public class RequestHeaderMatcher extends FeatureMatcher<HttpUriRequest, Collect
 
     @Override
     protected Collection<String> featureValueOf(HttpUriRequest request) {
-        return Lists.collect(request.getHeaders(headerName), new Block<Header, String>() {
-            @Override
-            public String invoke(Header header) { return header.getValue(); }
-        });
+        return Stream.of(request.getHeaders(headerName))
+                .map(Header::getValue)
+                .collect(Collectors.toList());
     }
 
     @Factory

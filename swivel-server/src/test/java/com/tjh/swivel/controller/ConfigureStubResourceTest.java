@@ -9,7 +9,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
-import vanderbilt.util.Maps;
 
 import javax.script.ScriptException;
 import javax.ws.rs.core.MediaType;
@@ -172,7 +171,7 @@ public class ConfigureStubResourceTest {
     public void editStubReturnsIDMap() throws ScriptException, URISyntaxException, IOException {
         assertThat(configureStubResource.editStub(LOCAL_PATH + "/12345", mockStubMap),
                 CoreMatchers.<Map<String, Object>>equalTo(
-                        Maps.<String, Object>asMap(ConfigureStubResource.STUB_ID_KEY, STUB_HANDLER_ID)));
+                        Map.of(ConfigureStubResource.STUB_ID_KEY, STUB_HANDLER_ID)));
     }
 
     @Test
@@ -251,8 +250,8 @@ public class ConfigureStubResourceTest {
         when(mockStubRequestHandler.getResourcePath()).
                 thenReturn(tmpFile.getPath());
         when(mockStubRequestHandler.toMap())
-                .thenReturn(Maps.<String, Object>asMap(AbstractStubRequestHandler.THEN_KEY,
-                        Maps.asMap(AbstractStubRequestHandler.FILE_CONTENT_TYPE_KEY, "text/plain",
+                .thenReturn(Map.of(AbstractStubRequestHandler.THEN_KEY,
+                        Map.of(AbstractStubRequestHandler.FILE_CONTENT_TYPE_KEY, "text/plain",
                                 AbstractStubRequestHandler.FILE_NAME_KEY, "someFile.txt")));
 
         configureStubResource.editStubRequestHandler(mockStubMap, mockStubRequestHandler);
@@ -264,8 +263,8 @@ public class ConfigureStubResourceTest {
     @Test
     public void editStubRequestHandlerIgnoresExistingStubIfNoResourcePath() throws ScriptException, IOException {
         when(mockStubRequestHandler.toMap())
-                .thenReturn(Maps.<String, Object>asMap(AbstractStubRequestHandler.THEN_KEY,
-                        Maps.asMap(AbstractStubRequestHandler.FILE_CONTENT_TYPE_KEY, "text/plain",
+                .thenReturn(Map.of(AbstractStubRequestHandler.THEN_KEY,
+                        Map.of(AbstractStubRequestHandler.FILE_CONTENT_TYPE_KEY, "text/plain",
                                 AbstractStubRequestHandler.FILE_NAME_KEY, "someFile.txt")));
 
         configureStubResource.editStubRequestHandler(mockStubMap, mockStubRequestHandler);

@@ -4,11 +4,6 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import vanderbilt.util.Block;
-import vanderbilt.util.Block2;
-import vanderbilt.util.Lists;
-import vanderbilt.util.Maps;
-import vanderbilt.util.PopulatingMap;
 
 import javax.script.ScriptException;
 import java.net.MalformedURLException;
@@ -19,6 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public class Configuration {
@@ -26,12 +23,10 @@ public class Configuration {
     public static final String STUB_NODE = "^stub";
     public static final String STUBS_MAP_KEY = "stubs";
     public static final String SHUNT_MAP_KEY = "shunt";
-    public static final UriHandlersPopulator POPULATOR = new UriHandlersPopulator();
 
     public static Logger LOGGER = Logger.getLogger(Configuration.class);
 
-    protected final Map<String, Map<String, Object>> uriHandlers = new PopulatingMap<String, Map<String, Object>>(
-            new ConcurrentHashMap<String, Map<String, Object>>(), POPULATOR);
+    protected final Map<String, Map<String, Object>> uriHandlers = new ConcurrentHashMap<>();
 
     //<editor-fold desc="query">
     public RequestHandler findRequestHandler(HttpRequestBase request, String matchedPath) {
@@ -55,25 +50,23 @@ public class Configuration {
     }
 
     RequestHandler findStub(Map<String, Object> stringObjectMap, final HttpUriRequest request) {
-        return Lists.find((Collection<StubRequestHandler>) stringObjectMap.get(Configuration.STUB_NODE),
-                new Block<StubRequestHandler, Boolean>() {
-                    @Override
-                    public Boolean invoke(StubRequestHandler requestHandler) {
-                        if (Level.DEBUG.equals(LOGGER.getEffectiveLevel())) {
-                            LOGGER.debug("Checking Stub " + requestHandler);
-                        }
-                        return requestHandler.matches(request);
+        return ((Collection<StubRequestHandler>) stringObjectMap.get(Configuration.STUB_NODE))
+                .stream()
+                .filter(requestHandler -> {
+                    if (Level.DEBUG.equals(LOGGER.getEffectiveLevel())) {
+                        LOGGER.debug("Checking Stub " + requestHandler);
                     }
-                });
+                    return requestHandler.matches(request);
+                })
+                .findFirst()
+                .orElse(null);
     }
 
     public Collection<StubRequestHandler> getStubs(String localPath, final List<Integer> stubIds) {
-        return Lists.select(getStubRequestHandlers(localPath), new Block<StubRequestHandler, Boolean>() {
-            @Override
-            public Boolean invoke(StubRequestHandler stubRequestHandler) {
-                return stubIds.isEmpty() || stubIds.contains(stubRequestHandler.getId());
-            }
-        });
+        return getStubRequestHandlers(localPath)
+                .stream()
+                .filter(stubRequestHandler -> stubIds.isEmpty() || stubIds.contains(stubRequestHandler.getId()))
+                .collect(Collectors.toList());
     }
     //</editor-fold>
 
@@ -82,24 +75,24 @@ public class Configuration {
         String path = localUri.getPath();
         List<StubRequestHandler> handlers = getStubRequestHandlers(path);
         System.out.println("handlers = " + handlers);
-        StubRequestHandler target = Lists.find(handlers, new Block<StubRequestHandler, Boolean>() {
-            @Override
-            public Boolean invoke(StubRequestHandler stubRequestHandler) {
-                return stubRequestHandler.getId() == stubHandlerId;
-            }
-        });
+
+        StubRequestHandler target = handlers.stream()
+                .filter(stubRequestHandler -> stubRequestHandler.getId() == stubHandlerId)
+                .findFirst()
+                .orElse(null);
         LOGGER.debug(String.format("Removing <%1$s> from path <%2$s>", target, localUri));
         handlers.remove(target);
         target.releaseResources();
 
         if (handlers.isEmpty()) {
-            clean(path, uriHandlers.get(path), Configuration.STUB_NODE);
+            clean(path, uriHandlers.computeIfAbsent(path, this::newConcurrentHashMap), Configuration.STUB_NODE);
         }
     }
 
     public void setShunt(URI localURI, ShuntRequestHandler requestHandler) {
         LOGGER.debug(String.format("Setting shunt <%1$s> at <%2$s>", requestHandler, localURI));
-        uriHandlers.get(localURI.getPath()).put(Configuration.SHUNT_NODE, requestHandler);
+        uriHandlers.computeIfAbsent(localURI.getPath(), this::newConcurrentHashMap)
+                .put(Configuration.SHUNT_NODE, requestHandler);
     }
 
     public void addStub(URI localUri, StubRequestHandler stubRequestHandler) {
@@ -110,7 +103,7 @@ public class Configuration {
 
     public void deleteShunt(URI localURI) {
         String path = localURI.getPath();
-        clean(path, uriHandlers.get(path), Configuration.SHUNT_NODE);
+        clean(path, uriHandlers.computeIfAbsent(path, this::newConcurrentHashMap), Configuration.SHUNT_NODE);
     }
 
     public void replaceStub(URI localURI, int stubId, StubRequestHandler stubRequestHandler) {
@@ -140,9 +133,9 @@ public class Configuration {
     }
 
     public void reset() {
-        HashMap<String, Map<String, Object>> oldMap = new HashMap<String, Map<String, Object>>(uriHandlers);
+        HashMap<String, Map<String, Object>> oldMap = new HashMap<>(uriHandlers);
         uriHandlers.clear();
-        for (String path : new HashSet<String>(oldMap.keySet())) {
+        for (String path : new HashSet<>(oldMap.keySet())) {
             removePath(oldMap, path);
         }
     }
@@ -150,18 +143,12 @@ public class Configuration {
 
     //<editor-fold desc="marshalling">
     public void load(Map<String, Map<String, Object>> configMap) {
-        final Map<String, Map<String, Object>> newConfig = new PopulatingMap<String, Map<String, Object>>(
-                POPULATOR);
-        Maps.eachPair(configMap, new Block2<String, Map<String, Object>, Object>() {
-            @Override
-            public Object invoke(String uri, Map<String, Object> shuntsAndStubs) {
-                Map<String, Object> nodeMap = newConfig.get(uri);
-                loadShunt((Map<String, String>) shuntsAndStubs.get(Configuration.SHUNT_MAP_KEY), nodeMap);
-                loadStubs((List<Map<String, Object>>) shuntsAndStubs.get(Configuration.STUBS_MAP_KEY), nodeMap);
-                return null;
-            }
+        final Map<String, Map<String, Object>> newConfig = new HashMap<>(configMap.size());
+        configMap.forEach((uri, shuntsAndStubs) -> {
+            Map<String, Object> nodeMap = newConfig.computeIfAbsent(uri, this::newConcurrentHashMap);
+            loadShunt((Map<String, String>) shuntsAndStubs.get(Configuration.SHUNT_MAP_KEY), nodeMap);
+            loadStubs((List<Map<String, Object>>) shuntsAndStubs.get(Configuration.STUBS_MAP_KEY), nodeMap);
         });
-
         synchronized (this) {
             reset();
             uriHandlers.putAll(newConfig);
@@ -169,38 +156,36 @@ public class Configuration {
     }
 
     public Map<String, Map<String, Object>> toMap() {
-        final HashMap<String, Map<String, Object>> result =
-                new HashMap<String, Map<String, Object>>(uriHandlers.size());
-        Maps.eachPair(uriHandlers, new Block2<String, Map<String, Object>, Object>() {
-            @Override
-            public Object invoke(String path, Map<String, Object> handlerMap) {
-                Map<String, Object> stubsAndShunt = new HashMap<String, Object>();
-                if (!getStubRequestHandlers(handlerMap).isEmpty()) {
-                    stubsAndShunt.put(STUBS_MAP_KEY, Lists.collect(getStubRequestHandlers(handlerMap),
-                            new Block<StubRequestHandler, Map<String, Object>>() {
-                                @Override
-                                public Map<String, Object> invoke(StubRequestHandler stubRequestHandler) {
-                                    return stubRequestHandler.toMap();
-                                }
-                            }));
-                }
-                if (handlerMap.containsKey(SHUNT_NODE)) {
-                    stubsAndShunt.put(SHUNT_MAP_KEY, ((ShuntRequestHandler) handlerMap.get(SHUNT_NODE)).toMap());
-                }
-                result.put(path, stubsAndShunt);
-                return null;
+        final HashMap<String, Map<String, Object>> result = new HashMap<>(uriHandlers.size());
+
+        uriHandlers.forEach((path, handlerMap) -> {
+            Map<String, Object> stubsAndShunt = new HashMap<>();
+            if (!getStubRequestHandlers(handlerMap).isEmpty()) {
+                stubsAndShunt.put(STUBS_MAP_KEY,
+                        getStubRequestHandlers(handlerMap).stream()
+                                .map(RequestHandler::toMap)
+                                .collect(Collectors.toList()));
             }
+            if (handlerMap.containsKey(SHUNT_NODE)) {
+                stubsAndShunt.put(SHUNT_MAP_KEY, ((ShuntRequestHandler) handlerMap.get(SHUNT_NODE)).toMap());
+            }
+            result.put(path, stubsAndShunt);
         });
+
         return result;
     }
     //</editor-fold>
 
+    protected Map<String, Object> newConcurrentHashMap(Object ignored) {
+        return new ConcurrentHashMap<>();
+    }
+
     protected List<StubRequestHandler> getStubRequestHandlers(Map<String, Object> node) {
-        return (List<StubRequestHandler>) node.get(STUB_NODE);
+        return (List<StubRequestHandler>) node.computeIfAbsent(STUB_NODE, i -> new CopyOnWriteArrayList<StubRequestHandler>());
     }
 
     protected List<StubRequestHandler> getStubRequestHandlers(String path) {
-        return getStubRequestHandlers(uriHandlers.get(path));
+        return getStubRequestHandlers(uriHandlers.computeIfAbsent(path, this::newConcurrentHashMap));
     }
 
     void clean(String path, Map<String, Object> handlerMap, String nodeType) {
@@ -221,16 +206,17 @@ public class Configuration {
     private void loadStubs(List<Map<String, Object>> stubDescriptions, Map<String, Object> nodeMap) {
         if (stubDescriptions != null && !stubDescriptions.isEmpty()) {
             getStubRequestHandlers(nodeMap)
-                    .addAll(Lists.collect(stubDescriptions, new Block<Map<String, Object>, StubRequestHandler>() {
-                        @Override
-                        public StubRequestHandler invoke(Map<String, Object> stubDescription) {
-                            try {
-                                return AbstractStubRequestHandler.createStubFor(stubDescription);
-                            } catch (ScriptException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    }));
+                    .addAll(stubDescriptions.stream()
+                            .map(this::createStubFor)
+                            .collect(Collectors.toList()));
+        }
+    }
+
+    protected StubRequestHandler createStubFor(Map<String, Object> stubDescription) {
+        try {
+            return AbstractStubRequestHandler.createStubFor(stubDescription);
+        } catch (ScriptException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -4,7 +4,6 @@ import com.tjh.swivel.model.Configuration;
 import com.tjh.swivel.model.ShuntRequestHandler;
 import org.junit.Before;
 import org.junit.Test;
-import vanderbilt.util.Maps;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -18,7 +17,7 @@ public class ConfigureShuntResourceTest {
 
     public static final String REMOTE_URI = "http:/some/target/uri";
     public static final Map<String, String> SHUNT_JSON =
-            Maps.asConstantMap(ConfigureShuntResource.REMOTE_URL_KEY, REMOTE_URI);
+            Map.of(ConfigureShuntResource.REMOTE_URL_KEY, REMOTE_URI);
 
     public static final String LOCAL_PATH = "extra/path";
     public static final URI LOCAL_URI = URI.create(LOCAL_PATH);
@@ -26,7 +25,7 @@ public class ConfigureShuntResourceTest {
     private Configuration mockConfiguration;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         configureShuntResource = new ConfigureShuntResource();
         mockConfiguration = mock(Configuration.class);
 
@@ -41,7 +40,7 @@ public class ConfigureShuntResourceTest {
     }
 
     @Test
-    public void deleteShuntRemovesShuntFromRouter() throws URISyntaxException {
+    public void deleteShuntRemovesShuntFromRouter() {
         configureShuntResource.deleteShunt(LOCAL_URI);
 
         verify(mockConfiguration).deleteShunt(LOCAL_URI);

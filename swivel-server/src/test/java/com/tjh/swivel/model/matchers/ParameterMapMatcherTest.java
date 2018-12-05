@@ -2,7 +2,6 @@ package com.tjh.swivel.model.matchers;
 
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Test;
-import vanderbilt.util.Maps;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -22,7 +21,7 @@ public class ParameterMapMatcherTest {
 
         when(mockRequest.getURI()).thenReturn(URI.create("some/path?key=value"));
 
-        Map<String, List<String>> copy = Maps.asMap("key", Arrays.asList("value"));
+        Map<String, List<String>> copy = Map.of("key", Arrays.asList("value"));
         assertThat(mockRequest, ParameterMapMatcher.hasParameterMap(equalTo(copy)));
     }
 }

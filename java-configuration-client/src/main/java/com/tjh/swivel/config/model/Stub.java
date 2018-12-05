@@ -8,12 +8,11 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.codehaus.jettison.json.JSONObject;
-import vanderbilt.util.Maps;
 
 import java.io.File;
 import java.net.URL;
-
-import static vanderbilt.util.Validators.notNull;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents a Swivel Stub
@@ -34,9 +33,9 @@ public class Stub implements Behavior {
      * @param then        - the stub's Then component
      */
     public Stub(String description, When when, Then then) {
-        this.description = notNull("description", description);
-        this.when = notNull("when", when);
-        this.then = notNull("then", then);
+        this.description = Objects.requireNonNull(description);
+        this.when = Objects.requireNonNull(when);
+        this.then = Objects.requireNonNull(then);
     }
 
     /**
@@ -45,7 +44,7 @@ public class Stub implements Behavior {
      * @return JSON expected by <code>rest/config/stub</code>
      */
     public JSONObject toJSON() {
-        return new JSONObject(Maps.asMap(
+        return new JSONObject(Map.of(
                 DESCRIPTION_KEY, description,
                 WHEN_KEY, when.toJSON(),
                 THEN_KEY, then.toJSON()));

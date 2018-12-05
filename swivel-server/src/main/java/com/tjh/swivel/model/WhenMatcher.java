@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.tjh.swivel.model.matchers.ContentMatcher.hasContent;
 import static com.tjh.swivel.model.matchers.ContentTypeMatcher.hasContentType;
@@ -20,7 +21,6 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static vanderbilt.util.Validators.notNull;
 
 public class WhenMatcher implements Matcher<HttpUriRequest> {
     public static final String METHOD_KEY = "method";
@@ -35,7 +35,7 @@ public class WhenMatcher implements Matcher<HttpUriRequest> {
     private final Map<String, String> when;
 
     public WhenMatcher(Map<String, String> when) {
-        this.when = notNull("when", Collections.unmodifiableMap(when));
+        this.when = Objects.requireNonNull(Collections.unmodifiableMap(when));
         this.matcher = createMatcher();
     }
 
@@ -45,7 +45,7 @@ public class WhenMatcher implements Matcher<HttpUriRequest> {
     @SuppressWarnings("unchecked")
     private Matcher<? extends HttpUriRequest> createMatcher() {
         try {
-            List<Matcher<HttpUriRequest>> result = new ArrayList<Matcher<HttpUriRequest>>(OPTIONAL_MATCHER_COUNT);
+            List<Matcher<HttpUriRequest>> result = new ArrayList<>(OPTIONAL_MATCHER_COUNT);
             if (when.containsKey(METHOD_KEY)) {
                 result.add(hasMethod(equalTo(when.get(METHOD_KEY))));
             }
@@ -67,7 +67,7 @@ public class WhenMatcher implements Matcher<HttpUriRequest> {
             if (when.containsKey(SCRIPT_KEY)) {
                 result.add(scriptMatches(when.get(SCRIPT_KEY)));
             }
-            return allOf(result.toArray(new Matcher[result.size()]));
+            return allOf(result.toArray(new Matcher[0]));
         } catch (ScriptException e) {
             throw new RuntimeException(e);
         }

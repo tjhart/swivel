@@ -1,9 +1,11 @@
 package com.tjh.swivel.model;
 
 import org.apache.http.client.methods.HttpUriRequest;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.springframework.util.MimeTypeUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +24,9 @@ public class StaticStubRequestHandlerTest {
     private StaticStubRequestHandler staticResponseHandler;
     private File storageFile;
 
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     @Before
     public void before() throws IOException {
         staticResponseHandler = new StaticStubRequestHandler(Map.of(
@@ -32,13 +37,7 @@ public class StaticStubRequestHandlerTest {
                 Map.of(AbstractStubRequestHandler.STATUS_CODE_KEY, 200)
         ));
 
-        storageFile = new File(System.getProperty("java.io.tmpdir") + "/testFile.tmp");
-        storageFile.createNewFile();
-    }
-
-    @After
-    public void after(){
-        storageFile.delete();
+        storageFile = temporaryFolder.newFile();
     }
 
     @Test
@@ -51,16 +50,21 @@ public class StaticStubRequestHandlerTest {
         new StaticStubRequestHandler(Map.of(AbstractStubRequestHandler.DESCRIPTION_KEY, DESCRIPTION,
                 AbstractStubRequestHandler.WHEN_KEY, WHEN_MAP,
                 AbstractStubRequestHandler.THEN_KEY, Map.of(AbstractStubRequestHandler.STATUS_CODE_KEY, 200,
-                AbstractStubRequestHandler.STORAGE_PATH_KEY, "foo/bar")));
+                        AbstractStubRequestHandler.STORAGE_PATH_KEY, "foo/bar")));
     }
 
     @Test
-    public void constructionSetsResponseFileWithStoragePath(){
+    public void constructionSetsResponseFileWithStoragePath() {
         StaticStubRequestHandler staticStubRequestHandler = new StaticStubRequestHandler(
                 Map.of(AbstractStubRequestHandler.DESCRIPTION_KEY, DESCRIPTION,
                         AbstractStubRequestHandler.WHEN_KEY, WHEN_MAP,
-                        AbstractStubRequestHandler.THEN_KEY, Map.of(AbstractStubRequestHandler.STATUS_CODE_KEY, 200,
-                        AbstractStubRequestHandler.STORAGE_PATH_KEY, storageFile.getPath())));
+                        AbstractStubRequestHandler.THEN_KEY, Map.of(
+                                AbstractStubRequestHandler.STATUS_CODE_KEY,
+                                200,
+                                AbstractStubRequestHandler.STORAGE_PATH_KEY,
+                                storageFile.getPath(),
+                                AbstractStubRequestHandler.FILE_CONTENT_TYPE_KEY,
+                                MimeTypeUtils.APPLICATION_JSON.getType())));
 
         assertThat(staticStubRequestHandler.responseFile, equalTo(storageFile));
     }

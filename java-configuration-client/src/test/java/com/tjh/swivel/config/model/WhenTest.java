@@ -21,7 +21,7 @@ public class WhenTest {
     private When when;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when = new When(METHOD, SOME_URI);
     }
 

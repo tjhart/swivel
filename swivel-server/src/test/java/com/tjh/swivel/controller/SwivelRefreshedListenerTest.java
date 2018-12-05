@@ -19,7 +19,7 @@ public class SwivelRefreshedListenerTest {
     private Configuration mockConfiguration;
     private ObjectMapper mockObjectMapper;
     private File mockFile;
-    private Map mockMap;
+    private Map<String, Map<String, Object>> mockMap;
 
     @Before
     public void setUp() throws IOException {
@@ -27,6 +27,7 @@ public class SwivelRefreshedListenerTest {
         mockConfiguration = mock(Configuration.class);
         mockObjectMapper = mock(ObjectMapper.class);
         mockFile = mock(File.class);
+        //noinspection unchecked
         mockMap = mock(Map.class);
 
         swivelRefreshedListener.setConfiguration(mockConfiguration);

@@ -1,5 +1,6 @@
 package com.tjh.swivel.controller.functional;
 
+import com.tjh.swivel.config.ServerConfiguration;
 import com.tjh.swivel.controller.ConfigureShuntResource;
 import com.tjh.swivel.controller.RequestRouter;
 import org.apache.http.client.methods.HttpGet;
@@ -14,7 +15,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-@ContextConfiguration(locations = {"classpath:serverContext.xml"})
+@ContextConfiguration(classes = {ServerConfiguration.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ConfigureShuntResourceTest {
 

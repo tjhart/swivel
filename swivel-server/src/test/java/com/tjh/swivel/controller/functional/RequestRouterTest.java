@@ -1,5 +1,6 @@
 package com.tjh.swivel.controller.functional;
 
+import com.tjh.swivel.config.RouterConfiguration;
 import com.tjh.swivel.controller.RequestRouter;
 import com.tjh.swivel.model.Configuration;
 import com.tjh.swivel.model.ShuntRequestHandler;
@@ -20,7 +21,7 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-@ContextConfiguration(locations = {"classpath:routerContext.xml"})
+@ContextConfiguration(classes = RouterConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 public class RequestRouterTest {
 

@@ -1,0 +1,10 @@
+.idea
+*.iml
+target
+.gradle
+out
+scratch
+**/.DS_Store
+screenshot.png
+**/build
+**/node_modules

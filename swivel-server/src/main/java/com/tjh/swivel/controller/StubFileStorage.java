@@ -22,16 +22,13 @@ public class StubFileStorage {
         result.createNewFile();
         LOGGER.debug("Creating stub storage file " + result.getPath());
 
-        FileOutputStream destination = new FileOutputStream(result);
-        try {
+        try (FileOutputStream destination = new FileOutputStream(result)) {
             byte[] buffer = new byte[8192];
             int read;
             while ((read = formFile.read(buffer)) != -1) {
                 destination.write(buffer, 0, read);
             }
             return result;
-        } finally {
-            destination.close();
         }
     }
 

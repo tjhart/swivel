@@ -22,6 +22,6 @@ public class MapEntryMatcher<K, V> extends FeatureMatcher<Map<K, V>, V> {
 
     @Factory
     public static <K, V> Matcher<Map<K, V>> hasEntry(K key, Matcher<? super V> val1) {
-        return new MapEntryMatcher<K, V>(key, val1);
+        return new MapEntryMatcher<>(key, val1);
     }
 }

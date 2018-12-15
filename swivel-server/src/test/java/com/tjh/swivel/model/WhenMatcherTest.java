@@ -17,7 +17,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings("unchecked")
 public class WhenMatcherTest {
     public static final Map<String, String> WHEN_MAP = Map.of(WhenMatcher.METHOD_KEY, "POST");
     public static final String APPLICATION_JSON = ContentType.APPLICATION_JSON.toString();
@@ -27,7 +26,7 @@ public class WhenMatcherTest {
     private HttpEntityEnclosingRequestBase mockEnclosingRequest;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         mockEnclosingRequest = mock(HttpEntityEnclosingRequestBase.class);
 
         when(mockEnclosingRequest.getURI()).thenReturn(URI.create("some/path"));
@@ -36,7 +35,7 @@ public class WhenMatcherTest {
     }
 
     @Test
-    public void matchesMethod() throws IOException {
+    public void matchesMethod() {
         //This is backwards from normal - expected is usually on the left.
         //but if I put the actual on the left, when the assertion fails, I get a nice
         //description of what's wrong
@@ -55,7 +54,7 @@ public class WhenMatcherTest {
     }
 
     @Test
-    public void matchesIfContentTypeProvidedAndMatches() throws IOException {
+    public void matchesIfContentTypeProvidedAndMatches() {
         Map<String, String> result = new HashMap<>(WHEN_MAP);
 
         result.putAll(Map.of(WhenMatcher.CONTENT_TYPE_KEY, APPLICATION_JSON));
@@ -65,7 +64,7 @@ public class WhenMatcherTest {
     }
 
     @Test(expected = AssertionError.class)
-    public void matchFailsIfContentProvidedAndDoesNotMatch() throws IOException {
+    public void matchFailsIfContentProvidedAndDoesNotMatch() {
         Map<String, String> result = new HashMap<>(WHEN_MAP);
 
         result.putAll(Map.of(WhenMatcher.CONTENT_KEY, "Yummy!"));
@@ -75,7 +74,7 @@ public class WhenMatcherTest {
     }
 
     @Test
-    public void matchesIfContentProvidedAndMatches() throws IOException {
+    public void matchesIfContentProvidedAndMatches() {
         Map<String, String> result = new HashMap<>(WHEN_MAP);
 
         result.putAll(Map.of(WhenMatcher.CONTENT_KEY, CONTENT));
@@ -85,7 +84,7 @@ public class WhenMatcherTest {
     }
 
     @Test(expected = AssertionError.class)
-    public void matchFailsIfQueryProvidedAndDoesNotMatch() throws IOException {
+    public void matchFailsIfQueryProvidedAndDoesNotMatch() {
         Map<String, String> result = new HashMap<>(WHEN_MAP);
 
         result.putAll(Map.of(WhenMatcher.QUERY_KEY, "key=val"));
@@ -95,7 +94,7 @@ public class WhenMatcherTest {
     }
 
     @Test
-    public void matchesIfQueryProvidedAndRequestContainsQuery() throws IOException {
+    public void matchesIfQueryProvidedAndRequestContainsQuery() {
         when(mockEnclosingRequest.getURI()).thenReturn(URI.create("some/path?key=val"));
 
         Map<String, String> result = new HashMap<>(WHEN_MAP);
@@ -107,7 +106,7 @@ public class WhenMatcherTest {
     }
 
     @Test
-    public void matchesIfRemoteAddrInXForwardedForHeader() throws IOException {
+    public void matchesIfRemoteAddrInXForwardedForHeader() {
         when(mockEnclosingRequest.getHeaders("X-Forwarded-For")).thenReturn(
                 new Header[]{new BasicHeader("X-Forwarded-For", "198.154.20.2, 127.0.0.1")});
 

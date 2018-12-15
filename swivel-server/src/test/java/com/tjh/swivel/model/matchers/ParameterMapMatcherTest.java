@@ -4,7 +4,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Test;
 
 import java.net.URI;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +21,7 @@ public class ParameterMapMatcherTest {
 
         when(mockRequest.getURI()).thenReturn(URI.create("some/path?key=value"));
 
-        Map<String, List<String>> copy = Map.of("key", Arrays.asList("value"));
+        Map<String, List<String>> copy = Map.of("key", Collections.singletonList("value"));
         assertThat(mockRequest, ParameterMapMatcher.hasParameterMap(equalTo(copy)));
     }
 }

@@ -1,11 +1,11 @@
 package com.tjh.swivel.controller;
 
-import com.sun.jersey.core.header.ContentDisposition;
-import com.sun.jersey.multipart.FormDataBodyPart;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tjh.swivel.model.AbstractStubRequestHandler;
 import com.tjh.swivel.model.Configuration;
 import com.tjh.swivel.model.StubRequestHandler;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.glassfish.jersey.media.multipart.ContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -26,11 +24,11 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -55,7 +53,6 @@ public class ConfigureStubResourceTest {
     private InputStream mockInputStream;
     private FormDataBodyPart mockBodyPart;
     private ContentDisposition mockContentDisposition;
-    private File mockFile;
     private StubFileStorage mockStorage;
 
     @SuppressWarnings("unchecked")
@@ -70,7 +67,7 @@ public class ConfigureStubResourceTest {
         mockThenMap = mock(Map.class);
         mockInputStream = mock(InputStream.class);
         mockStorage = mock(StubFileStorage.class);
-        mockFile = mock(File.class);
+        File mockFile = mock(File.class);
 
         configureStubResource.setConfiguration(mockConfiguration);
         configureStubResource.setObjectMapper(mockObjectMapper);
@@ -100,8 +97,8 @@ public class ConfigureStubResourceTest {
                 .thenReturn(FILE_NAME_TXT);
         when(mockStorage.createFile(any(InputStream.class)))
                 .thenReturn(mockFile);
-        when(mockConfiguration.getStubs(LOCAL_PATH, Arrays.asList(STUB_HANDLER_ID)))
-                .thenReturn(Arrays.asList(mockStubRequestHandler));
+        when(mockConfiguration.getStubs(LOCAL_PATH, Collections.singletonList(STUB_HANDLER_ID)))
+                .thenReturn(Collections.singletonList(mockStubRequestHandler));
     }
 
     @Test
@@ -121,7 +118,7 @@ public class ConfigureStubResourceTest {
     @Test
     public void postStubReturnsRouterIDForStub() throws URISyntaxException, ScriptException {
 
-        assertThat((Integer) configureStubResource.postStub(LOCAL_PATH, mockStubMap).get("id"),
+        assertThat(configureStubResource.postStub(LOCAL_PATH, mockStubMap).get("id"),
                 equalTo(STUB_HANDLER_ID));
     }
 
@@ -136,7 +133,7 @@ public class ConfigureStubResourceTest {
 
     @Test
     public void getStubDefersToConfiguration() {
-        List<Integer> stubIds = Arrays.asList(1);
+        List<Integer> stubIds = Collections.singletonList(1);
         configureStubResource.getStub(LOCAL_PATH, stubIds);
 
         verify(mockConfiguration).getStubs(LOCAL_PATH, stubIds);
@@ -144,13 +141,13 @@ public class ConfigureStubResourceTest {
 
     @Test
     public void getStubsCollectsMapsReturnedByConfiguration() {
-        Map<String, Object> expectedMap = new HashMap<String, Object>();
+        Map<String, Object> expectedMap = new HashMap<>();
 
         when(mockConfiguration.getStubs(eq(LOCAL_PATH), anyList()))
-                .thenReturn(Arrays.asList(mockStubRequestHandler));
+                .thenReturn(Collections.singletonList(mockStubRequestHandler));
         when(mockStubRequestHandler.toMap()).thenReturn(expectedMap);
-        assertThat(configureStubResource.getStub(LOCAL_PATH, Collections.<Integer>emptyList()),
-                CoreMatchers.<Collection<Map<String, Object>>>equalTo(Arrays.asList(expectedMap)));
+        assertThat(configureStubResource.getStub(LOCAL_PATH, Collections.emptyList()),
+                CoreMatchers.equalTo(Collections.singletonList(expectedMap)));
     }
 
     @Test
@@ -242,7 +239,7 @@ public class ConfigureStubResourceTest {
     }
 
     @Test
-    public void editStubRequestHandlerPreservesExistingFile() throws ScriptException, IOException, URISyntaxException {
+    public void editStubRequestHandlerPreservesExistingFile() throws ScriptException, IOException {
 
         File tmpFile = File.createTempFile("test", "txt");
         tmpFile.deleteOnExit();

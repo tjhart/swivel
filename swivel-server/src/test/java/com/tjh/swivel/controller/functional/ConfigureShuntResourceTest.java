@@ -12,7 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 @ContextConfiguration(classes = {ServerConfiguration.class})
@@ -26,7 +25,7 @@ public class ConfigureShuntResourceTest {
     protected RequestRouter requestRouter;
 
     @Before
-    public void before() throws URISyntaxException {
+    public void before() {
         configurationResource.putShunt(LOCAL_URI,
                 Map.of(ConfigureShuntResource.REMOTE_URL_KEY, "http://localhost:5984"));
     }

@@ -13,9 +13,9 @@ import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,7 +31,7 @@ public class RequestRouterTest {
     private final Configuration mockConfiguration = mock(Configuration.class);
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mockRequestBase = mock(HttpRequestBase.class);
         mockRequestHandler = mock(RequestHandler.class);
         requestRouter = new RequestRouter();

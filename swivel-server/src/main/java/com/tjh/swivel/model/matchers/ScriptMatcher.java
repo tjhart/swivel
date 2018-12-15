@@ -23,7 +23,7 @@ public class ScriptMatcher extends CustomMatcher<HttpUriRequest> {
 
     @Override
     public boolean matches(Object o) {
-        if (o == null || !(o instanceof HttpUriRequest)) {
+        if (!(o instanceof HttpUriRequest)) {
             return false;
         }
 

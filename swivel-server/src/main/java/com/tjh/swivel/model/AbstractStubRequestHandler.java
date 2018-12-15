@@ -91,7 +91,7 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
 
     @Override
     public Map<String, Object> toMap() {
-        return Map.<String, Object>of(
+        return Map.of(
                 DESCRIPTION_KEY, description,
                 ID_KEY, getId(),
                 WHEN_KEY, matcher.toMap(),
@@ -103,16 +103,15 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     //<editor-fold desc="Object">
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("AbstractStubRequestHandler{");
         StringDescription stringDescription = new StringDescription();
         matcher.describeTo(stringDescription);
-        sb.append("matcher=").append(stringDescription.toString());
-        sb.append(", id=").append(getId());
-        sb.append(", description=").append(description);
-        sb.append(", matcher=").append(matcher);
-        sb.append(", then=").append(then);
-        sb.append('}');
-        return sb.toString();
+        return "AbstractStubRequestHandler{" +
+                "matcher=" + stringDescription.toString() +
+                ", id=" + getId() +
+                ", description=" + description +
+                ", matcher=" + matcher +
+                ", then=" + then +
+                '}';
     }
     //</editor-fold>
 

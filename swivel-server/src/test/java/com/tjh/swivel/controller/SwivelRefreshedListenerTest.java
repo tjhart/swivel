@@ -1,7 +1,7 @@
 package com.tjh.swivel.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tjh.swivel.model.Configuration;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,5 +1,6 @@
 package com.tjh.swivel.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tjh.swivel.controller.ConfigurationResource;
 import com.tjh.swivel.controller.ConfigureShuntResource;
 import com.tjh.swivel.controller.ConfigureStubResource;
@@ -10,7 +11,6 @@ import com.tjh.swivel.controller.RequestRouter;
 import com.tjh.swivel.controller.StubFileStorage;
 import com.tjh.swivel.controller.SwivelClosedListener;
 import com.tjh.swivel.controller.SwivelRefreshedListener;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

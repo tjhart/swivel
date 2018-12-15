@@ -26,7 +26,7 @@ public class RequestRouter {
     public HttpResponse route(HttpRequestBase request) {
         LOGGER.debug("Routing " + request);
         RequestHandler requestHandler;
-        Deque<String> pathElements = new LinkedList<String>(Arrays.asList(toKeys(request.getURI())));
+        Deque<String> pathElements = new LinkedList<>(Arrays.asList(toKeys(request.getURI())));
         String matchedPath;
         do {
             matchedPath = String.join("/", pathElements);
@@ -43,10 +43,8 @@ public class RequestRouter {
         HttpResponse response;
         if (requestHandler == null) {
             LOGGER.debug("No handler found");
-            response = responseFactory.createResponse(404
-            );
+            response = responseFactory.createResponse(404);
         } else {
-
             LOGGER.debug(String.format("Routing <%1$s> to <%2$s>. Matched path is: <%3$s>", request, requestHandler,
                     matchedPath));
             response = requestHandler.handle(request, URI.create(matchedPath), createClient());

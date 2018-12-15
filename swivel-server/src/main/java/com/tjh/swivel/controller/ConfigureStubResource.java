@@ -1,12 +1,12 @@
 package com.tjh.swivel.controller;
 
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataParam;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tjh.swivel.model.AbstractStubRequestHandler;
 import com.tjh.swivel.model.Configuration;
 import com.tjh.swivel.model.StubRequestHandler;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.script.ScriptException;
 import javax.ws.rs.Consumes;

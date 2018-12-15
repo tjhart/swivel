@@ -8,9 +8,8 @@ import org.junit.Test;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,7 +25,7 @@ public class ProxyResourceTest {
     private JerseyResponseFactory mockResponseFactory;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         proxyResource = new ProxyResource();
         mockRouter = mock(RequestRouter.class);
         mockRequestFactory = mock(HttpUriRequestFactory.class);
@@ -43,21 +42,21 @@ public class ProxyResourceTest {
     }
 
     @Test
-    public void getDelegatesToRequestFactory() throws URISyntaxException, IOException {
+    public void getDelegatesToRequestFactory() throws IOException {
         proxyResource.get(LOCAL_URI, mockRequest);
 
         verify(mockRequestFactory).createGetRequest(LOCAL_URI, mockRequest);
     }
 
     @Test
-    public void getDelegatesToRouter() throws URISyntaxException, IOException {
+    public void getDelegatesToRouter() throws IOException {
         proxyResource.get(LOCAL_URI, mockRequest);
 
         verify(mockRouter).route(mockRequestBase);
     }
 
     @Test
-    public void getDelegatesToResponseFactory() throws URISyntaxException, IOException {
+    public void getDelegatesToResponseFactory() throws IOException {
         HttpResponse mockResponse = mock(HttpResponse.class);
         when(mockRouter.route(any(HttpRequestBase.class))).thenReturn(mockResponse);
 

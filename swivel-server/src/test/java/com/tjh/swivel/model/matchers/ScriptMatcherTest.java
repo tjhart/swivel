@@ -12,7 +12,7 @@ import javax.script.ScriptException;
 import static com.tjh.swivel.model.matchers.ScriptMatcher.scriptMatches;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,7 +25,7 @@ public class ScriptMatcherTest {
     private HttpUriRequest mockRequest;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mockRequest = mock(HttpUriRequest.class);
     }
 
@@ -46,6 +46,6 @@ public class ScriptMatcherTest {
         ArgumentCaptor<Bindings> bindingsCaptor = ArgumentCaptor.forClass(Bindings.class);
 
         verify(scriptMatcher.scriptWrapper).evalWith(bindingsCaptor.capture());
-        assertThat((HttpUriRequest)bindingsCaptor.getValue().get("request"), equalTo(mockRequest));
+        assertThat(bindingsCaptor.getValue().get("request"), equalTo(mockRequest));
     }
 }

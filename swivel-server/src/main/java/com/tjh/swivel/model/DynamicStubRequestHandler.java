@@ -37,10 +37,9 @@ public class DynamicStubRequestHandler extends AbstractStubRequestHandler {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("DynamicStubRequestHandler{");
-        sb.append("super=").append(super.toString());
-        sb.append(", scriptWrapper=").append(scriptWrapper);
-        sb.append('}');
-        return sb.toString();
+        return "DynamicStubRequestHandler{" +
+                "super=" + super.toString() +
+                ", scriptWrapper=" + scriptWrapper +
+                '}';
     }
 }

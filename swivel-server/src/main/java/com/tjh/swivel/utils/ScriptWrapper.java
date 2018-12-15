@@ -42,9 +42,8 @@ public class ScriptWrapper {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ScriptWrapper{");
-        sb.append("script='").append(script).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "ScriptWrapper{" +
+                "script='" + script + '\'' +
+                '}';
     }
 }

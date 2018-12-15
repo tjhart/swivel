@@ -14,7 +14,7 @@ import java.util.Enumeration;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -35,7 +35,7 @@ public class HttpUriRequestFactoryTest {
     private HttpUriRequest mockUriRequest;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         httpUriRequestFactory = new HttpUriRequestFactory();
         mockServletRequest = mock(HttpServletRequest.class);
         mockUriRequest = mock(HttpUriRequest.class);

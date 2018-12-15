@@ -22,7 +22,7 @@ public class ResponseFactoryTest {
     private ResponseFactory responseFactory;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         responseFactory = new ResponseFactory();
     }
 

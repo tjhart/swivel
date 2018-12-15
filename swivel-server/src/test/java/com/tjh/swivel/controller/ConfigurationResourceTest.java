@@ -1,8 +1,8 @@
 package com.tjh.swivel.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tjh.swivel.model.Configuration;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,8 +16,8 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -32,7 +32,7 @@ public class ConfigurationResourceTest {
     private Map<String,Map<String,Object>> configurationMap;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         configurationResource = new ConfigurationResource();
         mockConfiguration = mock(Configuration.class);
         configurationMap = Collections.emptyMap();

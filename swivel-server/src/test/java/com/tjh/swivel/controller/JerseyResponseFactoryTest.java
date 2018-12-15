@@ -46,7 +46,7 @@ public class JerseyResponseFactoryTest {
     public void responseHasExpectedHeaders() throws IOException {
         Response response = responseFactory.createResponse(mockHttpResponse);
 
-        assertThat((String) response.getMetadata().getFirst("name"), equalTo("value"));
+        assertThat(response.getMetadata().getFirst("name"), equalTo("value"));
     }
 
     @Test

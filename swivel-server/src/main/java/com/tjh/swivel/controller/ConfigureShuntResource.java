@@ -15,7 +15,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 @Path("config/shunt/{localPath: .*}")
@@ -29,17 +28,14 @@ public class ConfigureShuntResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, Map<String, Object>> putShunt(@PathParam("localPath") URI localPath, Map<String, String> json)
-            throws URISyntaxException {
+    public Map<String, Map<String, Object>> putShunt(@PathParam("localPath") URI localPath, Map<String, String> json) {
         try {
             LOGGER.debug(String.format("Configuring shunt: proxying %1$s with %2$s", localPath, json));
 
             configuration.setShunt(localPath, new ShuntRequestHandler(json));
             return configuration.toMap();
-        } catch (IllegalArgumentException iae) {
+        } catch (IllegalArgumentException | ClassCastException iae) {
             throw new WebApplicationException(iae, Response.Status.CONFLICT);
-        } catch (ClassCastException cce) {
-            throw new WebApplicationException(cce, Response.Status.CONFLICT);
         } catch (MalformedURLException mue) {
             throw new WebApplicationException(mue, Response.Status.BAD_REQUEST);
         }

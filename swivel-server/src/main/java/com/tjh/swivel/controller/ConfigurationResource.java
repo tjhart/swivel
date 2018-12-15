@@ -1,8 +1,8 @@
 package com.tjh.swivel.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tjh.swivel.model.Configuration;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -38,11 +38,9 @@ public class ConfigurationResource {
     }
 
     @PUT
-    @SuppressWarnings("unchecked")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Map<String, Map<String, Object>> putConfiguration(Map<String, Map<String, Object>> configMap)
-            throws IOException {
+    public Map<String, Map<String, Object>> putConfiguration(Map<String, Map<String, Object>> configMap) {
         LOGGER.debug("Loading configuration: " + configMap);
         configuration.load(configMap);
         return configuration.toMap();

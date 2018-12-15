@@ -72,10 +72,9 @@ public class ShuntRequestHandler implements RequestHandler<HttpRequestBase> {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ShuntRequestHandler{");
-        sb.append("remoteURL=").append(remoteURL);
-        sb.append('}');
-        return sb.toString();
+        return "ShuntRequestHandler{" +
+                "remoteURL=" + remoteURL +
+                '}';
     }
     //</editor-fold>
 }

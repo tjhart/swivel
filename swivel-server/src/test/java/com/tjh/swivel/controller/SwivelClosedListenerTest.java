@@ -3,7 +3,11 @@ package com.tjh.swivel.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tjh.swivel.model.Configuration;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,22 +15,24 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class SwivelClosedListenerTest {
 
     private SwivelClosedListener swivelClosedListener;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
     private ObjectMapper mockObjectMapper;
+    @Mock
     private Configuration mockConfiguration;
+    @Mock
     private File mockFile;
 
     @Before
     public void setUp() {
         swivelClosedListener = new SwivelClosedListener();
-        mockObjectMapper = mock(ObjectMapper.class);
-        mockConfiguration = mock(Configuration.class);
-        mockFile = mock(File.class);
 
         swivelClosedListener.setObjectMapper(mockObjectMapper);
         swivelClosedListener.setConfiguration(mockConfiguration);

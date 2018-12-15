@@ -5,6 +5,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import org.springframework.util.MimeTypeUtils;
 
 import java.io.File;
@@ -15,7 +18,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 public class StaticStubRequestHandlerTest {
 
@@ -26,6 +28,10 @@ public class StaticStubRequestHandlerTest {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
+    private HttpUriRequest mockHttpUriRequest;
 
     @Before
     public void before() throws IOException {
@@ -71,6 +77,6 @@ public class StaticStubRequestHandlerTest {
 
     @Test
     public void handleReturnsResponse() {
-        assertThat(staticResponseHandler.handle(mock(HttpUriRequest.class), null, null), notNullValue());
+        assertThat(staticResponseHandler.handle(mockHttpUriRequest, null, null), notNullValue());
     }
 }

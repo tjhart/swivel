@@ -28,6 +28,7 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     public static final String FILE_NAME_KEY = "fileName";
 
     private static Logger logger = Logger.getLogger(AbstractStubRequestHandler.class);
+    //REDTAG:TJH - must fix this!
     protected static ResponseFactory responseFactory = new ResponseFactory();
 
     protected WhenMatcher matcher;

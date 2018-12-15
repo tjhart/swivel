@@ -6,7 +6,11 @@ import org.apache.http.StatusLine;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -14,20 +18,22 @@ import java.io.IOException;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class JerseyResponseFactoryTest {
 
     private JerseyResponseFactory responseFactory;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
     private HttpResponse mockHttpResponse;
+    @Mock
+    private StatusLine mockStatusLine;
 
     @Before
     public void setUp() {
         responseFactory = new JerseyResponseFactory();
-
-        mockHttpResponse = mock(HttpResponse.class);
-        StatusLine mockStatusLine = mock(StatusLine.class);
 
         when(mockHttpResponse.getStatusLine()).thenReturn(mockStatusLine);
         when(mockHttpResponse.getAllHeaders()).thenReturn(new Header[]{new BasicHeader("name", "value")});

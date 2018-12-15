@@ -4,8 +4,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -17,7 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,16 +33,19 @@ public class HttpUriRequestFactoryTest {
     public static final String REMOTE_ADDR = "127.0.0.1";
 
     private HttpUriRequestFactory httpUriRequestFactory;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
     private HttpServletRequest mockServletRequest;
-    private Enumeration mockEnumeration;
+    @Mock
+    private Enumeration<String> mockEnumeration;
+    @Mock
     private HttpUriRequest mockUriRequest;
 
     @Before
     public void setUp() {
         httpUriRequestFactory = new HttpUriRequestFactory();
-        mockServletRequest = mock(HttpServletRequest.class);
-        mockUriRequest = mock(HttpUriRequest.class);
-        mockEnumeration = mock(Enumeration.class);
 
         when(mockServletRequest.getHeaderNames()).thenReturn(mockEnumeration);
         when(mockServletRequest.getParameterMap()).thenReturn(Collections.emptyMap());

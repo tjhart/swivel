@@ -5,7 +5,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -17,7 +21,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,14 +42,20 @@ public class ShuntRequestHandlerTest {
     }
 
     private ShuntRequestHandler shuntRequestHandler;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
     private HttpClient mockClient;
+    @Mock
     private HttpRequestBase mockRequest;
+    @Mock
+    private HttpResponse mockResponse;
+    @Mock
+    private HttpUriRequest httpUriRequest;
 
     @Before
     public void before() throws IOException {
-        mockClient = mock(HttpClient.class);
-        mockRequest = mock(HttpRequestBase.class);
-        HttpResponse mockResponse = mock(HttpResponse.class);
 
         when(mockRequest.getURI()).thenReturn(RELATIVE_URI);
         when(mockClient.execute(any(HttpUriRequest.class))).thenReturn(mockResponse);
@@ -63,7 +72,7 @@ public class ShuntRequestHandlerTest {
     public void handleRequestDefersToConstructRequest() {
         ShuntRequestHandler shuntResponseHandlerSpy = spy(shuntRequestHandler);
 
-        doReturn(mock(HttpUriRequest.class))
+        doReturn(httpUriRequest)
                 .when(shuntResponseHandlerSpy)
                 .createShuntRequest(any(HttpRequestBase.class), any(URI.class));
 

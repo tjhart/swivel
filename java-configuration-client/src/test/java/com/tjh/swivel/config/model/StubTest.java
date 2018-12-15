@@ -7,7 +7,11 @@ import org.apache.http.util.EntityUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +23,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class StubTest {
@@ -37,13 +40,20 @@ public class StubTest {
     public static final String DESCRIPTION = "description";
 
     private Stub stub;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
+    private When mockWhen;
+    @Mock
     private Then mockThen;
+    @Mock
+    private JSONObject mockJSONObject;
+    @Mock
+    private File mockFile;
 
     @Before
     public void setUp() {
-        When mockWhen = mock(When.class);
-        mockThen = mock(Then.class);
-        JSONObject mockJSONObject = mock(JSONObject.class);
 
         stub = new Stub(DESCRIPTION, mockWhen, mockThen);
 
@@ -90,8 +100,6 @@ public class StubTest {
 
     @Test
     public void createEntityCreatesMultiPartIfThenIsFileBased(){
-        File mockFile = mock(File.class);
-
         when(mockThen.getFile()).thenReturn(mockFile);
         when(mockThen.getContentType()).thenReturn("text/plain");
 

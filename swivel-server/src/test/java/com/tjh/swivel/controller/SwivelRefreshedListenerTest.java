@@ -3,32 +3,37 @@ package com.tjh.swivel.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tjh.swivel.model.Configuration;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class SwivelRefreshedListenerTest {
 
     private SwivelRefreshedListener swivelRefreshedListener;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
     private Configuration mockConfiguration;
+    @Mock
     private ObjectMapper mockObjectMapper;
+    @Mock
     private File mockFile;
+    @Mock
     private Map<String, Map<String, Object>> mockMap;
 
     @Before
     public void setUp() throws IOException {
         swivelRefreshedListener = new SwivelRefreshedListener();
-        mockConfiguration = mock(Configuration.class);
-        mockObjectMapper = mock(ObjectMapper.class);
-        mockFile = mock(File.class);
-        //noinspection unchecked
-        mockMap = mock(Map.class);
 
         swivelRefreshedListener.setConfiguration(mockConfiguration);
         swivelRefreshedListener.setObjectMapper(mockObjectMapper);

@@ -7,7 +7,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.net.URI;
 
@@ -16,7 +20,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,14 +29,18 @@ public class RequestRouterTest {
     public static final URI LOCAL_URI = URI.create("some/path");
     public static final URI DEEP_URI = URI.create("some/path/deep");
     private RequestRouter requestRouter;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
     private HttpRequestBase mockRequestBase;
+    @Mock
     private RequestHandler mockRequestHandler;
-    private final Configuration mockConfiguration = mock(Configuration.class);
+    @Mock
+    private Configuration mockConfiguration;
 
     @Before
     public void setUp() {
-        mockRequestBase = mock(HttpRequestBase.class);
-        mockRequestHandler = mock(RequestHandler.class);
         requestRouter = new RequestRouter();
 
         requestRouter.setResponseFactory(new ResponseFactory());

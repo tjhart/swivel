@@ -5,7 +5,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import javax.script.ScriptException;
 import java.net.URI;
@@ -16,7 +20,6 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class AbstractStubRequestHandlerTest {
@@ -27,13 +30,22 @@ public class AbstractStubRequestHandlerTest {
             AbstractStubRequestHandler.DESCRIPTION_KEY, DESCRIPTION,
             AbstractStubRequestHandler.WHEN_KEY, WHEN_MAP,
             AbstractStubRequestHandler.THEN_KEY, THEN_MAP);
-    private ResponseFactory mockResponseFactory;
+
     private TestSubRequestHandler testSubRequestHandler;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
+    private ResponseFactory mockResponseFactory;
+    @Mock
+    private WhenMatcher mockMatcher;
+    @Mock
+    private HttpUriRequest mockRequest;
 
     @Before
     public void setUp() {
         testSubRequestHandler = new TestSubRequestHandler(STATIC_DESCRIPTION);
-        mockResponseFactory = mock(ResponseFactory.class);
+
         AbstractStubRequestHandler.setResponseFactory(mockResponseFactory);
     }
 
@@ -77,10 +89,7 @@ public class AbstractStubRequestHandlerTest {
 
     @Test
     public void matchesDefersToMatcher() {
-        WhenMatcher mockMatcher = mock(WhenMatcher.class);
         testSubRequestHandler.matcher = mockMatcher;
-
-        HttpUriRequest mockRequest = mock(HttpUriRequest.class);
         testSubRequestHandler.matches(mockRequest);
 
         verify(mockMatcher).matches(mockRequest);

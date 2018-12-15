@@ -2,7 +2,11 @@ package com.tjh.swivel.config;
 
 import com.tjh.swivel.config.model.Shunt;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -13,7 +17,6 @@ import java.net.URL;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class ShuntConfigurerTest {
@@ -30,12 +33,15 @@ public class ShuntConfigurerTest {
         }
     }
 
-    private SwivelConfigurer mockSwivelConfigurer;
     private ShuntConfigurer shuntConfigurer;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
+    private SwivelConfigurer mockSwivelConfigurer;
 
     @Before
     public void setUp() {
-        mockSwivelConfigurer = mock(SwivelConfigurer.class);
         shuntConfigurer = new ShuntConfigurer(mockSwivelConfigurer);
     }
 

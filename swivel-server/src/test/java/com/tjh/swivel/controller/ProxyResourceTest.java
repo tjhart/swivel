@@ -3,14 +3,17 @@ package com.tjh.swivel.controller;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URI;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,20 +21,25 @@ public class ProxyResourceTest {
 
     public static final URI LOCAL_URI = URI.create("local/path");
     private ProxyResource proxyResource;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
     private RequestRouter mockRouter;
+    @Mock
     private HttpUriRequestFactory mockRequestFactory;
+    @Mock
     private HttpServletRequest mockRequest;
+    @Mock
     private HttpRequestBase mockRequestBase;
+    @Mock
     private JerseyResponseFactory mockResponseFactory;
+    @Mock
+    private HttpResponse mockResponse;
 
     @Before
     public void setUp() {
         proxyResource = new ProxyResource();
-        mockRouter = mock(RequestRouter.class);
-        mockRequestFactory = mock(HttpUriRequestFactory.class);
-        mockRequest = mock(HttpServletRequest.class);
-        mockRequestBase = mock(HttpRequestBase.class);
-        mockResponseFactory = mock(JerseyResponseFactory.class);
 
         proxyResource.setRouter(mockRouter);
         proxyResource.setRequestFactory(mockRequestFactory);
@@ -57,7 +65,6 @@ public class ProxyResourceTest {
 
     @Test
     public void getDelegatesToResponseFactory() throws IOException {
-        HttpResponse mockResponse = mock(HttpResponse.class);
         when(mockRouter.route(any(HttpRequestBase.class))).thenReturn(mockResponse);
 
         proxyResource.get(LOCAL_URI, mockRequest);

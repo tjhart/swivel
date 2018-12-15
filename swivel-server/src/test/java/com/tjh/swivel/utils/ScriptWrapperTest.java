@@ -1,7 +1,11 @@
 package com.tjh.swivel.utils;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import javax.script.Bindings;
 import javax.script.CompiledScript;
@@ -13,20 +17,27 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ScriptWrapperTest {
 
     private static final String SOURCE_SCRIPT = "(function(){})();";
-    private ScriptWrapper scriptWrapper;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
     private Bindings mockBindings;
+    @Mock
+    private ScriptWrapper scriptWrapper;
+    @Mock
+    private ScriptEngine mockScriptEngine;
+    @Mock
+    private CompiledScript mockCompiledScript;
 
     @Before
     public void before() throws ScriptException {
         scriptWrapper = new ScriptWrapper(SOURCE_SCRIPT);
-        mockBindings = mock(Bindings.class);
     }
     @Test
     public void constructorCapturesScript() {
@@ -45,7 +56,8 @@ public class ScriptWrapperTest {
 
     @Test
     public void evalWithInvokesCompiledScriptIfAvailable() throws ScriptException {
-        scriptWrapper.compiledScript = mock(CompiledScript.class);
+
+        scriptWrapper.compiledScript = mockCompiledScript;
 
         when(scriptWrapper.compiledScript.eval(any(Bindings.class)))
                 .thenReturn("result");
@@ -58,7 +70,7 @@ public class ScriptWrapperTest {
     @Test
     public void evalWithDefersToEngineIfCompiledScriptNotAvailable() throws ScriptException {
         scriptWrapper.compiledScript = null;
-        scriptWrapper.engine = mock(ScriptEngine.class);
+        scriptWrapper.engine = mockScriptEngine;
         when(scriptWrapper.engine.eval(anyString(), any(Bindings.class))).thenReturn("result");
 
         scriptWrapper.evalWith(mockBindings);

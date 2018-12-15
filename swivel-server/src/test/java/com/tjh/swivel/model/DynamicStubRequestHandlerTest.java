@@ -4,8 +4,12 @@ import com.tjh.swivel.utils.ScriptWrapper;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import javax.script.Bindings;
 import javax.script.ScriptException;
@@ -15,7 +19,6 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class DynamicStubRequestHandlerTest {
@@ -25,8 +28,17 @@ public class DynamicStubRequestHandlerTest {
                     "    return responseFactory.createResponse(200, 'OK');" +
                     "})();";
     public static final String DESCRIPTION = "description";
+
     private DynamicStubRequestHandler dynamicResponseHandler;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
     private HttpUriRequest mockRequest;
+    @Mock
+    private ScriptWrapper mockScriptWrapper;
+    @Mock
+    private HttpClient mockHttpClient;
 
     @Before
     public void setUp() throws ScriptException {
@@ -39,14 +51,14 @@ public class DynamicStubRequestHandlerTest {
                         AbstractStubRequestHandler.SCRIPT_KEY, SOURCE_SCRIPT
                 )
         ));
-        mockRequest = mock(HttpUriRequest.class);
     }
 
     @Test
     public void handleDefersToScriptWrapper() throws ScriptException {
-        dynamicResponseHandler.scriptWrapper = mock(ScriptWrapper.class);
+        //REDTAG:TJH - fix this
+        dynamicResponseHandler.scriptWrapper = mockScriptWrapper;
 
-        dynamicResponseHandler.handle(mockRequest, URI.create("matched/uri"), mock(HttpClient.class));
+        dynamicResponseHandler.handle(mockRequest, URI.create("matched/uri"), mockHttpClient);
 
         ArgumentCaptor<Bindings> bindingsCaptor = ArgumentCaptor.forClass(Bindings.class);
 

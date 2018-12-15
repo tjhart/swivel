@@ -9,8 +9,12 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,7 +28,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,22 +39,25 @@ public class SwivelConfigurerTest {
     public static final int STUB_ID = 12345;
     public static final String EXPECTED_RESPONSE = new JSONObject(Map.of("id", STUB_ID)).toString();
     public static final String SOME_PATH = "some/path";
+
     private SwivelConfigurer swivelConfigurer;
-    private When mockWhen;
     private SwivelConfigurer swivelConfigurerSpy;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
+    private When mockWhen;
+    @Mock
     private Stub mockStub;
+    @Mock
     private HttpResponse mockHttpResponse;
+    @Mock
     private HttpUriRequest mockHttpRequest;
+    @Mock
     private HttpClient mockHttpClient;
 
     @Before
     public void setUp() throws Exception {
-        mockWhen = mock(When.class);
-        mockHttpClient = mock(HttpClient.class);
-        mockStub = mock(Stub.class);
-        mockHttpResponse = mock(HttpResponse.class);
-        mockHttpRequest = mock(HttpUriRequest.class);
-
         swivelConfigurer = new SwivelConfigurer(SWIVEL_URL);
 
         swivelConfigurerSpy = spy(swivelConfigurer);

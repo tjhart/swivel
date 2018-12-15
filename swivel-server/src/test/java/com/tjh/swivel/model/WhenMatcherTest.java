@@ -6,7 +6,11 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class WhenMatcherTest {
@@ -23,12 +26,13 @@ public class WhenMatcherTest {
     public static final String CONTENT = "fred";
     public static final StringEntity STRING_ENTITY = new StringEntity(CONTENT, ContentType.APPLICATION_JSON);
 
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
     private HttpEntityEnclosingRequestBase mockEnclosingRequest;
 
     @Before
     public void setUp() {
-        mockEnclosingRequest = mock(HttpEntityEnclosingRequestBase.class);
-
         when(mockEnclosingRequest.getURI()).thenReturn(URI.create("some/path"));
         when(mockEnclosingRequest.getMethod()).thenReturn("POST");
         when(mockEnclosingRequest.getEntity()).thenReturn(STRING_ENTITY);

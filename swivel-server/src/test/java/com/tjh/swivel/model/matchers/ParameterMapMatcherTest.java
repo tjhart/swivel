@@ -1,7 +1,11 @@
 package com.tjh.swivel.model.matchers;
 
 import org.apache.http.client.methods.HttpUriRequest;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.net.URI;
 import java.util.Collections;
@@ -10,14 +14,17 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ParameterMapMatcherTest {
 
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
+    private HttpUriRequest mockRequest;
+
     @Test
     public void queryParamsMatch() {
-        HttpUriRequest mockRequest = mock(HttpUriRequest.class);
 
         when(mockRequest.getURI()).thenReturn(URI.create("some/path?key=value"));
 

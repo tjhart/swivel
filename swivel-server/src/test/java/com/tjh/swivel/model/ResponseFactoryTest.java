@@ -5,7 +5,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.util.EntityUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,11 +19,14 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 public class ResponseFactoryTest {
 
     private ResponseFactory responseFactory;
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
+    private File mockFile;
 
     @Before
     public void setUp() {
@@ -65,7 +72,6 @@ public class ResponseFactoryTest {
 
     @Test
     public void createResponseWithFileWorks() {
-        File mockFile = mock(File.class);
         HttpResponse response = responseFactory.createResponse(
                 Map.of(
                         AbstractStubRequestHandler.STATUS_CODE_KEY, 200,

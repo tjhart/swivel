@@ -8,7 +8,11 @@ import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import javax.script.ScriptException;
 import javax.ws.rs.core.MediaType;
@@ -31,7 +35,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,37 +48,40 @@ public class ConfigureStubResourceTest {
     public static final long FILE_SIZE = 42L;
     public static final String MOCK_JSON_STRING = "{}";
     private ConfigureStubResource configureStubResource;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
     private Configuration mockConfiguration;
+    @Mock
     private Map<String, Object> mockStubMap;
+    @Mock
     private Map<String, Object> mockThenMap;
+    @Mock
     private StubRequestHandler mockStubRequestHandler;
+    @Mock
     private ObjectMapper mockObjectMapper;
+    @Mock
     private InputStream mockInputStream;
+    @Mock
     private FormDataBodyPart mockBodyPart;
+    @Mock
     private ContentDisposition mockContentDisposition;
+    @Mock
     private StubFileStorage mockStorage;
+    @Mock
+    private File mockFile;
 
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
         configureStubResource = new ConfigureStubResource();
-        mockConfiguration = mock(Configuration.class);
-        mockStubRequestHandler = mock(StubRequestHandler.class);
-        mockObjectMapper = mock(ObjectMapper.class);
-
-        mockStubMap = mock(Map.class);
-        mockThenMap = mock(Map.class);
-        mockInputStream = mock(InputStream.class);
-        mockStorage = mock(StubFileStorage.class);
-        File mockFile = mock(File.class);
 
         configureStubResource.setConfiguration(mockConfiguration);
         configureStubResource.setObjectMapper(mockObjectMapper);
         configureStubResource.setStubFileStorage(mockStorage);
 
         configureStubResource = spy(configureStubResource);
-        mockBodyPart = mock(FormDataBodyPart.class);
-        mockContentDisposition = mock(ContentDisposition.class);
 
         doReturn(mockStubRequestHandler)
                 .when(configureStubResource)

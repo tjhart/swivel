@@ -3,7 +3,11 @@ package com.tjh.swivel.model;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -22,7 +26,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,18 +33,29 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("unchecked") public class ConfigurationTest {
     public static final URI LOCAL_URI = URI.create("some/path");
     public static final int STUB_HANDLER_ID = 456;
-    private ShuntRequestHandler mockShuntHandler;
+
     private Configuration configuration;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    @Mock
+    private ShuntRequestHandler mockShuntHandler;
+    @Mock
     private StubRequestHandler mockStubHandler;
+    @Mock
     private HttpRequestBase mockRequest;
+    @Mock
+    private StubRequestHandler mockNonMatchingHandler;
+    @Mock
+    private StubRequestHandler mockNewStub;
+    @Mock
+    private Map<String, Object> mockMap;
+    @Mock
+    private StubRequestHandler mockNewStubRequestHandler;
 
     @Before
     public void setUp() {
         configuration = spy(new Configuration());
-
-        mockShuntHandler = mock(ShuntRequestHandler.class);
-        mockStubHandler = mock(StubRequestHandler.class);
-        mockRequest = mock(HttpRequestBase.class);
 
         when(mockStubHandler.getId()).thenReturn(STUB_HANDLER_ID);
         when(mockStubHandler.matches(any(HttpUriRequest.class))).thenReturn(true);
@@ -128,7 +142,6 @@ import static org.mockito.Mockito.when;
 
     @Test
     public void getStubsOnlyReturnsMatchingStubs() {
-        StubRequestHandler mockNonMatchingHandler = mock(StubRequestHandler.class);
         configuration.addStub(LOCAL_URI, mockStubHandler);
         configuration.addStub(LOCAL_URI, mockNonMatchingHandler);
 
@@ -138,7 +151,6 @@ import static org.mockito.Mockito.when;
 
     @Test
     public void replaceStubBehaves() {
-        StubRequestHandler mockNewStub = mock(StubRequestHandler.class);
         configuration.addStub(LOCAL_URI, mockStubHandler);
         configuration.replaceStub(LOCAL_URI, STUB_HANDLER_ID, mockNewStub);
 
@@ -148,7 +160,6 @@ import static org.mockito.Mockito.when;
 
     @Test
     public void cleanRemovesNodeType() {
-        Map<String, Object> mockMap = mock(Map.class);
         configuration.clean("some/path", mockMap, Configuration.SHUNT_NODE);
 
         verify(mockMap).remove(Configuration.SHUNT_NODE);
@@ -156,7 +167,6 @@ import static org.mockito.Mockito.when;
 
     @Test
     public void cleanRemovesStubNodeIfEmpty() {
-        Map<String, Object> mockMap = mock(Map.class);
         when(mockMap.containsKey(Configuration.STUB_NODE))
                 .thenReturn(true);
         when(mockMap.computeIfAbsent(eq(Configuration.STUB_NODE), any(Function.class)))
@@ -179,7 +189,6 @@ import static org.mockito.Mockito.when;
 
     @Test
     public void replacStubReleasesResources() {
-        StubRequestHandler mockNewStubRequestHandler = mock(StubRequestHandler.class);
 
         doReturn(new ArrayList(Collections.singletonList(mockStubHandler)))
                 .when(configuration)

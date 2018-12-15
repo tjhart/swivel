@@ -137,10 +137,9 @@ public class SwivelConfigurer {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("SwivelConfigurer{");
-        sb.append("swivelURL='").append(swivelURL).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "SwivelConfigurer{" +
+                "swivelURL='" + swivelURL + '\'' +
+                '}';
     }
     //</editor-fold>
 

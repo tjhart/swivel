@@ -19,7 +19,7 @@ public class ThenTest {
     private Then then;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         then = new Then(RESPONSE_CODE);
     }
 

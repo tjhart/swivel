@@ -159,15 +159,13 @@ public class When {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("When{");
-        sb.append("method=").append(method);
-        sb.append(", content='").append(content).append('\'');
-        sb.append(", contentType='").append(contentType).append('\'');
-        sb.append(", remoteAddress='").append(remoteAddress).append('\'');
-        sb.append(", script='").append(script).append('\'');
-        sb.append(", uri=").append(uri);
-        sb.append('}');
-        return sb.toString();
+        return "When{" + "method=" + method +
+                ", content='" + content + '\'' +
+                ", contentType='" + contentType + '\'' +
+                ", remoteAddress='" + remoteAddress + '\'' +
+                ", script='" + script + '\'' +
+                ", uri=" + uri +
+                '}';
     }
 
     //</editor-fold>

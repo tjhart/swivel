@@ -7,10 +7,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.net.URI;
 import java.util.Map;
 
@@ -19,14 +19,14 @@ import java.util.Map;
 public class ConfigureShuntResourceTest {
 
     public static final URI LOCAL_URI = URI.create("couch");
-    @Autowired
-    protected ConfigureShuntResource configurationResource;
-    @Autowired
+    @Resource
+    protected ConfigureShuntResource configureShutResource;
+    @Resource
     protected RequestRouter requestRouter;
 
     @Before
     public void before() {
-        configurationResource.putShunt(LOCAL_URI,
+        configureShutResource.putShunt(LOCAL_URI,
                 Map.of(ConfigureShuntResource.REMOTE_URL_KEY, "http://localhost:5984"));
     }
 
@@ -38,7 +38,7 @@ public class ConfigureShuntResourceTest {
 
     @Test
     public void shuntThrowsOnUnknownURL() {
-        configurationResource.deleteShunt(LOCAL_URI);
+        configureShutResource.deleteShunt(LOCAL_URI);
         //would throw if failed
     }
 }

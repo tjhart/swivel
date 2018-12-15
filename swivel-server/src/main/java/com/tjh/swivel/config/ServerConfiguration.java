@@ -11,14 +11,13 @@ import com.tjh.swivel.controller.RequestRouter;
 import com.tjh.swivel.controller.StubFileStorage;
 import com.tjh.swivel.controller.SwivelClosedListener;
 import com.tjh.swivel.controller.SwivelRefreshedListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.io.Resource;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -27,13 +26,13 @@ import java.util.Properties;
 public class ServerConfiguration {
 
     @Value("file:${com.tjh.swivel.storage.path:${java.io.tmpdir}}/swivelStorage")
-    private Resource stubFileDir;
+    private org.springframework.core.io.Resource stubFileDir;
     @Value("file:${com.tjh.swivel.config.file:${java.io.tmpdir}}/swivelConfig.json")
-    private Resource saveFile;
+    private org.springframework.core.io.Resource saveFile;
 
-    @Autowired
+    @Resource
     private com.tjh.swivel.model.Configuration configuration;
-    @Autowired
+    @Resource
     private RequestRouter requestRouter;
 
     @Bean

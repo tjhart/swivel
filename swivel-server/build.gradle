@@ -17,6 +17,7 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-beans', version: project.springVersion
     compile group: 'org.springframework', name: 'spring-context', version: project.springVersion
     runtime group: 'org.springframework', name: 'spring-web', version: project.springVersion
+    compile group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
 
     runtime group: 'org.glassfish.jersey.ext', name: 'jersey-spring4', version: project.jerseyVersion
 

@@ -105,12 +105,11 @@ public class Stub implements Behavior {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Stub{");
-        sb.append("description=").append(description);
-        sb.append(", when=").append(when);
-        sb.append(", then=").append(then);
-        sb.append('}');
-        return sb.toString();
+        return "Stub{" +
+                "description=" + description +
+                ", when=" + when +
+                ", then=" + then +
+                '}';
     }
     //</editor-fold>
 

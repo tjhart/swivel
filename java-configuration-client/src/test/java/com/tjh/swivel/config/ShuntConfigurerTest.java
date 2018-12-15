@@ -34,7 +34,7 @@ public class ShuntConfigurerTest {
     private ShuntConfigurer shuntConfigurer;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mockSwivelConfigurer = mock(SwivelConfigurer.class);
         shuntConfigurer = new ShuntConfigurer(mockSwivelConfigurer);
     }
@@ -65,7 +65,7 @@ public class ShuntConfigurerTest {
     }
 
     @Test
-    public void toSetsRemoteURL() throws IOException {
+    public void toSetsRemoteURL() {
         shuntConfigurer.setLocalURI(LOCAL_URI);
         shuntConfigurer.to(REMOTE_URL);
 

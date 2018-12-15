@@ -1,7 +1,7 @@
 dependencies {
     compile project(':java-configuration-client')
-    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.2.3'
-    compile group: 'org.codehaus.jettison', name: 'jettison', version: '1.1'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.6'
+    compile group: 'org.codehaus.jettison', name: 'jettison', version: '1.4.0'
 }
 
 test {

@@ -102,13 +102,12 @@ public class StubConfigurer implements ConfigurationElement {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("StubConfigurer{");
-        sb.append("swivelConfigurer=").append(swivelConfigurer);
-        sb.append(", description='").append(description).append('\'');
-        sb.append(", when=").append(when);
-        sb.append(", then=").append(then);
-        sb.append('}');
-        return sb.toString();
+        return "StubConfigurer{" +
+                "swivelConfigurer=" + swivelConfigurer +
+                ", description='" + description + '\'' +
+                ", when=" + when +
+                ", then=" + then +
+                '}';
     }
     //</editor-fold>
 

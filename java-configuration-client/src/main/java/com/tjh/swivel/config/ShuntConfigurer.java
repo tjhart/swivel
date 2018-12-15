@@ -56,7 +56,7 @@ public class ShuntConfigurer implements ConfigurationElement {
      * @param remoteURL - remoteURL for the request
      * @return <code>this</code>
      */
-    public ShuntConfigurer to(URL remoteURL)  {
+    public ShuntConfigurer to(URL remoteURL) {
         setRemoteURL(remoteURL);
         return this;
     }
@@ -67,8 +67,8 @@ public class ShuntConfigurer implements ConfigurationElement {
     //<editor-fold desc="Object">
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ShuntConfigurer)) return false;
+        if (this == o) { return true; }
+        if (!(o instanceof ShuntConfigurer)) { return false; }
 
         ShuntConfigurer that = (ShuntConfigurer) o;
 
@@ -88,12 +88,10 @@ public class ShuntConfigurer implements ConfigurationElement {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ShuntConfigurer{");
-        sb.append("swivelConfigurer=").append(swivelConfigurer);
-        sb.append(", localURI=").append(localURI);
-        sb.append(", remoteURL=").append(remoteURL);
-        sb.append('}');
-        return sb.toString();
+        return "ShuntConfigurer{" + "swivelConfigurer=" + swivelConfigurer +
+                ", localURI=" + localURI +
+                ", remoteURL=" + remoteURL +
+                '}';
     }
     //</editor-fold>
 

@@ -19,8 +19,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
+import java.util.Collections;
 
 import static com.tjh.swivel.config.Swivel.APPLICATION_URL_ENCODED_FORM;
 import static com.tjh.swivel.config.Swivel.TEXT_PLAIN;
@@ -54,7 +53,7 @@ public class SwivelConfigurerTest {
     }
 
     @Test
-    public void configureStubWorks() throws IOException, URISyntaxException {
+    public void configureStubWorks() throws IOException {
 
         swivelConfigurer
                 .when(get(PATH))
@@ -71,7 +70,7 @@ public class SwivelConfigurerTest {
 
     //integration tests
     @Test
-    public void matchingContentWorks() throws IOException, URISyntaxException {
+    public void matchingContentWorks() throws IOException {
         swivelConfigurer
                 .when(post(PATH)
                         .withContent("some data"))
@@ -110,7 +109,7 @@ public class SwivelConfigurerTest {
     }
 
     @Test
-    public void scriptMatchingWorks() throws URISyntaxException, IOException {
+    public void scriptMatchingWorks() throws IOException {
         swivelConfigurer
                 .when(post(PATH)
                         .as(APPLICATION_URL_ENCODED_FORM)
@@ -126,7 +125,7 @@ public class SwivelConfigurerTest {
                 .configure();
 
         HttpPost httpPost = new HttpPost(SWIVEL_PROXY_URL + "/" + PATH);
-        httpPost.setEntity(new UrlEncodedFormEntity(Arrays.asList(new BasicNameValuePair("foo", "bar"))));
+        httpPost.setEntity(new UrlEncodedFormEntity(Collections.singletonList(new BasicNameValuePair("foo", "bar"))));
         String response = EntityUtils.toString(getEntity(httpPost));
         assertThat(response, equalTo("it matched!"));
     }

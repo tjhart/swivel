@@ -12,7 +12,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -38,15 +37,13 @@ public class StubTest {
     public static final String DESCRIPTION = "description";
 
     private Stub stub;
-    private When mockWhen;
     private Then mockThen;
-    private JSONObject mockJSONObject;
 
     @Before
-    public void setUp() throws URISyntaxException {
-        mockWhen = mock(When.class);
+    public void setUp() {
+        When mockWhen = mock(When.class);
         mockThen = mock(Then.class);
-        mockJSONObject = mock(JSONObject.class);
+        JSONObject mockJSONObject = mock(JSONObject.class);
 
         stub = new Stub(DESCRIPTION, mockWhen, mockThen);
 
@@ -55,7 +52,7 @@ public class StubTest {
     }
 
     @Test
-    public void toJSONIncludesWhen() throws URISyntaxException, JSONException {
+    public void toJSONIncludesWhen() throws JSONException {
         assertThat(stub.toJSON().getJSONObject(Stub.WHEN_KEY), notNullValue());
     }
 
@@ -70,7 +67,7 @@ public class StubTest {
     }
 
     @Test
-    public void toRequestCreatesPostRequest() throws MalformedURLException {
+    public void toRequestCreatesPostRequest() {
         assertThat(stub.toRequest(SOME_URL), instanceOf(HttpPost.class));
     }
 

@@ -10,10 +10,10 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Map;
@@ -25,9 +25,9 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class RequestRouterTest {
 
-    @Autowired
+    @Resource
     RequestRouter requestRouter;
-    @Autowired
+    @Resource
     Configuration configuration;
 
     @Before

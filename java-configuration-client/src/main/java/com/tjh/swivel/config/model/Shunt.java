@@ -74,11 +74,10 @@ public class Shunt implements Behavior {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Shunt{");
-        sb.append("remoteURL=").append(remoteURL);
-        sb.append(", localURI=").append(localURI);
-        sb.append('}');
-        return sb.toString();
+        return "Shunt{" +
+                "remoteURL=" + remoteURL +
+                ", localURI=" + localURI +
+                '}';
     }
     //</editor-fold>
 

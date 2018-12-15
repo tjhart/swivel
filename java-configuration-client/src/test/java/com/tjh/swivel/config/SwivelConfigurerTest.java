@@ -154,6 +154,5 @@ public class SwivelConfigurerTest {
 
         assertThat(value, instanceOf(HttpDelete.class));
         assertThat(value.getURI(), equalTo(URI.create(SWIVEL_URL + "/rest/config")));
-
     }
 }

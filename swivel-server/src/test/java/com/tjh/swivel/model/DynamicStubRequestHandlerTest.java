@@ -53,7 +53,6 @@ public class DynamicStubRequestHandlerTest {
 
     @Test
     public void handleDefersToScriptWrapper() throws ScriptException {
-        //REDTAG:TJH - fix this
         dynamicResponseHandler.scriptWrapper = mockScriptWrapper;
 
         dynamicResponseHandler.handle(mockRequest, URI.create("matched/uri"), mockHttpClient);

@@ -41,7 +41,6 @@ public class ScriptMatcherTest {
     public void machesBindsRequestToEvaluation() throws ScriptException {
         ScriptMatcher scriptMatcher = new ScriptMatcher(SIMPLE_SCRIPT);
 
-        //REDTAG:TJH - fix this.
         scriptMatcher.scriptWrapper = mockScriptWrapper;
         when(scriptMatcher.scriptWrapper.evalWith(any(Bindings.class))).thenReturn(true);
 

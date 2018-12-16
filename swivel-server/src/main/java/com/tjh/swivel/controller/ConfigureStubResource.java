@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tjh.swivel.model.AbstractStubRequestHandler;
 import com.tjh.swivel.model.Configuration;
 import com.tjh.swivel.model.StubRequestHandler;
+import com.tjh.swivel.model.StubRequestHandlerFactory;
 import org.apache.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -41,6 +42,7 @@ public class ConfigureStubResource {
     private Configuration configuration;
     private ObjectMapper objectMapper;
     private StubFileStorage stubFileStorage;
+    private StubRequestHandlerFactory stubRequestHandlerFactory;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -179,7 +181,7 @@ public class ConfigureStubResource {
     }
 
     protected StubRequestHandler createStubRequestHandler(Map<String, Object> stubDescription) throws ScriptException {
-        return AbstractStubRequestHandler.createStubFor(stubDescription);
+        return stubRequestHandlerFactory.createStubFor(stubDescription);
     }
 
     public void setConfiguration(Configuration configuration) {this.configuration = configuration;}
@@ -188,4 +190,7 @@ public class ConfigureStubResource {
 
     public void setStubFileStorage(StubFileStorage stubFileStorage) {this.stubFileStorage = stubFileStorage;}
 
+    public void setStubRequestHandlerFactory(StubRequestHandlerFactory stubRequestHandlerFactory) {
+        this.stubRequestHandlerFactory = stubRequestHandlerFactory;
+    }
 }

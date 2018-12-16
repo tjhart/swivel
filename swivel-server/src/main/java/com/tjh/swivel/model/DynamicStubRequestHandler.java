@@ -13,11 +13,13 @@ import java.util.Map;
 
 public class DynamicStubRequestHandler extends AbstractStubRequestHandler {
     protected ScriptWrapper scriptWrapper;
-    protected ResponseFactory responseFactory = new ResponseFactory();
+    protected ResponseFactory responseFactory;
 
-    public DynamicStubRequestHandler(Map<String, Object> stubDescription) throws ScriptException {
-        super(stubDescription);
+    public DynamicStubRequestHandler(Map<String, Object> stubDescription,
+            ResponseFactory responseFactory) throws ScriptException {
+        super(stubDescription, responseFactory);
         this.scriptWrapper = new ScriptWrapper((String)then.get(SCRIPT_KEY));
+        this.responseFactory = responseFactory;
     }
 
     @Override

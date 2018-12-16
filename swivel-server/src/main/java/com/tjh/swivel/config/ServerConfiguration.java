@@ -11,6 +11,7 @@ import com.tjh.swivel.controller.RequestRouter;
 import com.tjh.swivel.controller.StubFileStorage;
 import com.tjh.swivel.controller.SwivelClosedListener;
 import com.tjh.swivel.controller.SwivelRefreshedListener;
+import com.tjh.swivel.model.StubRequestHandlerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,8 @@ public class ServerConfiguration {
     private com.tjh.swivel.model.Configuration configuration;
     @Resource
     private RequestRouter requestRouter;
+    @Resource
+    private StubRequestHandlerFactory stubRequestHandlerFactory;
 
     @Bean
     static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -79,6 +82,7 @@ public class ServerConfiguration {
         result.setConfiguration(configuration);
         result.setObjectMapper(objectMapper());
         result.setStubFileStorage(stubFileStorage());
+        result.setStubRequestHandlerFactory(stubRequestHandlerFactory);
         return result;
     }
 

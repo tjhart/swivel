@@ -11,17 +11,12 @@ import org.mockito.junit.MockitoRule;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,10 +47,12 @@ import static org.mockito.Mockito.when;
     private Map<String, Object> mockMap;
     @Mock
     private StubRequestHandler mockNewStubRequestHandler;
+    @Mock
+    private StubRequestHandlerFactory mockStubRequestHandlerFactory;
 
     @Before
     public void setUp() {
-        configuration = spy(new Configuration());
+        configuration = spy(new Configuration(mockStubRequestHandlerFactory));
 
         when(mockStubHandler.getId()).thenReturn(STUB_HANDLER_ID);
         when(mockStubHandler.matches(any(HttpUriRequest.class))).thenReturn(true);
@@ -67,8 +64,8 @@ import static org.mockito.Mockito.when;
 
         assertThat(configuration.uriHandlers
                         .get(LOCAL_URI.getPath())
-                        .get(Configuration.SHUNT_NODE),
-                equalTo(mockShuntHandler));
+                        .get(Configuration.SHUNT_NODE))
+                .isEqualTo(mockShuntHandler);
     }
 
     @Test
@@ -77,8 +74,8 @@ import static org.mockito.Mockito.when;
 
         configuration.deleteShunt(LOCAL_URI);
 
-        assertThat(configuration.uriHandlers.get(LOCAL_URI.toString()),
-                nullValue());
+        assertThat(configuration.uriHandlers.get(LOCAL_URI.toString()))
+                .isNull();
     }
 
     @SuppressWarnings("unchecked")
@@ -88,8 +85,8 @@ import static org.mockito.Mockito.when;
 
         assertThat(((List<StubRequestHandler>) configuration.uriHandlers
                         .get(LOCAL_URI.getPath())
-                        .get(Configuration.STUB_NODE)).get(0),
-                sameInstance(mockStubHandler));
+                        .get(Configuration.STUB_NODE)).get(0))
+                .isSameAs(mockStubHandler);
     }
 
     @Test
@@ -99,23 +96,24 @@ import static org.mockito.Mockito.when;
         configuration.removeStub(LOCAL_URI, STUB_HANDLER_ID);
 
         assertThat(configuration.uriHandlers
-                .get(LOCAL_URI.getPath()), nullValue());
+                .get(LOCAL_URI.getPath()))
+                .isNull();
     }
 
     @Test
     public void findRequestHandlerFindsStub() {
         configuration.addStub(LOCAL_URI, mockStubHandler);
 
-        assertThat(configuration.findRequestHandler(mockRequest, LOCAL_URI.getPath()),
-                equalTo(mockStubHandler));
+        assertThat(configuration.findRequestHandler(mockRequest, LOCAL_URI.getPath()))
+                .isEqualTo(mockStubHandler);
     }
 
     @Test
     public void findRequestHandlerFindsShunt() {
         configuration.setShunt(LOCAL_URI, mockShuntHandler);
 
-        assertThat(configuration.findRequestHandler(mockRequest, LOCAL_URI.getPath()),
-                equalTo(mockShuntHandler));
+        assertThat(configuration.findRequestHandler(mockRequest, LOCAL_URI.getPath()))
+                .isEqualTo(mockShuntHandler);
     }
 
     @Test
@@ -123,21 +121,22 @@ import static org.mockito.Mockito.when;
         configuration.addStub(LOCAL_URI, mockStubHandler);
         configuration.setShunt(LOCAL_URI, mockShuntHandler);
 
-        assertThat(configuration.findRequestHandler(mockRequest, LOCAL_URI.getPath()),
-                equalTo(mockStubHandler));
+        assertThat(configuration.findRequestHandler(mockRequest, LOCAL_URI.getPath()))
+                .isEqualTo(mockStubHandler);
     }
 
     @Test
     public void findRequestHandlerReturnsNull() {
-        assertThat(configuration.findRequestHandler(mockRequest, LOCAL_URI.getPath()), nullValue());
+        assertThat(configuration.findRequestHandler(mockRequest, LOCAL_URI.getPath()))
+                .isNull();
     }
 
     @Test
     public void getStubsReturnsAllIfStubIdsIsEmpty() {
         configuration.addStub(LOCAL_URI, mockStubHandler);
 
-        assertThat(configuration.getStubs(LOCAL_URI.getPath(), Collections.emptyList()),
-                hasItem(mockStubHandler));
+        assertThat(configuration.getStubs(LOCAL_URI.getPath(), Collections.emptyList()))
+                .contains(mockStubHandler);
     }
 
     @Test
@@ -145,8 +144,8 @@ import static org.mockito.Mockito.when;
         configuration.addStub(LOCAL_URI, mockStubHandler);
         configuration.addStub(LOCAL_URI, mockNonMatchingHandler);
 
-        assertThat(configuration.getStubs(LOCAL_URI.getPath(), Collections.singletonList(STUB_HANDLER_ID)),
-                equalTo((Collection) Collections.singletonList(mockStubHandler)));
+        assertThat(configuration.getStubs(LOCAL_URI.getPath(), Collections.singletonList(STUB_HANDLER_ID)))
+                .isEqualTo(Collections.singletonList(mockStubHandler));
     }
 
     @Test
@@ -154,8 +153,8 @@ import static org.mockito.Mockito.when;
         configuration.addStub(LOCAL_URI, mockStubHandler);
         configuration.replaceStub(LOCAL_URI, STUB_HANDLER_ID, mockNewStub);
 
-        assertThat(configuration.getStubs(LOCAL_URI.getPath(), Collections.emptyList()),
-                equalTo((Collection) Collections.singletonList(mockNewStub)));
+        assertThat(configuration.getStubs(LOCAL_URI.getPath(), Collections.emptyList()))
+                .isEqualTo(Collections.singletonList(mockNewStub));
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.tjh.swivel.config;
 
 import com.tjh.swivel.controller.RequestRouter;
 import com.tjh.swivel.model.ResponseFactory;
+import com.tjh.swivel.model.StubRequestHandlerFactory;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +21,13 @@ public class RouterConfiguration {
     }
 
     @Bean
+    public StubRequestHandlerFactory stubRequestHandlerFactory(){
+        return new StubRequestHandlerFactory(responseFactory());
+    }
+
+    @Bean
     public com.tjh.swivel.model.Configuration configuration(){
-        return new com.tjh.swivel.model.Configuration();
+        return new com.tjh.swivel.model.Configuration(stubRequestHandlerFactory());
     }
 
     @Bean

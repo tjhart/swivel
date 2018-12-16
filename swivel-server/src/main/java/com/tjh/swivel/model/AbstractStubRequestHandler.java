@@ -7,7 +7,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hamcrest.StringDescription;
 
-import javax.script.ScriptException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
@@ -28,32 +27,19 @@ public abstract class AbstractStubRequestHandler implements StubRequestHandler {
     public static final String FILE_NAME_KEY = "fileName";
 
     private static Logger logger = Logger.getLogger(AbstractStubRequestHandler.class);
-    //REDTAG:TJH - must fix this!
-    protected static ResponseFactory responseFactory = new ResponseFactory();
 
+    protected ResponseFactory responseFactory;
     protected WhenMatcher matcher;
     protected final Map<String, Object> then;
     private final String description;
 
-    public static StubRequestHandler createStubFor(Map<String, Object> stubDescription) throws ScriptException {
-        StubRequestHandler result;
-        if (((Map<String, Object>) stubDescription.get(THEN_KEY)).containsKey(SCRIPT_KEY)) {
-            result = new DynamicStubRequestHandler(stubDescription);
-        } else {
-            result = new StaticStubRequestHandler(stubDescription);
-        }
-        return result;
-    }
-
-    public AbstractStubRequestHandler(Map<String, Object> stubDescription) {
+    public AbstractStubRequestHandler(Map<String, Object> stubDescription,
+            ResponseFactory responseFactory) {
+        this.responseFactory = responseFactory;
         this.description = Objects.requireNonNull((String) stubDescription.get(DESCRIPTION_KEY));
         this.matcher = new WhenMatcher((Map<String, String>) stubDescription.get(WHEN_KEY));
         this.then = Collections.unmodifiableMap(
                 Objects.requireNonNull((Map<String, Object>) stubDescription.get(THEN_KEY)));
-    }
-
-    static void setResponseFactory(ResponseFactory responseFactory) {
-        AbstractStubRequestHandler.responseFactory = responseFactory;
     }
 
     //<editor-fold desc="StubRequestHandler">

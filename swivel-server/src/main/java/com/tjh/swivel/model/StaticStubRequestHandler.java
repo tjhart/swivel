@@ -16,17 +16,18 @@ public class StaticStubRequestHandler extends AbstractStubRequestHandler {
     protected final HttpResponse httpResponse;
     protected final File responseFile;
 
-    public StaticStubRequestHandler(Map<String, Object> stubDescription) {
-        super(stubDescription);
+    public StaticStubRequestHandler(Map<String, Object> stubDescription,
+            ResponseFactory responseFactory) {
+        super(stubDescription, responseFactory);
         if (then.containsKey(STORAGE_PATH_KEY)) {
             responseFile = new File((String) then.get(STORAGE_PATH_KEY));
             if (!responseFile.exists() && !responseFile.isFile()) {
                 throw new RuntimeException("Stub Storage file does not exist:" + responseFile.getPath());
             }
-            this.httpResponse = responseFactory.createResponse(then, responseFile);
+            this.httpResponse = this.responseFactory.createResponse(then, responseFile);
         } else {
             responseFile = null;
-            this.httpResponse = responseFactory.createResponse(then);
+            this.httpResponse = this.responseFactory.createResponse(then);
         }
     }
 

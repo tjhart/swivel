@@ -27,6 +27,11 @@ public class Configuration {
     public static Logger LOGGER = Logger.getLogger(Configuration.class);
 
     protected final Map<String, Map<String, Object>> uriHandlers = new ConcurrentHashMap<>();
+    private final StubRequestHandlerFactory stubRequestHandlerFactory;
+
+    public Configuration(StubRequestHandlerFactory stubRequestHandlerFactory) {
+        this.stubRequestHandlerFactory = stubRequestHandlerFactory;
+    }
 
     //<editor-fold desc="query">
     public RequestHandler findRequestHandler(HttpRequestBase request, String matchedPath) {
@@ -217,7 +222,7 @@ public class Configuration {
 
     protected StubRequestHandler createStubFor(Map<String, Object> stubDescription) {
         try {
-            return AbstractStubRequestHandler.createStubFor(stubDescription);
+            return stubRequestHandlerFactory.createStubFor(stubDescription);
         } catch (ScriptException e) {
             throw new RuntimeException(e);
         }

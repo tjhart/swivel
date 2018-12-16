@@ -16,9 +16,7 @@ import javax.script.ScriptException;
 import java.net.URI;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 public class DynamicStubRequestHandlerTest {
@@ -39,6 +37,8 @@ public class DynamicStubRequestHandlerTest {
     private ScriptWrapper mockScriptWrapper;
     @Mock
     private HttpClient mockHttpClient;
+    @Mock
+    private ResponseFactory mockResponseFactory;
 
     @Before
     public void setUp() throws ScriptException {
@@ -47,10 +47,8 @@ public class DynamicStubRequestHandlerTest {
                 AbstractStubRequestHandler.WHEN_KEY, Map.of(WhenMatcher.METHOD_KEY, "GET"),
 
                 AbstractStubRequestHandler.THEN_KEY,
-                Map.of(
-                        AbstractStubRequestHandler.SCRIPT_KEY, SOURCE_SCRIPT
-                )
-        ));
+                Map.of(AbstractStubRequestHandler.SCRIPT_KEY, SOURCE_SCRIPT)
+        ), mockResponseFactory);
     }
 
     @Test
@@ -64,7 +62,7 @@ public class DynamicStubRequestHandlerTest {
 
         verify(dynamicResponseHandler.scriptWrapper).evalWith(bindingsCaptor.capture());
         Bindings value = bindingsCaptor.getValue();
-        assertThat(value.get("request"), equalTo(mockRequest));
-        assertThat(value.get("responseFactory"), instanceOf(ResponseFactory.class));
+        assertThat(value.get("request")).isEqualTo(mockRequest);
+        assertThat(value.get("responseFactory")).isEqualTo(mockResponseFactory);
     }
 }
